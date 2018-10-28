@@ -4,11 +4,22 @@ class UsersController < ApplicationController
   before_action :admin_user,     only: :destroy
 
   def index
-    @users = User.paginate(page: params[:page])
+    @users = User.where(activated: true).paginate(page: params[:page])
   end
 
   def show
     @user = User.find(params[:id])
+
+    # @userが有効化されていなかったら、root_urlへリダイレクトする
+    # 下記の文はこうかける。redirect_toやrenderのあとも処理は続くため
+    # そこで処理を終わらせるためにはreturnしてあげればよい。
+    # しかし、他のredirect_toじゃそんなことしてないし、ここでなぜ突然
+    # returnしだしたのか？など、return無くても動作は問題なさそう。
+    # unless @user.activated?
+    #   redirect_to root_url
+    #   return
+    # end
+    redirect_to root_url and return unless @user.activated?
   end
 
   def new
@@ -18,9 +29,9 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
-      log_in @user
-      flash[:success] = "Welcome to the Sample App!"
-      redirect_to @user #=> redirect_to user_url(@user)
+      @user.send_activation_email
+      flash[:info] = "Please check your email to activate your account."
+      redirect_to root_url
     else
       render 'new'
     end
