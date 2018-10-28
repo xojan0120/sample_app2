@@ -8,7 +8,12 @@ class User < ApplicationRecord
                     format: { with: VALID_EMAIL_REGEX },
                     uniqueness: { case_sensitive: false }
   has_secure_password
-  validates :password, presence: true, length: { minimum: 6 }
+
+  # ここで空パスワードを許可しているが、has_secure_passwordによるバリデーション内には
+  # 空パスワードのチェックが行われるため、実際には空パスワードは通らない。
+  # なお、以下で空パスワードをチェックすると、バリデーションエラーがあった場合に、
+  # 二重で空パスワードエラーが発生してしまうため、下記ではallow_nil: trueしておくのが正解。
+  validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
 
   # 渡された文字列のハッシュ値を返す
   def User.digest(string)
