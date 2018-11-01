@@ -28,7 +28,7 @@ Rails.application.configure do
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.delivery_method = :test
+  config.action_mailer.delivery_method = :test # => :testにすると実際にメールは送信されず、送信済みキュー(ActionMailer::Base.deliveriesメソッドでキューにアクセスできる)
   host = '192.168.33.10:3000'
   config.action_mailer.default_url_options = { host: host, protocol: 'https' }
 

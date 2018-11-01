@@ -11,6 +11,8 @@ class ActiveSupport::TestCase
 
   # テストユーザーがログイン中の場合にtrueを返す
   def is_logged_in?
+    # "セッションの:user_idが空でないとき" => session[:user_id].nil? は falseになる。
+    # !で真偽逆転させてtrueを返す。
     !session[:user_id].nil?
   end
 
