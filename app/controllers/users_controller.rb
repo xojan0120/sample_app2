@@ -10,6 +10,12 @@ class UsersController < ApplicationController
   def show
     @user = User.find(params[:id])
 
+    # @userからmicropostsを取得するときにpaginateメソッドで
+    # ビューに@micropostsを渡すときの件数(ページ)を制限できる
+    # なお、ビュー側には<%= will_paginate %>という埋め込みruby
+    # が必要になる。
+    @microposts = @user.microposts.paginate(page: params[:page])
+
     # @userが有効化されていなかったら、root_urlへリダイレクトする
     # 下記の文はこうかける。redirect_toやrenderのあとも処理は続くため
     # そこで処理を終わらせるためにはreturnしてあげればよい。
@@ -62,15 +68,6 @@ class UsersController < ApplicationController
 
     # beforeアクション
     
-    # ログイン済みユーザーかどうか確認
-    def logged_in_user
-      unless logged_in?
-        store_location
-        flash[:danger] = "Please log in."
-        redirect_to login_url
-      end
-    end
-
     # 正しいユーザーかどうか確認
     def correct_user
       @user = User.find(params[:id])

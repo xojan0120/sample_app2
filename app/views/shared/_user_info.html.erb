@@ -1,0 +1,12 @@
+<%#
+    # ここのcurrent_userは変数ではなくメソッド。
+    # ログインユーザのuserオブジェクトを返す。
+    # app/helpers/sessions_helper.rbに定義有り
+%>
+<%# 下の link_toの第二引数は通常 user_path(current_user) だが、current_userに省略できる模様 %>
+<%= link_to gravatar_for(current_user, size: 50), current_user %>
+<h1><%= current_user.name %></h1>
+<span><%= link_to "view my profile", current_user %></span>
+
+<%# pluralizeは第一引数の数値に応じて、第二引数の英単語を適切な単数形、複数形に変換した文字列を返す %>
+<span><%= pluralize(current_user.microposts.count, "micropost") %></span>

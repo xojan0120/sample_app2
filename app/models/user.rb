@@ -1,4 +1,9 @@
 class User < ApplicationRecord
+  # Userオブジェクトは複数Micropostを持つ
+  # dependent: :destroyは、Userが破棄された場合、それに依存(dependent)して、
+  # micropostsも破棄されるという意味
+  has_many :microposts, dependent: :destroy
+
   attr_accessor :remember_token, :activation_token, :reset_token
   before_save   :downcase_email
   before_create :create_activation_digest
@@ -92,6 +97,10 @@ class User < ApplicationRecord
   def password_reset_expired?
     # パスワード再設定メール送信時刻 < 現時刻より2時間以上前(早い) の場合、true
     reset_sent_at < 2.hours.ago
+  end
+
+  def feed
+    Micropost.where("user_id = ?", id)
   end
 
   private

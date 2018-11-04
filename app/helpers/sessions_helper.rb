@@ -19,12 +19,20 @@ module SessionsHelper
 
   # 記憶トークンcookieに対応するユーザーを返す
   def current_user
+    # セッションのuser_idを代入
     if (user_id = session[:user_id])
+      # @current_userがnilならば、Userテーブルからuser_idで検索し、userオブジェクトを代入する。
+      # @current_userがnilでないのなら、そのまま
       @current_user ||= User.find_by(id: user_id)
+    # クッキーの暗号化されたuser_idを復号化してuser_idに代入
     elsif (user_id = cookies.signed[:user_id])
+      # Userテーブルからuser_idで検索する
       user = User.find_by(id: user_id)
+      # userが存在する、かつ、userが認証されている
       if user && user.authenticated?(:remember, cookies[:remember_token])
+        # userでログイン。(クッキーにuser.idをセット)
         log_in user
+        # userを@current_userとして返す
         @current_user = user
       end
     end

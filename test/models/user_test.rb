@@ -3,7 +3,10 @@ require 'test_helper'
 class UserTest < ActiveSupport::TestCase
 
   def setup
-    @user = User.new(name: "Example User", email: "user@example.com", password: "foobar", password_confirmation: "foobar")
+    @user = User.new(name: "Example User",
+                     email: "user@example.com",
+                     password: "foobar",
+                     password_confirmation: "foobar")
   end
 
   test "should be valid" do
@@ -72,5 +75,19 @@ class UserTest < ActiveSupport::TestCase
 
   test "authenticated? should return false for a user while nil digest" do
     assert_not @user.authenticated?(:remember, '')
+  end
+
+  test "associated microposts should be destroyed" do
+    @user.save
+
+    # @userに依存したmicropotsを作成する。
+    # なお、@user.microposts.build(content: "Lorem ipsum")だとデータベースへは
+    # 反映せず、Micropostオブジェクトを返してくれる
+    @user.microposts.create!(content: "Lorem ipsum")
+    
+    # @user.destoryすることで、Micropost.countが-1になる
+    assert_difference "Micropost.count", -1 do
+      @user.destroy
+    end
   end
 end
