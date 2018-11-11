@@ -33,3 +33,11 @@ users = User.order(:created_at).take(6)
   content = Faker::Lorem.sentence(5)
   users.each { |user| user.microposts.create!(content: content) }
 end
+
+# リレーションシップ
+users = User.all
+user = users.first # 最初のユーザ
+following = users[2..50] # usersの3番目～51番目を、最初のユーザにフォローされる人たちとして取得
+followers = users[3..40] # usersの4番目～41番目を、最初のユーザをフォローする人たちとして取得
+following.each { |followed| user.follow(followed) } # 最初のユーザがfollowingの人たちをフォローする
+followers.each { |follower| follower.follow(user) } # followersの人たちが最初のユーザをフォローする

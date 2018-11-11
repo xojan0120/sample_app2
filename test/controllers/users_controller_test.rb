@@ -70,4 +70,26 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_url
   end
 
+  # ログインしていないときフォローされる側の人たちのページにアクセスした場合
+  # login_urlへリダイレクトされているか
+  test "should redirect following when not logged in" do
+    # following_user GET    /users/:id/following(.:format)          users#following
+    # => /users/#{@user.id}/following
+    get following_user_path(@user)
+
+    # login GET    /login(.:format)                        sessions#new
+    assert_redirected_to login_url
+  end
+
+  # ログインしていないときフォローする側の人たちのページにアクセスした場合
+  # login_urlへリダイレクトされているか
+  test "should redirect followers when not logged in" do
+    # followers GET    /users/:id/followers(.:format)          users#followers
+    # => /users/#{@user.id}/followers
+    get followers_user_path(@user)
+
+    # login GET    /login(.:format)                        sessions#new
+    assert_redirected_to login_url
+  end
+
 end

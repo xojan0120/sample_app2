@@ -1,0 +1,25 @@
+<%# 左辺が未定義または偽ならcurrent_userを代入 %>
+<% @user ||= current_user %>
+<div class="stats">
+  <%#
+      following_user GET    /users/:id/following(.:format)          users#following
+      following_user_path(@user) => /users/#{@user.id}/following
+  %>
+  <a href="<%= following_user_path(@user) %>">
+    <strong id="following" class="stats">
+      <%= @user.following.count %>
+    </strong>
+    following
+  </a>
+  <%#
+      followers_user GET    /users/:id/followers(.:format)          users#followers
+      followers_user_path(@user) => /users/#{@user.id}/followers
+  %>
+  <a href="<%= followers_user_path(@user) %>">
+    <strong id="followers" class="stats">
+      <%= @user.followers.count %>
+    </strong>
+    followers
+  </a>
+</div>
+

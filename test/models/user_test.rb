@@ -90,4 +90,62 @@ class UserTest < ActiveSupport::TestCase
       @user.destroy
     end
   end
+
+  test "should follow and unfollow a user" do
+    # test/fixtures/users.yml から取得
+    michael = users(:michael) # id = 1
+    archer  = users(:archer)  # id = 2
+
+    # michaelがarcherをフォローしていないか
+    # SELECT 1 AS one FROM users INNER JOIN relationships ON users.id = relationships.followed_id
+    # WHERE relationships.follower_id = 1 AND users.id = 2 
+    assert_not michael.following?(archer)
+
+    # michaelがarcherをフォローする
+    # INSERT INTO relationships (follower_id, followed_id, created_at, updated_at) 
+    #                    VALUES (          1,           2,       date,       date)
+    michael.follow(archer)
+
+    # michaelがarcherをフォローしているか
+    assert michael.following?(archer)
+
+    # archerはmichaelにフォローされているか
+    # (archerのfollowersにmichaelは含まれるか)
+    assert archer.followers.include?(michael)
+
+    # michaelがarcherをアンフォローする
+    # SELECT relationships.* FROM relationships 
+    # WHERE relationships.follower_id = 1 AND relationships.followed_id = 2
+    # ↑で follower_id = 1 かつ followd_id = 2のrelationshipsを取得(relationships.id = 3が取得される)
+    # DELETE FROM relationships WHERE relationships.id = 3 
+    michael.unfollow(archer)
+
+    # michaelがarcherをフォローしていないか
+    assert_not michael.following?(archer)
+  end
+
+  test "feed should have the right posts" do
+    # test/fixtures/relationships.ymlにて↓定義
+    # michaelはlanaをフォローしている
+    # lanaはmichaelをフォローしている
+    # archerはmichaelをフォローしている
+    michael = users(:michael)
+    archer  = users(:archer)
+    lana    = users(:lana)
+
+    # lanaの投稿が、michaelのfeed(投稿の一覧)に含まれているか
+    lana.microposts.each do |post_following|
+      assert michael.feed.include?(post_following)
+    end
+
+    # michaelの投稿が、michaelのfeedに含まれているか
+    michael.microposts.each do |post_self|
+      assert michael.feed.include?(post_self)
+    end
+
+    # archerの投稿が、michaelのfeedに含まれていないか
+    archer.microposts.each do |post_unfollowed|
+      assert_not michael.feed.include?(post_unfollowed)
+    end
+  end
 end

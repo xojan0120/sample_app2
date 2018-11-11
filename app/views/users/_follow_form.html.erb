@@ -1,0 +1,14 @@
+<%#
+    @userがログイン済みユーザーでなかったら
+    (ビューに表示しようとしている@userがcurrent_user(自分)でなかったら)
+  %>
+<% unless current_user?(@user) %>
+  <div id="follow_form">
+    <%# ログイン済みユーザーが@userをフォローしているか？ %>
+    <% if current_user.following?(@user) %>
+      <%= render 'unfollow' %>
+    <% else %>
+      <%= render 'follow' %>
+    <% end %>
+  </div>
+<% end %>

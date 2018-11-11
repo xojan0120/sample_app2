@@ -40,5 +40,11 @@ class UsersProfileTest < ActionDispatch::IntegrationTest
 
     # will_paginateが1度のみ表示されているか
     assert_select 'div.pagination', count: 1
+
+    # フォロー数の統計情報が表示されているか
+    assert_select "strong#following" , { text: @user.following.count.to_s  }
+
+    # フォロワー数の統計情報が表示されているか
+    assert_select "strong#followers" , { text: @user.followers.count.to_s  }
   end
 end
