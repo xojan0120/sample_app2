@@ -160,8 +160,14 @@ class User < ApplicationRecord
     # ただのSQL文である。これをMicropost.whereの中にいれることで、１文のSQLで
     # あるユーザーがフォローしている全てのユーザIDを取得という意味になり、
     # より効率的にデータを取得できる。
+   
+    # Relationshipsテーブルから、自分がフォロワーになっている（つまり自分が
+    # フォローしている）人たちのID（followed_id）を取得
     following_ids = "SELECT followed_id FROM relationships
                      WHERE follower_id = :user_id"
+
+    # Micropostsテーブルから、上記のID（自分がフォローしている人たちのID）
+    # に一致する、または、自分のマイクロポストを取得する
     Micropost.where("user_id IN (#{following_ids})
                      OR user_id = :user_id", user_id: id)
   end

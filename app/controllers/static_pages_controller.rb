@@ -3,7 +3,7 @@ class StaticPagesController < ApplicationController
     if logged_in?
       @micropost = current_user.microposts.build
       # ここのfeedは app/models/user.rbで定義されているメソッド
-      # current_userの全てのマイクロソフトを取得する
+      # current_userの全てのマイクロポストを取得する
       @feed_items = current_user.feed.paginate(page: params[:page])
     end
   end
