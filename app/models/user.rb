@@ -44,14 +44,26 @@ class User < ApplicationRecord
   has_many :followers, through: :passive_relationships, source: :follower
 
   attr_accessor :remember_token, :activation_token, :reset_token
+
   before_save   :downcase_email
+  before_save   :downcase_unique_name
+
   before_create :create_activation_digest
+
   validates :name, presence: true, length: { maximum: 50 }
 
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
-  validates :email, presence: true, length: { maximum: 255 },
+  validates :email, presence: true,
+                    length: { maximum: 255 },
                     format: { with: VALID_EMAIL_REGEX },
                     uniqueness: { case_sensitive: false }
+
+  VALID_UNIQUE_NAME_REGEX = /\A[a-z0-9_]+\z/i
+  unique_name_length_range = Constants::UNIQUE_NAME_MIN_LENGTH..Constants::UNIQUE_NAME_MAX_LENGTH
+  validates :unique_name, presence: true, length: { in: unique_name_length_range },
+                          format: { with: VALID_UNIQUE_NAME_REGEX },
+                          uniqueness: { case_sensitive: false }
+
   has_secure_password
 
   # ここで空パスワードを許可しているが、has_secure_passwordによるバリデーション内には
@@ -168,8 +180,11 @@ class User < ApplicationRecord
 
     # Micropostsテーブルから、上記のID（自分がフォローしている人たちのID）
     # に一致する、または、自分のマイクロポストを取得する
-    Micropost.where("user_id IN (#{following_ids})
-                     OR user_id = :user_id", user_id: id)
+    
+    # Micropost.where("user_id IN (#{following_ids})
+    #                  OR user_id = :user_id", user_id: id)
+    
+    Micropost.including_replies(id)
   end
 
   # ユーザーをフォローする
@@ -194,6 +209,11 @@ class User < ApplicationRecord
     # メールアドレスをすべて小文字にする
     def downcase_email
       self.email.downcase!
+    end
+
+    # 一意ユーザ名をすべて小文字にする
+    def downcase_unique_name
+      self.unique_name.downcase!
     end
 
     # 有効化トークンとダイジェストを作成および代入する

@@ -22,7 +22,7 @@ class MicropostsInterfaceTest < ActionDispatch::IntegrationTest
     assert_select 'input[type=file]'
 
     # 無効な空本文で送信
-    # マイクロソフトの数が変化していないか
+    # マイクロポストの数が変化していないか
     assert_no_difference 'Micropost.count' do
       # microposts POST   /microposts(.:format)                   microposts#create
       post microposts_path, params: { micropost: { content: "" } }
@@ -103,13 +103,59 @@ class MicropostsInterfaceTest < ActionDispatch::IntegrationTest
     # 本文に0 micropostsが含まれているかどうか
     assert_match "0 microposts", response.body
 
-    # 別のテストユーザでマクロポストを登校
+    # 別のテストユーザでマクロポストを投稿
     other_user.microposts.create!(content: "A micropost")
     # root GET    /                                       static_pages#home
     get root_path
     # 本文に1 micropostが含まれているかどうか
     assert_match "1 micropost", response.body
 
+  end
+
+  test "@返信すると、自分のフィードと相手のフィードだけにその投稿が表示されているか" do
+    # テストユーザ取得
+    #   michael (返信元ユーザ)
+    #   archer  (返信先ユーザ)
+    #   lana    (その他ユーザ1(返信元をフォローしている))
+    #   john    (その他ユーザ2(返信元ユーザをフォローしていない)
+    from_user   = users(:michael)
+    to_user     = users(:archer)
+    other_user1 = users(:lana)
+    other_user2 = users(:john)
+
+    # 返信先ユーザのunique_name取得
+    unique_name = to_user.unique_name
+
+    # @返信の内容
+    content = "@#{unique_name} 結合テストで返信テスト"
+
+    # 返信元ユーザでログイン
+    log_in_as(from_user)
+
+    # @返信を投稿
+    post microposts_path, params: { micropost: { content: content } }
+
+    # 投稿のid取得
+    micropost_id = from_user.microposts.first.id
+
+    # 返信元ユーザのフィードに@返信の投稿があるか
+    get root_path
+    assert_select "#micropost-#{micropost_id} span.content", text: content
+
+    # 返信先ユーザのフィードに@返信の投稿があるか
+    log_in_as(to_user)
+    get root_path
+    assert_select "#micropost-#{micropost_id} span.content", text: content
+
+    # その他ユーザ1のフィードに@返信の投稿があるか
+    log_in_as(other_user1)
+    get root_path
+    assert_select "#micropost-#{micropost_id} span.content", text: content
+
+    # その他のユーザ2のフィードに@返信の投稿がないか
+    log_in_as(other_user2)
+    get root_path
+    assert_no_match "micropost-#{micropost_id}", response.body
   end
 
 end

@@ -6,7 +6,9 @@ class UserTest < ActiveSupport::TestCase
     @user = User.new(name: "Example User",
                      email: "user@example.com",
                      password: "foobar",
-                     password_confirmation: "foobar")
+                     password_confirmation: "foobar",
+                     unique_name: "example_user"
+                    )
   end
 
   test "should be valid" do

@@ -12,18 +12,25 @@ User.create!(name: "Example User",
              password_confirmation: "foobar",
              admin: true,
              activated: true,
-             activated_at: Time.zone.now)
+             activated_at: Time.zone.now,
+             unique_name: "example_user"
+            )
 
 99.times do |n|
   name = Faker::Name.name
   email = "example-#{n+1}@railstutorial.org"
   password = "password"
+
+  # 半角スペースとドットをアンダースコアに変換＆小文字変換
+  unique_name = name.gsub(/ /,"_").gsub(".","_").downcase
   User.create!(name: name,
                email: email,
                password: password,
                password_confirmation: password,
                activated: true,
-               activated_at: Time.zone.now)
+               activated_at: Time.zone.now,
+               unique_name: unique_name
+              )
 end
 
 # ユーザーテーブルから作成日時順で6人のUserオブジェクトを配列で取得する

@@ -6,10 +6,43 @@ class MicropostsController < ApplicationController
     # ここのcurrent_userは変数ではなくメソッド。
     # ログインユーザのuserオブジェクトを返す。
     # app/helpers/sessions_helper.rbに定義有り
-    # ログインユーザのマイクロポストをマイクロソフト用パラメータで作成する
+    # ログインユーザのマイクロポストをマイクロポスト用パラメータで作成する
     @micropost = current_user.microposts.build(micropost_params)
 
-    # マイクロソフトを保存する。
+    # @(.+?)
+    #   -> @から始まる任意の1文字以上にマッチ
+    # (?:\p{Hiragana}|\p{Katakana}|[ー－、。]|[一-龠々]|\s|　|[\p{P}\p{S}]|\Z)
+    #   -> ?: キャプチャしないグループに設定。これがなければ$2でキャプチャできるが、それを敢えてしないことで多少の速度UPらしい。
+    #      \p{Hiragana} ひらがなにマッチ
+    #      \p{Katakana} カタカナにマッチ
+    #      [ー－、。]   括弧内のいずれかにマッチ
+    #      [一-龠々]    漢字にマッチ
+    #      \s           半角スペースにマッチ
+    #      　           全角スペースにマッチ
+    #      [\p{P}\p{S}] あらゆるASCII記号にマッチ
+    #      \Z           文字列の末尾にマッチ。但し文字列の最後の文字が改行ならばそれの手前にマッチ。
+    
+    # @返信のunique_name部分を抽出(unique_nameを1個だけ抽出) 
+    # re = /@(.+?)(\p{Hiragana}|\p{Katakana}|[ー－、。]|[一-龠々]|\s|　|[\p{P}\p{S}]|\Z)/
+    # @micropost.content.match re
+    # unique_name = $1
+
+    # こちらのほうがスマート
+    unique_name_length_range = "{#{Constants::UNIQUE_NAME_MIN_LENGTH},#{Constants::UNIQUE_NAME_MAX_LENGTH}}"
+    re = /@([0-9a-z_]#{unique_name_length_range})/i # /@[0-9a-zA-Z_]{1,15}/
+    @micropost.content.match(re)
+    reply_user = User.find_by(unique_name: $1)
+
+    # 複数回マッチ用
+    #re = /@[0-9a-zA-Z_]#{unique_name_length_range}/ # /@[0-9a-zA-Z_]{1,15}/
+    #if unique_name = @micropost.content.scan(re).first
+    #  unique_name.sub!("@","")
+    #end
+    #reply_user = User.find_by(unique_name: unique_name)
+
+    @micropost.in_reply_to = reply_user.id if reply_user
+
+    # マイクロポストを保存する。
     if @micropost.save
       flash[:success] = "Micropost created!"
       redirect_to root_url

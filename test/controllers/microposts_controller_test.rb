@@ -50,4 +50,23 @@ class MicropostsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_url
   end
 
+  test "@返信するとin_reply_toに返信相手のユーザIDがセットされているか" do
+    # michaelでログイン
+    from_user = users(:michael)
+    log_in_as(from_user)
+
+    # 返信相手のarcherのunique_name取得
+    to_user = users(:archer)
+    unique_name = to_user.unique_name
+
+    # @返信の内容
+    content = "@#{unique_name} 返信テスト"
+
+    # @返信を投稿
+    post microposts_path, params: { micropost: { content: content } }
+
+    # 最新の投稿のin_reply_toが返信相手のユーザIDになっているか
+    assert_equal to_user.id, Micropost.first.in_reply_to
+  end
+
 end

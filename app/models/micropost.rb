@@ -7,6 +7,14 @@ class Micropost < ApplicationRecord
   # ここでは、作成日時の降順でデータを取得するの意味
   default_scope -> { order(created_at: :desc) }
 
+  # スコープは、関連オブジェクトやモデルへのメソッド呼び出しとして参照される
+  # よく使用されるクエリを指定することができる。ActiveRecord::Relationオブジェクト
+  # を返す。スコープはクラスメソッドの定義と同じで、どちらを使用するかは
+  # お好み。但し、引数を使用するならば、クラスメソッドとして定義することが
+  # 推奨されているので、
+  # https://railsguides.jp/active_record_querying.html#%E3%82%B9%E3%82%B3%E3%83%BC%E3%83%97
+  #scope :including_replies, ->(id) { where("in_reply_to = ?", id) }
+
   # CarrierWaveに画像と関連付けたモデルを伝えるためにmount_uploaderというメソッドを使用
   # このメソッドは、引数に属性名のシンボルと生成されたアップローダーのクラス名を取る
   mount_uploader :picture, PictureUploader
@@ -24,6 +32,21 @@ class Micropost < ApplicationRecord
 
   # アップロードされた画像のサイズを検証する
   validate :picture_size
+
+  def Micropost.including_replies(user_id)
+    # Relationshipsテーブルから、自分がフォロワーになっている（つまり自分が
+    # フォローしている）人たちのID（followed_id）を取得
+    following_ids = "SELECT followed_id FROM relationships
+                     WHERE follower_id = :user_id"
+
+    # Micropostsテーブルから、下記のいずれか条件のマイクロポストを取得する
+    #   自分がフォローしている人
+    #   自分のマイクロポスト
+    #   返信先が自分になっているマイクロポスト
+    Micropost.where("user_id        IN (#{following_ids})
+                     OR user_id     =  :user_id
+                     OR in_reply_to =  :user_id"         , user_id: user_id)
+  end
 
   private
 
