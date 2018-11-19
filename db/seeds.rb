@@ -21,15 +21,13 @@ User.create!(name: "Example User",
   email = "example-#{n+1}@railstutorial.org"
   password = "password"
 
-  # 半角スペースとドットをアンダースコアに変換＆小文字変換
-  unique_name = name.gsub(/ /,"_").gsub(".","_").downcase
   User.create!(name: name,
                email: email,
                password: password,
                password_confirmation: password,
                activated: true,
                activated_at: Time.zone.now,
-               unique_name: unique_name
+               unique_name: "example_#{n+1}"
               )
 end
 
