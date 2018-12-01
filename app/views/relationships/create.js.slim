@@ -1,0 +1,6 @@
+/ escape_javascriptはjavascript内にHTMLを挿入するときに実行結果をエスケープしてくれる
+/ ここでいうjavascriptとは、当ファイル自身で、下記のrenderによる埋め込みERb部分が
+/ HTMLが出力されるため、それをエスケープしている模様。
+
+|  $("#follow_form").html("#{escape_javascript(render('users/unfollow'))}");
+|  $("#followers").html("#{@user.followers.count}"); 

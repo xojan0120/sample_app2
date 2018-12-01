@@ -1,0 +1,27 @@
+- provide(:title, 'Reset password')
+h1 Reset password
+
+.row
+  .col-md-6.col-md-offset-3
+    = form_for(@user, url: password_reset_path(params[:id])) do |f|
+      = render 'shared/error_messages', object: f.object
+
+      / いつもなら、hidden_fieldだが、ここではhidden_field_tagを使う。
+      / 前者はコントローラでparams[:email]、後者はparams[:user][:email]で取得できる
+      / ここで後者を使わない理由はなんだろうか？
+      /
+      / hidden_field_tag :email, @user.email
+      / →<input type="hidden" name="email" id="email" value="example@railstutorial.org" />
+      /
+      / f.hidden_field :email, :value => @user.email
+      / →<input type="hidden" name="user[email]" id="user_email" value="example@railstutorial.org" />
+
+      = hidden_field_tag :email, @user.email
+
+      = f.label :password
+      = f.password_field :password, class: 'form-control'
+
+      = f.label :password_confirmation, "Confirmation"
+      = f.password_field :password_confirmation, class: "form-control"
+
+      = f.submit "Update password", class: "btn btn-primary"

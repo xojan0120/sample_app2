@@ -1,0 +1,30 @@
+- provide(:title, @user.name)
+.row
+  aside.col-md-4
+    section.user_info
+      h1
+        = gravatar_for @user
+        = @user.name
+    section.stats
+      = render 'shared/stats'
+
+  .col-md-8
+
+    = render 'follow_form' if logged_in?
+
+    / @user.micropostsが空でない場合
+    - if @user.microposts.any?
+        h3 Microposts (#{@user.microposts.count})
+        ol.microposts
+          / 下記の記述で、_micropost.html.erbパーシャルが表示される
+          = render @microposts
+
+        / 下記の記述で@micropostsのページ表示が実現される
+        / なお、will_paginateメソッドを使えるようにするには、
+        / モデル側で@micropostsを取得するときにpaginateメソッドで
+        / 取得する必要がある。ここではmicropostsはUserモデルに紐付いて
+        / いるので、Userコントローラ上のアクションでpaginateメソッドを
+        / 使用する。
+        / [UsersController#show]
+        /   @microposts = @user.microposts.paginate(page: params[:page])
+        = will_paginate @microposts
