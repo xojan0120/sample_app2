@@ -1,3 +1,22 @@
+/ cross site request forgeries対策のためのタグ
+/ railsアプリケーションが対策用のトークンを埋め込んだフォームを利用者に表示し
+/ 利用者が入力したフォームデータにrailsアプリケーションが発行したトークンと
+/ 同じものが含まれているかを検証し、間違いなく正規のサイトから送信された
+/ フォームデータかどうかを判定している
+/ 参考 http://stonebeach-dakar.hatenablog.com/entry/2016/07/23/142019
 = csrf_meta_tags
+
+/ 'application'はcss/jsへのパス
+/ 参考 http://railsdoc.com/references/stylesheet_link_tag
+
+/ media: 'all'はcssのmedia属性で指定できる全てのメディアタイプを指す
+/ メディアタイプとは、そのページがパソコン用、印刷用などを表す
+/ 参考 https://reference.hyper-text.org/html5/attribute/media/
+
+/ 'data-turbolinks-track': 'reload'
+/ cssが元のページと違っていたら、Turbolinksの遷移でなくて普通に再読込するという意味。
+/ Turbolinksとはcss/jsが同じページ間で画面遷移するときにtitleタグとbodyタグ内だけを
+/ Ajaxを使って入れ替えることで画面遷移を高速化するライブラリ。詳しくは下記。
+/ http://www.techscore.com/tech/Ruby/rails-4.0/turbolinks/
 = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
 = javascript_include_tag 'application','data-turbolinks-track': 'reload'
