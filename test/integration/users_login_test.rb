@@ -46,6 +46,8 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     get login_path
     post login_path, params: { session: { email: @user.email,
                                           password: 'password' } }
+
+    # ログイン
     assert is_logged_in?
     assert_redirected_to @user
     follow_redirect!
@@ -53,6 +55,8 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", login_path, count: 0
     assert_select "a[href=?]", logout_path
     assert_select "a[href=?]", user_path(@user)
+
+    # ログアウト
     delete logout_path
     assert_not is_logged_in?
     assert_redirected_to root_url
@@ -64,7 +68,16 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
 
   test "login with remembering" do
     log_in_as(@user, remember_me: '1')
-    assert_not_empty cookies['remember_token']
+
+    # テスト内ではcookiesメソッドにシンボル (例 cookies[:remember_token])
+    # は使えないので、文字列をキーにする。
+    
+    # assingsは直前のアクション内で設定されたインスタンス変数にアクセスすためのメソッド
+    # ここでの直前のアクションは、test/test_helper.rbのActionDispatch::IntegrationTest
+    # クラスのlog_in_asメソッド内のpost login_pathによるsession#createアクションのこと。
+    
+    # assert_not_empty cookies['remember_token']
+    assert_equal cookies['remember_token'], assigns(:user).remember_token
   end
 
   test "login without remembering" do
@@ -73,6 +86,9 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     delete logout_path
     # クッキーを削除してログイン
     log_in_as(@user, remember_me: '0')
+
+    # テスト内ではcookiesメソッドにシンボル (例 cookies[:remember_token])
+    # は使えないので、文字列をキーにする。
     assert_empty cookies['remember_token']
   end
 end

@@ -17,26 +17,49 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  # ログインせずに編集画面へアクセスしたときリダイレクトされるか
   test "should redirect edit when not logged in" do
+    # edit_user GET    /users/:id/edit(.:format)               users#edit
     get edit_user_path(@user)
+
+    # flashは空ではないか(ログインを促すメッセージが入るはず)
     assert_not flash.empty?
+
+    # ログインURLへリダイレクトする
     assert_redirected_to login_url
   end
 
+  # ログインせずに更新処理したときリダイレクトされるか
   test "should redirect update when not logged in" do
+    # 更新処理
     patch user_path(@user), params: { user: { name: @user.name,
                                              email: @user.email } }
+
+    # flashは空ではないか(ログインを促すメッセージが入るはず)
     assert_not flash.empty?
+
+    # ログインURLへリダイレクトする
     assert_redirected_to login_url
   end
 
+  # Web経由でのadmin属性変更を許可しない
   test "should not allow the admin attribute to be edited via the web" do
+    # @other_userでログイン
     log_in_as(@other_user)
+
+    # @other_userはadminではない
     assert_not @other_user.admin?
+
+    # @other_userのadmin: trueでPATCH
     patch user_path(@other_user), params: {
-                                    user: { password: @other_user.password,
-                                            password_confirmation: @other_user.password,
-                                            admin: true } }
+                                    user: { 
+                                      password:              "password",
+                                      password_confirmation: "password",
+                                      admin:                  true
+                                    }
+                                  }
+
+    # @other_userを再読込してもadminではない
     assert_not @other_user.reload.admin?
   end
 
@@ -55,6 +78,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_url
   end
 
+  # ログインしていない状態でDELETEでログイン画面にリダイレクトされるか
   test "should redirect destroy when not logged in" do
     assert_no_difference 'User.count' do
       delete user_path(@user)
@@ -62,7 +86,8 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to login_url
   end
 
-  test "should redirect destroy when not logged in as a non-admin" do
+  # ログイン済みだが管理者でない場合にDELETEでホーム画面にリダイレクトされるか
+  test "should redirect destroy when logged in as a non-admin" do
     log_in_as(@other_user)
     assert_no_difference 'User.count' do
       delete user_path(@user)

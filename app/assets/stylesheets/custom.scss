@@ -3,8 +3,11 @@
 
 $light-gray: #777;
 $gray-medium-light: #eaeaea;
-$gray-darker: #222;
 
+/* box_sizingについては下記参考
+   box_sizing: border-boxにすると、paddingとborder-widthを加味した上で
+   widthに指定した幅と高さになるように内容領域を調整してくれる。
+   http://phiary.me/css3-box-sizing/ */
 @mixin box_sizing {
   -moz-box-sizing:    border-box;
   -webkit-box-sizing: border-box;

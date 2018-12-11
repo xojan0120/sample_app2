@@ -12,4 +12,6 @@ html
         = content_tag(:div, message, class: "alert alert-#{message_type}")
       = yield
       = render 'layouts/footer'
+
+      / 本番環境のみデバッグ情報表示
       = debug(params) if Rails.env.development?

@@ -7,4 +7,10 @@ h1 Update your profile
     = render 'form'
     .gravatar_edit
       = gravatar_for @user
+      / rel="noopener"属性はtarget="_blank"で開いたページから、元のページをjavascriptで
+      / window.opener.location = 別サイトのURL などで別ページに遷移させられないように
+      / 制限することができる。これは、target="_blank"で開かれたウインドウやタブにより
+      / 元ページが一旦隠れてしまっている間に、フィッシングサイトなどの別ページに遷移
+      / され、IDやパスワードを盗まれるなどの危険性を回避するための処置。
+      / 詳しくは、https://blog.jxck.io/entries/2016-06-12/noopener.html
       a [href="http://gravatar.com/emails" target="_blank" rel="noopener"] change

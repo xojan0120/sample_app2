@@ -7,9 +7,15 @@ class SiteLayoutTest < ActionDispatch::IntegrationTest
   end
 
   test "layout links" do
+
+    # root GET / static_pages#home
     get root_path
     assert_template 'static_pages/home'
+
+    # root_pathへのリンクが2つあるか
     assert_select "a[href=?]", root_path, count: 2
+
+    # help_pathへのリンクが1つあるか(以下同様)
     assert_select "a[href=?]", help_path
     assert_select "a[href=?]", about_path
     assert_select "a[href=?]", contact_path

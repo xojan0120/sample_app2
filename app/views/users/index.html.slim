@@ -4,6 +4,8 @@ h1 All users
 = will_paginate
 
 ul.users
+  / renderメソッドは@usersをUserオブジェクトのリストであると推測してくれる。
+  / これにより_user.html.erbパーシャルで各ユーザを出力してくれる。
   = render @users
 
 = will_paginate

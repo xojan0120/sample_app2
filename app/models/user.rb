@@ -66,14 +66,16 @@ class User < ApplicationRecord
 
   has_secure_password
 
-  # ここで空パスワードを許可しているが、has_secure_passwordによるバリデーション内には
-  # 空パスワードのチェックが行われるため、実際には空パスワードは通らない。
-  # なお、以下で空パスワードをチェックすると、バリデーションエラーがあった場合に、
-  # 二重で空パスワードエラーが発生してしまうため、下記ではallow_nil: trueしておくのが正解。
+  # ここでallow_nil: trueにより空パスワードを許可しているが、has_secure_passwordによる
+  # 空パスワードのチェックも行われるため、新規登録時は空パスワードは通らない。
+  # なお、以下でallow_nil: trueがないと、新規登録時バリデーションエラーがあった場合に、
+  # 二重で空パスワードエラーが発生するという不都合もあった。
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
 
   # 渡された文字列のハッシュ値を返す
   def User.digest(string)
+    # ActiveModel::SecurePassword.min_cost はテスト環境だとtrue、それ以外だとfalse
+    # 参考：https://qiita.com/shinya_ichinoseki/items/cedde49adc1d1e886195
     cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST : BCrypt::Engine.cost
     BCrypt::Password.create(string, cost: cost)
   end
