@@ -20,15 +20,14 @@ class UsersController < ApplicationController
     @microposts = @user.microposts.paginate(page: params[:page])
 
     # @userが有効化されていなかったら、root_urlへリダイレクトする
-    # 下記の文はこうかける。redirect_toやrenderのあとも処理は続くため
-    # そこで処理を終わらせるためにはreturnしてあげればよい。
-    # しかし、他のredirect_toじゃそんなことしてないし、ここでなぜ突然
-    # returnしだしたのか？など、return無くても動作は問題なさそう。
-    # unless @user.activated?
-    #   redirect_to root_url
-    #   return
-    # end
     redirect_to root_url and return unless @user.activated?
+
+    # and returnについて
+    # railsでは、1つのアクション内でのrenderメソッドやredirectメソッドは
+    # 1度だけにするというルールがある。(複数回呼び出そうとするとエラーになる)
+    # そのため、renderやredirectコードのあとにand returnと書くことで
+    # 明示的に1度だけ呼ばれるようにすることができる。
+    # 参考：https://qiita.com/katsuyuki/items/abf6b8d1cd43915e5586
   end
 
   def new

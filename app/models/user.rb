@@ -48,6 +48,7 @@ class User < ApplicationRecord
   before_save   :downcase_email
   before_save   :downcase_unique_name
 
+  # before_saveとの違いは、saveは作成・更新時、createは作成時のみ実行される
   before_create :create_activation_digest
 
   validates :name, presence: true, length: { maximum: 50 }

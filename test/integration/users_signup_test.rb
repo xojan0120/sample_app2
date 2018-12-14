@@ -3,6 +3,11 @@ require 'test_helper'
 class UsersSignupTest < ActionDispatch::IntegrationTest
 
   def setup
+    # メールの送信キューをクリアする
+    # config/environments/development.rbの
+    # config.action_mailer.delivery_method = :test 
+    # に設定すると、メールは実際に送信されず、送信キューにメールがたまる。(このキューにはActionMailer::Base.deliveriesというメソッドでアクセスできる)
+    # 送信キューはclearメソッドで明示的にクリアしないと消えないので、ここでクリアしている。
     ActionMailer::Base.deliveries.clear
   end
 

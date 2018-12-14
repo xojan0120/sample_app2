@@ -4,13 +4,29 @@ class UserMailerTest < ActionMailer::TestCase
 
   test "account_activation" do
     user = users(:michael)
+
+    # ユーザーの有効化トークン属性に、新しいトークンを設定
     user.activation_token = User.new_token
+
+    # Userメーラーでuser宛にアカウント有効化メールを送信する
     mail = UserMailer.account_activation(user)
+
+    # サブジェクトはAccount actionvationか
     assert_equal "Account activation", mail.subject
+
+    # 宛先はuser.emailか。 ※mail.toは配列
     assert_equal [user.email], mail.to
+
+    # 差出人はnoreply@example.comか
     assert_equal ["noreply@example.com"], mail.from
+
+    # 本文にuser.nameがあるか
     assert_match user.name,               mail.body.encoded
+
+    # 本文にuser.activation_tokenがあるか
     assert_match user.activation_token,   mail.body.encoded
+
+    # 本文にuser.emailがあるか
     assert_match CGI.escape(user.email),  mail.body.encoded
   end
 
