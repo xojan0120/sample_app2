@@ -40,7 +40,7 @@ class PasswordResetsTest < ActionDispatch::IntegrationTest
     # password_resets POST   /password_resets(.:format)              password_resets#create
     post password_resets_path, params: { password_reset: { email: @user.email } }
 
-    # 期待値：@userの再設定用ダイジェスト, 実際値：@userを再読込した後の再設定用ダイジェストが一致しない
+    # 期待値："@userの再設定用ダイジェスト", 実際値："@userを再読込した後の再設定用ダイジェスト"    が一致しない
     # 上記のpostで、@userに対して再設定用トークンが作成され、データベース上の@userの再設定用ダイジェスト(@user.reset_digest)が更新される
     # この更新後の再設定用ダイジェストが@user.reload.reset_digestである。
     # 更新前の再設定用ダイジェストは@user.reset_digestになる。
@@ -77,10 +77,10 @@ class PasswordResetsTest < ActionDispatch::IntegrationTest
     # root GET    /                                       static_pages#home
     assert_redirected_to root_url
 
-    # userの有効属性を無効にしている
+    # userの有効属性を無効にしている(activated:true -> falseに変更(fixturesのmichaelは最初からactivated:trueにしてある))
     user.toggle!(:activated)
 
-    # 再設定トークン有り、有効なメールアドレス(空メールアドレス)、無効なユーザで再設定用URLへアクセスしてきた場合のテスト
+    # 無効なユーザ状態で、再設定トークン有り、有効なメールアドレスで再設定用URLへアクセスしてきた場合のテスト
     # edit_password_reset_path、つまり、パスワード再設定用メールに記載されている再設定用URLをGETしている
     # edit_password_reset GET    /password_resets/:id/edit(.:format)     password_resets#edit
     # edit_password_reset_path(user.reset_token, email:"")
@@ -94,14 +94,14 @@ class PasswordResetsTest < ActionDispatch::IntegrationTest
     # userの有効属性を有効に戻している
     user.toggle!(:activated)
 
-    # メールアドレスが有効で、トークンが無効
+    # 有効なユーザ状態で、メールアドレスが有効で、トークンが無効
     get edit_password_reset_path('wrong token', email:user.email)
 
     # root_urlへリダイレクトされたか
     # root GET    /                                       static_pages#home
     assert_redirected_to root_url
 
-    # メールアドレスもトークンも有効
+    # 有効なユーザ状態で、メールアドレスもトークンも有効
     get edit_password_reset_path(user.reset_token, email:user.email)
 
     # パスワード再設定用ページ(パスワード変更ページ)が表示されたか
@@ -143,6 +143,9 @@ class PasswordResetsTest < ActionDispatch::IntegrationTest
                                                            user: { password:              "foobaz",
                                                                    password_confirmation: "foobaz" } }
     
+    # パスワード再設定後、userのreset_digestがnilになっているか
+    assert_nil user.reload.reset_digest
+
     # テストユーザがログインしている
     assert is_logged_in?
 
@@ -153,6 +156,7 @@ class PasswordResetsTest < ActionDispatch::IntegrationTest
     # user GET    /users/:id(.:format)                    users#show
     # → /users/#{user.id}
     assert_redirected_to user
+
   end
 
   test "expired token" do
@@ -196,7 +200,8 @@ class PasswordResetsTest < ActionDispatch::IntegrationTest
     follow_redirect!
 
     # レスポンス本文にexpiredという期限切れを表す英単語があるかチェック
-    assert_match /expired/, response.body
+    # /i で大文字小文字無視
+    assert_match /expired/i, response.body
 
   end
 

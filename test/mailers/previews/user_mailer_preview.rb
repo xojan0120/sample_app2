@@ -24,5 +24,4 @@ class UserMailerPreview < ActionMailer::Preview
     # Userメーラーでuser宛にパスワード再設定メールを送信する
     UserMailer.password_reset(user)
   end
-
 end
