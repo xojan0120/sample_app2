@@ -16,7 +16,10 @@
     - if @user.microposts.any?
         h3 Microposts (#{@user.microposts.count})
         ol.microposts
-          / 下記の記述で、_micropost.html.erbパーシャルが表示される
+          / 下記の記述で、_micropost.html.erbパーシャルが表示される。
+          / これはRailsが@micropostsをMicropostオブジェクトのリスト
+          / であると推測し、さらに_micropost.html.erbのパーシャルを
+          / 探して表示してくれる。
           = render @microposts
 
         / 下記の記述で@micropostsのページ表示が実現される
@@ -27,4 +30,10 @@
         / 使用する。
         / [UsersController#show]
         /   @microposts = @user.microposts.paginate(page: params[:page])
+
+        / また、app/views/users/index.html.slimではwill_paginateメソッドの
+        / 引数は何も指定されていないが、それはUsersコントローラの
+        / コンテキストにおいて@usersが存在していることを前提としているため。
+        / ここでは、Usersコントローラのコンテキストから、@micropostsを自動で
+        / 探し出すことはできないため、明示的に@micropostsを渡している。
         = will_paginate @microposts

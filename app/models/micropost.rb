@@ -31,6 +31,7 @@ class Micropost < ApplicationRecord
   validates :content, presence: true, length: { maximum: 140 }
 
   # アップロードされた画像のサイズを検証する
+  # validatesではなく、validateは独自のバリデーションを定義するときに使う。
   validate :picture_size
 
   def Micropost.including_replies(user_id)

@@ -23,21 +23,27 @@ class MicropostTest < ActiveSupport::TestCase
     assert @micropost.valid?
   end
 
+  # micropost.user_idは空でない
   test "user id should be present" do
     @micropost.user_id = nil
     assert_not @micropost.valid?
   end
 
+  # micropost.contentは空でない
   test "content should be present" do
     @micropost.content = "   "
     assert_not @micropost.valid?
   end
 
+  # micropost.contentは140文字以下である
   test "content should be at most 140 characters" do
     @micropost.content = "a" * 141
     assert_not @micropost.valid?
   end
 
+  # Micropostテーブルから取得できる最初のmicropostオブジェクトは、
+  # fixturesの:most_recentとして定義したmicropostと同じである。
+  # ※:most_recentのcreated_atはTime.zone.nowにしてある。
   test "order should be most recent first" do
     assert_equal microposts(:most_recent), Micropost.first
   end

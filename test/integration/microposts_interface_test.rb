@@ -40,7 +40,7 @@ class MicropostsInterfaceTest < ActionDispatch::IntegrationTest
 
     # マイクロポストの数が+1されているか
     assert_difference 'Micropost.count', 1 do
-      # microposts POST   /microposts(.:format)                   microposts#create
+      # microposts POST /microposts(.:format) microposts#create
       post microposts_path, params: { micropost: { content: content,
                                                    picture: picture } }
     end

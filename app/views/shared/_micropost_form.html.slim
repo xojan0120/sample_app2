@@ -3,12 +3,22 @@
   / 同じ名前の変数が使えるようになり、そのハッシュの値が、変数の中に入る。
   / ここでは、第二引数のハッシュは1組しかないので{}は省略されているが、複数組
   / 渡すことも可能。例) render 'shared/test', {a: 123, b: 100}
+
+  / object: f.objectとという記法について
+  / 'shared/error_messages'は@userや@micropost変数を参照して
+  / formの入力時にエラーがあるかないかを判定している。
+  / つまり'shared/error_messages'がどのコントローラのインスタンス変数を
+  / 参照するかは不定である。そこで、objectという変数名を使い、
+  / form変数のfのobject、つまりf.object(ここではf.objectは@micropostにあたる)を
+  / 渡すことで'shared/error_messages'内で変動するインスタンス変数にアクセスできる
+  / ようにしている。
   = render 'shared/error_messages', object: f.object
   .field
     = f.text_area :content, placeholder: "Compose new micropost..."
   = f.submit "Post", class: "btn btn-primary"
   span.picture
-    / acceptパラメータでアップロードできるファイル形式をMIME形式で指定
+    / acceptパラメータでファイル選択時に表示されるファイル一覧を
+    / 指定したMIMEタイプのものだけにすることができる
     = f.file_field :picture, accept: 'image/jpeg,image/gif,image/png'
 
 javascript:

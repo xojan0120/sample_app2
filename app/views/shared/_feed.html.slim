@@ -1,4 +1,9 @@
 - if @feed_items.any?
   ol.microposts
+    / renderの引数にインスタンス変数を指定すると、Railsはそれが
+    / なんのオブジェクトなのか推測してくれる。@feed_items(app/controllers/static_pages_controller.rbのhomeアクションで定義されている)
+    / はcurrent_user.feed.paginate(page: params[:page])であり、
+    / current_user.feedはUserモデルのfeedメソッドであり、
+    / Micropostオブジェクトを返すので、最終的に_micropost.html.erbを探し出して使用する。
     = render @feed_items
   = will_paginate @feed_items

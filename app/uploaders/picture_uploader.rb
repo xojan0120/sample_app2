@@ -12,6 +12,7 @@ class PictureUploader < CarrierWave::Uploader::Base
   if Rails.env.production?
     storage :fog
   else
+    # 本番環境以外はローカルのファイルシステムに画像を保存する
     storage :file
   end
 

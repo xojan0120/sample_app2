@@ -24,6 +24,8 @@ class UsersProfileTest < ActionDispatch::IntegrationTest
     assert_select 'h1', text: @user.name
 
     # h1タグ配下にimg.gravatarがあるか
+    # h1>img.gravatarはh1の配下にimg.gravatarがあるか。
+    # h1 img.gravatarでも同じっぽい？
     assert_select 'h1>img.gravatar'
 
     # @userのマイクロポストの件数の文字列が、本文に含まれているか

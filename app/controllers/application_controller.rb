@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  #protect_from_forgery with: :exception
+  protect_from_forgery with: :exception
   include SessionsHelper
 
   private
@@ -11,5 +11,11 @@ class ApplicationController < ActionController::Base
         flash[:danger] = "Please log in."
         redirect_to login_url
       end
+    end
+
+    # current_userの全てのマイクロポストを取得する
+    def current_user_feed(page)
+      # ここのfeedは app/models/user.rbで定義されているメソッド
+      current_user.feed.paginate(page: page)
     end
 end

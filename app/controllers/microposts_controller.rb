@@ -47,7 +47,31 @@ class MicropostsController < ApplicationController
       flash[:success] = "Micropost created!"
       redirect_to root_url
     else
-      @feed_items = []
+      # パターン1 (deleteリンクでエラー)
+      #@feed_items = []
+      #render 'static_pages/home'
+
+      # パターン2(routesにGET /microposts to: 'static_pages#home'追加)
+      # @feed_items = current～がstatic_pages#homeアクションとDRYじゃない
+      #@feed_items = current_user.feed.paginate(page: params[:page])
+      #render 'static_pages/home'
+      
+      # パターン3(flashによるエラー表示に難あり)
+      # また、redirect_toだと別Controllerにアクションを委譲する
+      # ため、@micropostが引き継がれず、@micropost.errorsも
+      # 引き継げないため、flashでエラーメッセージを引き継ぐ必要
+      # がある。
+      # なお、データ保存失敗時に、redirect_toではなくrenderを
+      # 使用したほうがいい理由の参考：https://qiita.com/yuki-n/items/2e64a179838c9086ab30
+      #@feed_items = current_user.feed.paginate(page: params[:page])
+      #flash[:danger] = @micropost.errors.full_messages
+      #redirect_to root_url
+
+      # パターン4
+      # StaticPagesController#homeアクションの
+      # @feed_items = current_user.feed.paginate(page: params[:page])
+      # をリファクタリングし、ApplicationControllerで定義し直しておく。
+      @feed_items = current_user_feed(params[:page])
       render 'static_pages/home'
     end
   end
@@ -56,7 +80,7 @@ class MicropostsController < ApplicationController
     @micropost.destroy
     flash[:success] = "Micropost deleted"
 
-    # requiest.referrer => 1つ前のURLを返す
+    # request.referrer => 1つ前のURLを返す
     # 1つ前のURLが見つからなかったら、root_urlへリダイレクトする
     #redirect_to request.referrer || root_url
     redirect_back(fallback_location: root_url) # 上記と同じ動きだが、redirect_backはRails5.1から導入された
