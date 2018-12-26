@@ -34,9 +34,28 @@ class Micropost < ApplicationRecord
   # validatesではなく、validateは独自のバリデーションを定義するときに使う。
   validate :picture_size
 
-  def Micropost.including_replies(user_id)
-    # Relationshipsテーブルから、自分がフォロワーになっている（つまり自分が
-    # フォローしている）人たちのID（followed_id）を取得
+  #def Micropost.including_replies(user_id)
+  #  # Relationshipsテーブルから、自分がフォロワーになっている（つまり自分が
+  #  # フォローしている）人たちのID（followed_id）を取得
+  #  following_ids = "SELECT followed_id FROM relationships
+  #                   WHERE follower_id = :user_id"
+
+  #  # Micropostsテーブルから、下記のいずれか条件のマイクロポストを取得する
+  #  #   自分がフォローしている人
+  #  #   自分のマイクロポスト
+  #  #   返信先が自分になっているマイクロポスト
+  #  Micropost.where("user_id        IN (#{following_ids})
+  #                   OR user_id     =  :user_id
+  #                   OR in_reply_to =  :user_id"         , user_id: user_id)
+  #  
+  #end
+  
+  def Micropost.including_replies(user)
+    # following_idsとはrailsが自動的に生成したメソッドである。
+    # Userモデルでhas_many :followingを定義したことで生成される。
+    # メソッド名の通り、あるUserがフォローしているユーザのidの配列を返す
+    # なお、下記では(:following_ids)に直接、following_idsによるidの配列がセットされてしまうように
+    # 見えるが、実際は、railsが自動的に配列からidのカンマ区切りの状態に変換してくれる。
     following_ids = "SELECT followed_id FROM relationships
                      WHERE follower_id = :user_id"
 
@@ -44,9 +63,23 @@ class Micropost < ApplicationRecord
     #   自分がフォローしている人
     #   自分のマイクロポスト
     #   返信先が自分になっているマイクロポスト
-    Micropost.where("user_id        IN (#{following_ids})
-                     OR user_id     =  :user_id
-                     OR in_reply_to =  :user_id"         , user_id: user_id)
+
+    # 書き方A
+    #Micropost.where("   user_id     IN (:following_ids)
+    #                 OR user_id     =   :user_id
+    #                 OR in_reply_to =   :user_id"       ,following_ids: user.following_ids, user_id: user.id)
+    
+    # 書き方B
+    Micropost.where("   user_id     IN (#{following_ids})
+                     OR user_id     =   :user_id
+                     OR in_reply_to =   :user_id"       , user_id: user.id)
+
+    # 書き方Aより書き方Bのほうが、userのフォロー数が多い場合に効率がよい。
+    # 書き方Aの場合は、userがフォローしているユーザIDを
+    # Rails側でuser.following_idsで保持するのに対して
+    # 書き方Bの場合は、SQL側で保持するため。
+    # 集合の操作において、Rails側で処理させるよりSQL側で処理させるほうが効率がよい。
+    
   end
 
   private

@@ -11,6 +11,12 @@ class User < ApplicationRecord
   # 探そうとしてしまうため、class_name: "Relationship"と指定することで、そのモデルを明示している。
   # さらに、Userモデルからフォローしている人を検索するためには、Relationshipモデルのfollower_idを
   # 検索しなければいけないため、これを外部キーとして明示するために、foreign_key: "follower_id"を指定している。
+  #
+  # Userはたくさんのactive_relationships(フォローしている人との関係)を持っている。
+  # active_relationshipsのモデルはRelationshipである。
+  # Userからactive_relationships(Relationship)を取得するときの外部キーはRelationshipのfollower_idである。
+  # → SELECT * FROM relationships WHERE follower_id = 「user.id」
+  # Userが削除されれば、Relationshipからもuser.id = relationship.follower_idのレコードが削除される。
   has_many :active_relationships, class_name:  "Relationship",
                                   foreign_key: "follower_id",
                                   dependent:   :destroy
@@ -22,6 +28,12 @@ class User < ApplicationRecord
   # 探そうとしてしまうため、class_name: "Relationship"と指定することで、そのモデルを明示している。
   # さらに、Userモデルからフォローされている人を検索するためには、Relationshipモデルのfollowed_idを
   # 検索しなければいけないため、これを外部キーとして明示するために、foreign_key: "followed_id"を指定している。
+  #
+  # Userはたくさんのpassive_relationships(フォローされている人との関係)を持っている。
+  # passive_relationshipのモデルはRelationshipである。
+  # Userからpassive_relationships(Relationship)を取得するときの外部キーはRelationshipのfollowed_idである。
+  # → SELECT * FROM relationships WHERE followed_id = 「user.id」
+  # Userが削除されれば、Relationshipからもuser.id = relationship.followed_idのレコードが削除される。
   has_many :passive_relationships, class_name:  "Relationship",
                                    foreign_key: "followed_id",
                                    dependent:   :destroy
@@ -33,6 +45,13 @@ class User < ApplicationRecord
   # followingの単数形はfollowedと知ることができる。
   # ↓の一文により、Usersモデルは複数のfollowedを持ち、sourceに明示されたfollowedに+ "_id"のfollowed_idを用いて、
   # relationshipsテーブル(active_relationships)から対象のユーザ(followed)を取得できるようになる。
+  # なお、これにより、Userがフォローしている人の配列を取得できるfollowingメソッドが使えるようになる。
+  #
+  # Userはたくさんのfollowing(フォローした人たちの集合)を持つ。
+  # followingを取得するときは、active_relationships(フォローしている人との関係)を通す。
+  # その際、active_relationships(Relationship)のfollowed_idを参照元とする。
+  # → SELECT * FROM users INNER JOIN relationships ON users.id = relationships.followed_id
+  #             WHERE relationships.follower_id = 「user.id」
   has_many :following, through: :active_relationships,  source: :followed
 
   # 1人のユーザーはいくつもの「フォローする」「フォローされる」という関係性がある（多対多）
@@ -41,6 +60,13 @@ class User < ApplicationRecord
   # 明示していたが、ここでは本来ならsource: :followerを明示する必要はない。敢えて、対照的に比較できるよう明示しているだけ。
   # ↓の一文により、Usersモデルは複数のfollowerを持ち、sourceに明示されたfollowerに+ "_id"のfollower_idを用いて、
   # relationshipsテーブル(passive_relationships)から対象のユーザ(follower)を取得できるようになる。
+  # なお、これにより、Userをフォローしている人の配列を取得できるfollowersメソッドが使えるようになる。
+  #
+  # Userはたくさんのfollowers(フォローされている人たちの集合)を持つ。
+  # followersを取得するときは、passive_relationships(フォローされている人との関係)を通す。
+  # その際、passive_relationships(Relationship)のfollower_idを参照元とする。
+  # → SELECT * FROM users INNER JOIN relationships ON users.id = relationships.follower_id
+  #             WHERE relationships.followed_id = 「user.id」
   has_many :followers, through: :passive_relationships, source: :follower
 
   attr_accessor :remember_token, :activation_token, :reset_token
@@ -178,8 +204,8 @@ class User < ApplicationRecord
    
     # Relationshipsテーブルから、自分がフォロワーになっている（つまり自分が
     # フォローしている）人たちのID（followed_id）を取得
-    following_ids = "SELECT followed_id FROM relationships
-                     WHERE follower_id = :user_id"
+    #following_ids = "SELECT followed_id FROM relationships
+    #                 WHERE follower_id = :user_id"
 
     # Micropostsテーブルから、上記のID（自分がフォローしている人たちのID）
     # に一致する、または、自分のマイクロポストを取得する
@@ -187,7 +213,7 @@ class User < ApplicationRecord
     # Micropost.where("user_id IN (#{following_ids})
     #                  OR user_id = :user_id", user_id: id)
     
-    Micropost.including_replies(id)
+    Micropost.including_replies(self)
   end
 
   # ユーザーをフォローする

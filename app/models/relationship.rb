@@ -1,5 +1,8 @@
 class Relationship < ApplicationRecord
+  # Relationshipのfollower(フォローする人)は、Userに属する
   belongs_to :follower, class_name: "User"
+
+  # Relationshipのfollowed(フォローされる人)は、Userに属する
   belongs_to :followed, class_name: "User"
 
   # ↓の２行はfollwer_idとfollowd_idがそれぞれ必須であることを

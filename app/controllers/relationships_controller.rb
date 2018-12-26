@@ -6,6 +6,7 @@ class RelationshipsController < ApplicationController
   def create
     @user = User.find(params[:followed_id])
     current_user.follow(@user)
+    # respond_toメソッドはリクエストの種類によって応答を場合分けするときに使えるメソッド
     # respond_toメソッドはブロック内を上から順に実行するわけではなく、
     # いずれかの1行が実行される
     respond_to do |format|
@@ -17,6 +18,7 @@ class RelationshipsController < ApplicationController
   def destroy
     @user = Relationship.find(params[:id]).followed
     current_user.unfollow(@user)
+    # respond_toメソッドはリクエストの種類によって応答を場合分けするときに使えるメソッド
     # respond_toメソッドはブロック内を上から順に実行するわけではなく、
     # いずれかの1行が実行される
     respond_to do |format|
