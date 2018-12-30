@@ -99,8 +99,11 @@ class FollowingTest < ActionDispatch::IntegrationTest
     get root_path
 
     @user.feed.paginate(page: 1).each do |micropost|
+      # response.body側に含まれる「I'm sorry.」という文字列のシングルクォーテーションが
+      # 「I&#39;m sorry.」というように「&#39;」にエスケープされているので、
+      # micropost.contentもCGI.escapeHTMLしておかないとマッチしない
+      
       assert_match CGI.escapeHTML(micropost.content), response.body
-      #assert_match (micropost.content), response.body
     end
   end
 end
