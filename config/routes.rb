@@ -24,7 +24,8 @@ Rails.application.routes.draw do
     member do # memberはメソッド
       # following_user GET    /users/:id/following(.:format)          users#following
       # followers_user GET    /users/:id/followers(.:format)          users#followers
-      # 下記で上記２つが追加される。memberなので:idがつく。collectionだと/users/following(.:format)のようになる。
+      # 下記で上記２つが追加される。memberなので上記のように:idがつく。
+      # collectionだと/users/following(.:format)のよう:idがつかない。
       get :following, :followers
     end
   end
