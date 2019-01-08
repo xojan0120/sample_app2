@@ -29,6 +29,10 @@ group :development, :test do
 
   # ↓のplatformオプションが必要な理由は謎
   gem 'byebug',  '9.0.6', platform: :mri
+
+  # rspec関連
+  gem 'rspec-rails', '~>3.6.0'
+  gem "factory_bot_rails", "~> 4.10.0"
 end
 
 # 開発環境のみで使用するgem
@@ -37,6 +41,9 @@ group :development do
   gem 'listen',                '3.1.5'
   gem 'spring',                '2.0.2'
   gem 'spring-watcher-listen', '2.0.1'
+
+  # rspec関連
+  gem 'spring-commands-rspec'
 end
 
 # テスト環境のみで使用するgem

@@ -18,6 +18,14 @@ module SampleApp
     # 認証トークンをremoteフォームに埋め込む
     config.action_view.embed_authenticity_token_in_remote_forms = true
 
-    # デフォルトのテンプレートエンジンをslimに変更する
+    # RSpec関連
+    config.generators do |g|
+      g.test_framework :rspec,
+        fixtures: false,
+        view_specs: false,
+        helper_specs: false,
+        routing_specs: false,
+        request_specs: false
+    end
   end
 end
