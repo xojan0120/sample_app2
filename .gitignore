@@ -31,5 +31,5 @@
 # vimのスワップファイルを無視する
 *.swp
 
-# aws access keys file
-accessKeys.csv
+# secret files
+/secret/*
