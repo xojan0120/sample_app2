@@ -44,6 +44,9 @@ group :development do
 
   # rspec関連
   gem 'spring-commands-rspec'
+
+  # erd関連
+  gem 'rails-erd'
 end
 
 # テスト環境のみで使用するgem
