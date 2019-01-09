@@ -1,8 +1,15 @@
 FactoryBot.define do
   factory :user do
-    name "John Smith"
-    email "john_smith@example.com"
-    password_digest User.digest('password')
-    unique_name "john_smithx"
+    name                "user1"
+    email               "user1@gmail.com"
+    password_digest     User.digest('foobar')
+    admin               true
+    activated           true
+    activated_at        Time.now
+    unique_name         "user1"
+  end
+
+  trait :not_admin do
+    admin false
   end
 end
