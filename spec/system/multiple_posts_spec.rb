@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.feature "MultiplePosts", type: :feature do
+RSpec.feature "MultiplePosts", type: :system do
   scenario "Capybara+Javascript設定動作確認", js: true do
     user1 = FactoryBot.create(:user)
     user2 = FactoryBot.create(:user)
