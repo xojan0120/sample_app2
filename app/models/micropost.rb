@@ -50,7 +50,7 @@ class Micropost < ApplicationRecord
   #  
   #end
   
-  def Micropost.including_replies(user)
+  def Micropost.including_replies(user_id)
     # following_idsとはrailsが自動的に生成したメソッドである。
     # Userモデルでhas_many :followingを定義したことで生成される。
     # メソッド名の通り、あるUserがフォローしているユーザのidの配列を返す
@@ -72,7 +72,7 @@ class Micropost < ApplicationRecord
     # 書き方B
     Micropost.where("   user_id     IN (#{following_ids})
                      OR user_id     =   :user_id
-                     OR in_reply_to =   :user_id"       , user_id: user.id)
+                     OR in_reply_to =   :user_id"       , user_id: user_id)
 
     # 書き方Aより書き方Bのほうが、userのフォロー数が多い場合に効率がよい。
     # 書き方Aの場合は、userがフォローしているユーザIDを

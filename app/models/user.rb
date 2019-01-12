@@ -213,7 +213,7 @@ class User < ApplicationRecord
     # Micropost.where("user_id IN (#{following_ids})
     #                  OR user_id = :user_id", user_id: id)
     
-    Micropost.including_replies(self)
+    Micropost.including_replies(id)
   end
 
   # ユーザーをフォローする
