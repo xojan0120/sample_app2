@@ -270,6 +270,10 @@ GEM
     guard-minitest (2.4.4)
       guard-compat (~> 1.2)
       minitest (>= 3.0)
+    guard-rspec (4.7.3)
+      guard (~> 2.1)
+      guard-compat (~> 1.1)
+      rspec (>= 2.99.0, < 4.0)
     high_voltage (3.1.0)
     hpricot (0.8.6)
     html2slim (0.2.0)
@@ -379,6 +383,10 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
+    rspec (3.8.0)
+      rspec-core (~> 3.8.0)
+      rspec-expectations (~> 3.8.0)
+      rspec-mocks (~> 3.8.0)
     rspec-core (3.8.0)
       rspec-support (~> 3.8.0)
     rspec-expectations (3.8.2)
@@ -483,6 +491,7 @@ DEPENDENCIES
   fog (= 1.42)
   guard (= 2.13.0)
   guard-minitest (= 2.4.4)
+  guard-rspec
   high_voltage
   html2slim
   jbuilder (= 2.7.0)

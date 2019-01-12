@@ -57,6 +57,9 @@ group :test do
   gem 'guard',                    '2.13.0'
   gem 'guard-minitest',           '2.4.4'
 
+  # rspec関連
+  gem 'guard-rspec', require: false
+
   # Capybara関連
   gem 'capybara',              '~> 2.15.2' 
   gem 'selenium-webdriver'

@@ -13,6 +13,8 @@ RSpec.feature "MultiplePosts", type: :system do
     fill_in "Password", with: "foobar"
     click_button "Log in"
 
+    debugger
+
     click_link "Users"
     click_link user2.name
  
@@ -26,4 +28,11 @@ RSpec.feature "MultiplePosts", type: :system do
       wait_for_ajax
     }.to change(user1.following, :count).by(-1)
   end
+
+  #describe "describe" do
+  #  context "context" do
+  #    it "it" do
+  #    end
+  #  end
+  #end
 end
