@@ -1,12 +1,12 @@
 FactoryBot.define do
   factory :user do
-    name                "user1"
-    email               "user1@gmail.com"
-    password_digest     User.digest('foobar')
-    admin               true
-    activated           true
-    activated_at        Time.now
-    unique_name         "user1"
+    sequence(:name)        {|n| "user#{n}"}
+    sequence(:email)       {|n| "user#{n}@gmail.com"}
+    password_digest             User.digest('foobar')
+    admin                       true
+    activated                   true
+    activated_at                Time.now
+    sequence(:unique_name) {|n| "user#{n}"}
   end
 
   trait :not_admin do

@@ -10,7 +10,7 @@ class RelationshipsController < ApplicationController
     # respond_toメソッドはブロック内を上から順に実行するわけではなく、
     # いずれかの1行が実行される
     respond_to do |format|
-      format.html { redirect_to @user }
+      #format.html { redirect_to @user }
       format.js
     end
   end

@@ -32,7 +32,7 @@ group :development, :test do
 
   # rspec関連
   gem 'rspec-rails', '~>3.6.0'
-  gem "factory_bot_rails", "~> 4.10.0"
+  gem 'factory_bot_rails', '~> 4.10.0'
 end
 
 # 開発環境のみで使用するgem
@@ -56,6 +56,11 @@ group :test do
   gem 'minitest-reporters',       '1.1.14'
   gem 'guard',                    '2.13.0'
   gem 'guard-minitest',           '2.4.4'
+
+  # Capybara関連
+  gem 'capybara',              '~> 2.15.2' 
+  gem 'selenium-webdriver'
+  gem 'chromedriver-helper'
 end
 
 # 本番環境のみで使用するgem
