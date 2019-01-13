@@ -1,8 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  it do
-    pp FactoryBot.create(:user, :not_admin)
+  it "管理者でないユーザ" do
+    user = FactoryBot.create(:user, :not_admin)
+    expect(user.admin).to be_falsey
   end
 
   it "メールアドレスを全て小文字にする" do

@@ -13,7 +13,7 @@ RSpec.feature "MultiplePosts", type: :system do
     fill_in "Password", with: "foobar"
     click_button "Log in"
 
-    debugger
+    #debugger
 
     click_link "Users"
     click_link user2.name
