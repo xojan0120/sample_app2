@@ -7,6 +7,7 @@ module LoginSupport
     click_button "Log in"
   end
 
+  # use javascript
   def log_out
     click_link "Account"
     click_link "Log out"

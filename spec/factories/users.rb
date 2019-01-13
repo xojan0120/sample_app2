@@ -12,4 +12,10 @@ FactoryBot.define do
   trait :not_admin do
     admin false
   end
+
+  trait :with_microposts do
+    after(:create) {|user|
+      create_list(:micropost, 2, user:user)
+    }
+  end
 end

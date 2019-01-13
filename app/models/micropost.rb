@@ -82,6 +82,10 @@ class Micropost < ApplicationRecord
     
   end
 
+  def extract_reply_to
+    content
+  end
+
   private
 
     # 下記は独自のバリデーション
