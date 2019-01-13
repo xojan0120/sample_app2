@@ -31,7 +31,11 @@ class MicropostsController < ApplicationController
     unique_name_length_range = "{#{Constants::UNIQUE_NAME_MIN_LENGTH},#{Constants::UNIQUE_NAME_MAX_LENGTH}}"
     re = /@([0-9a-z_]#{unique_name_length_range})/i # /@[0-9a-zA-Z_]{1,15}/
     @micropost.content.match(re)
-    reply_user = User.find_by(unique_name: $1)
+
+    if $1
+      reply_user = User.find_by(unique_name: $1.downcase)
+      @micropost.in_reply_to = reply_user.id if reply_user
+    end
 
     # 複数回マッチ用
     #re = /@[0-9a-zA-Z_]#{unique_name_length_range}/ # /@[0-9a-zA-Z_]{1,15}/
@@ -40,7 +44,6 @@ class MicropostsController < ApplicationController
     #end
     #reply_user = User.find_by(unique_name: unique_name)
 
-    @micropost.in_reply_to = reply_user.id if reply_user
 
     # マイクロポストを保存する。
     if @micropost.save
