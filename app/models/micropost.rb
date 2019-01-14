@@ -32,7 +32,14 @@ class Micropost < ApplicationRecord
 
   # アップロードされた画像のサイズを検証する
   # validatesではなく、validateは独自のバリデーションを定義するときに使う。
-  validate :picture_size
+  #validate :picture_size
+  #validates_with :PictureValidator
+  #validates :picture, size: { maximum: 5, with: 1..5 }
+
+  #validates :picture, size: 1.megabytes..5.megabytes
+  #validates :picture, size: 1024
+  #validates :picture, size: { maximum: 5.megabytes }
+  validates :picture, size: { minimum: 10.megabytes }
 
   #def Micropost.including_replies(user_id)
   #  # Relationshipsテーブルから、自分がフォロワーになっている（つまり自分が
