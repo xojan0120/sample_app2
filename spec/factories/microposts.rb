@@ -3,4 +3,8 @@ FactoryBot.define do
     sequence(:content) {|n| "test message#{n}"}
     association :user
   end
+
+  trait :with_picture do
+    picture { Rack::Test::UploadedFile.new(Rails.root.join('spec/factories/rails.png')) }
+  end
 end

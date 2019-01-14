@@ -8,6 +8,8 @@ RSpec.feature "SingleReply", type: :system do
   scenario "ユーザは1人に返信ができる", js: true do
     msg = "@#{receiver.unique_name} こんにちわ"
 
+    visit root_path
+
     log_in_as sender
     visit_home
     post_content msg

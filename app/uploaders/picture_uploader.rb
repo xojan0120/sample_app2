@@ -10,16 +10,23 @@ class PictureUploader < CarrierWave::Uploader::Base
 
   # Choose what kind of storage to use for this uploader:
   if Rails.env.production?
+    # Amazon S3へアップロードされる。
+    # 設定ファイルはconfig/initializers/carrier_wave.rb
     storage :fog
   else
     # 本番環境以外はローカルのファイルシステムに画像を保存する
+    # 保存先は下記のstore_dirの定義による
     storage :file
   end
 
   # Override the directory where uploaded files will be stored.
   # This is a sensible default for uploaders that are meant to be mounted:
   def store_dir
-    "uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
+    if Rails.env.development?
+      "uploads/develop/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
+    elsif Rails.env.test?
+      "uploads/test/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
+    end
   end
 
   # Provide a default URL as a default if there hasn't been a file uploaded:

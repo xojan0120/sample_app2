@@ -2,16 +2,12 @@ require 'rails_helper'
 
 RSpec.describe Micropost, type: :model do
   it "ユーザに紐付いていれば有効であること" do
-    #user = FactoryBot.create(:user)
-    #micropost = user.microposts.build(content: "test")
-    micropost = FactoryBot.create(:micropost)
+    micropost = FactoryBot.build(:micropost)
     expect(micropost).to be_valid
   end
 
   it "ユーザに紐付いていなければ無効であること" do
-    #user = FactoryBot.create(:user)
-    #micropost = user.microposts.build(content: "test")
-    micropost = FactoryBot.create(:micropost)
+    micropost = FactoryBot.build(:micropost)
     micropost.user_id = nil
     expect(micropost).to be_invalid
   end
@@ -36,11 +32,29 @@ RSpec.describe Micropost, type: :model do
     expect(micropost).to be_invalid
   end
 
-  it "投稿は作成日時の新しいものから取得できること" do
-    user = FactoryBot.create(:user)
-    micropost1 = user.microposts.create(content: "test1", created_at: Date.yesterday.to_time)
-    micropost2 = user.microposts.create(content: "test2", created_at: Date.today.to_time)
-    micropost3 = user.microposts.create(content: "test3", created_at: Date.yesterday.to_time)
-    expect(user.microposts.first.created_at).to eq Date.today.to_time
+  describe "投稿の取得順序について" do
+    let(:user)             { FactoryBot.create(:user) }
+    let(:today)            { Date.today.to_time       }
+    let(:yesterday)        { Date.today.days_ago(1)   }
+    let(:before_yesterday) { Date.today.days_ago(2)   }
+    before do
+      user.microposts.create(content: "first post",  created_at: before_yesterday)
+      user.microposts.create(content: "second post", created_at: yesterday)
+      user.microposts.create(content: "third post",  created_at: today)
+    end
+    context "デフォルトスコープでは" do
+      it "投稿は作成日時の一番新しいものから取得できること" do
+        expect(user.microposts.first.created_at).to eq today
+      end
+    end
+    context "デフォルトスコープを解除した状態では" do
+      it "投稿は作成日時の一番古いものから取得できること" do
+        expect(user.microposts.unscoped.first.created_at).to eq before_yesterday
+      end
+    end
+  end
+
+  it "画像アップロードテスト" do
+    p micropost = FactoryBot.create(:micropost, :with_picture)
   end
 end

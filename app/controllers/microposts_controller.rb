@@ -94,6 +94,10 @@ class MicropostsController < ApplicationController
     def micropost_params
       # パラメータのうち、params[:micropost]を必須とし、params[:micropost][:content]のみ渡す
       params.require(:micropost).permit(:content, :picture)
+
+      # メモ：画像アップロードしたときに他のバリデーションでエラーになると、
+      # アップロードした画像が消えてユーザ側が不便だが、キャッシュを設定することで
+      # 画像を残すことができる。参考：https://blog.otsukasatoshi.com/entry/2016/05/15/150419
     end
 
     def correct_user
