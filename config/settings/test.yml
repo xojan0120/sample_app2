@@ -1,0 +1,7 @@
+test_image:
+  rails_logo:
+    path: spec/factories/images/rails.png
+    mime: image/png
+  filesize_6mb:
+    path: spec/factories/images/filesize_6mb.jpg
+    mime: image/jpg

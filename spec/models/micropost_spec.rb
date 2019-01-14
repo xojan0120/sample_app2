@@ -54,7 +54,33 @@ RSpec.describe Micropost, type: :model do
     end
   end
 
-  it "画像アップロードテスト" do
-    p micropost = FactoryBot.create(:micropost, :with_picture)
+  describe "投稿画像について" do
+    context "ファイルサイズが5MB以下の場合" do
+      it "有効である" do
+        picture = fixture_file_upload(
+                                        Settings.test_image.rails_logo.path,
+                                        Settings.test_image.rails_logo.mime
+                                      )
+        micropost = FactoryBot.build(:micropost, picture: picture)
+        expect(micropost).to be_valid
+      end
+    end
+    context "ファイルサイズが5MBより大きい場合" do
+      it "バリデーションテスト", focus: true do
+        picture = fixture_file_upload(
+                                        Settings.test_image.filesize_6mb.path,
+                                        Settings.test_image.filesize_6mb.mime
+                                      )
+        micropost = FactoryBot.create(:micropost, picture: picture)
+      end
+      it "無効である" do
+        picture = fixture_file_upload(
+                                        Settings.test_image.filesize_6mb.path,
+                                        Settings.test_image.filesize_6mb.mime
+                                      )
+        micropost = FactoryBot.build(:micropost, picture: picture)
+        expect(micropost).to be_invalid
+      end
+    end
   end
 end
