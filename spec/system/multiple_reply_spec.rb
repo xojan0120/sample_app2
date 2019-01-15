@@ -10,6 +10,8 @@ RSpec.feature "MultipleReply", type: :system do
   xscenario "ユーザは2人に返信ができる", js: true do
     msg = "@#{receiver1.unique_name} @#{receiver2.unique_name} こんにちわ"
 
+    visit root_path
+
     log_in_as sender
     visit_home
     post_content msg

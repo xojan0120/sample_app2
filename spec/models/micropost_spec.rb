@@ -12,22 +12,22 @@ RSpec.describe Micropost, type: :model do
     expect(micropost).to be_invalid
   end
 
-  it "投稿があれば有効であること" do
+  it "投稿文があれば有効であること" do
     micropost = FactoryBot.build(:micropost)
     expect(micropost).to be_valid
   end
 
-  it "投稿がなければ無効であること" do
+  it "投稿文がなければ無効であること" do
     micropost = FactoryBot.build(:micropost, content:nil)
     expect(micropost).to be_invalid
   end
 
-  it "投稿が140文字以下なら有効であること" do
+  it "投稿文が140文字以下なら有効であること" do
     micropost = FactoryBot.build(:micropost, content: "a"*140)
     expect(micropost).to be_valid
   end
 
-  it "投稿が141文字以上なら無効であること" do
+  it "投稿文が141文字以上なら無効であること" do
     micropost = FactoryBot.build(:micropost, content: "a"*141)
     expect(micropost).to be_invalid
   end
@@ -75,6 +75,47 @@ RSpec.describe Micropost, type: :model do
         micropost = FactoryBot.build(:micropost, picture: picture)
         expect(micropost.picture).to be_truthy
         expect(micropost).to be_invalid
+      end
+    end
+  end
+
+  describe "投稿文中から@一意ユーザ名抽出機能について" do
+
+    context "文中に@一意ユーザ名が無い場合" do
+    end
+
+    context "文中に@一意ユーザ名が1つある場合" do
+      context "@一意ユーザ名が文頭にある場合" do
+        fit "抽出できる" do
+          unique_name = "JohnSmith"
+          content = "@#{unique_name} ハロー"
+          unique_names = [unique_name].map{|v| v.downcase }
+          micropost = FactoryBot.build(:micropost, content: content)
+          expect(micropost.unique_names).to match_array(unique_names)
+        end
+      end
+      xcontext "@一意ユーザ名が文中にある場合" do
+        it "抽出できる" do
+        end
+      end
+      xcontext "@一意ユーザ名が文末にある場合" do
+        it "抽出できる" do
+        end
+      end
+    end
+
+    context "文中に@一意ユーザ名が2つ以上ある場合" do
+      xcontext "@一意ユーザ名が文頭にある場合" do
+        it "抽出できる" do
+        end
+      end
+      xcontext "@一意ユーザ名が文中にある場合" do
+        it "抽出できる" do
+        end
+      end
+      xcontext "@一意ユーザ名が文末にある場合" do
+        it "抽出できる" do
+        end
       end
     end
   end
