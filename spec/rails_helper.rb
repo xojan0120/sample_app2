@@ -60,4 +60,6 @@ RSpec.configure do |config|
   #config.after(:suite) do
   #  FileUtils.rm_rf(Dir["#{Rails.root}/public/uploads/test/*"])
   #end
+
+  #config.include ActionView::Helpers::TextHelper
 end
