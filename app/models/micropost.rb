@@ -30,16 +30,33 @@ class Micropost < ApplicationRecord
   # content属性がnilでないか、長さが最大140であるかの検証
   validates :content, presence: true, length: { maximum: 140 }
 
-  # アップロードされた画像のサイズを検証する
-  # validatesではなく、validateは独自のバリデーションを定義するときに使う。
+  # ------------------------------------------------------------------
+  # アップロードされた画像のサイズをカスタムバリデーションで検証する
+  # ------------------------------------------------------------------
+  # カスタムメソッド版(当クラスのprivateメソッドで定義)
+  # validatesではなく、validateを使う。オプションは渡せない。
   #validate :picture_size
-  #validates_with :PictureValidator
-  #validates :picture, size: { maximum: 5, with: 1..5 }
+  
+  # カスタムバリデータ(レコード)版(app/validators/picture_size_validator.rbで定義)
+  # validatesではなく、validates_withを使う。オプションを渡せる。options[キー]で取得。
+  #validates_with PictureSizeValidator
+  #validates_with PictureSizeValidator, { minimum: 1.byte }
+  #validates_with PictureSizeValidator, minimum: 1.byte
 
+  # カスタムバリデータ(属性)版(app/validators/size_validator.rbで定義)
+  # オプションを渡せる。
+  #
+  # Hashの場合は、options[キー]で取得。
+  #validates :picture, size: { minimum: 1.byte }
+  validates :picture, size: { maximum: 5.megabytes }
+  #validates :picture, size: { minimum: 1.megabytes, maximum: 5.megabytes }
+  #
+  # Range,Arrayの場合は、options[:in]で取得。
   #validates :picture, size: 1.megabytes..5.megabytes
-  #validates :picture, size: 1024
-  #validates :picture, size: { maximum: 5.megabytes }
-  validates :picture, size: { minimum: 10.megabytes }
+  #validates :picture, size: [1.megabytes, 5.megabytes]
+  #
+  # Hash,Range,Array以外の場合は、options[:with]で取得。
+  #validates :picture, size: 5.megabytes
 
   #def Micropost.including_replies(user_id)
   #  # Relationshipsテーブルから、自分がフォロワーになっている（つまり自分が
