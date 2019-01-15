@@ -66,7 +66,7 @@ RSpec.describe Micropost, type: :model do
       end
     end
     context "ファイルサイズが5MBより大きい場合" do
-      it "バリデーションテスト", focus: true do
+      fit "バリデーションテスト" do
         picture = fixture_file_upload(
                                         Settings.test_image.filesize_6mb.path,
                                         Settings.test_image.filesize_6mb.mime
