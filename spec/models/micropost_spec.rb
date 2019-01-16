@@ -80,73 +80,29 @@ RSpec.describe Micropost, type: :model do
   end
 
   describe "投稿文中から@一意ユーザ名抽出機能について" do
-
     context "文中に@一意ユーザ名が無い場合" do
       it "空の配列を返す" do
       end
     end
 
     context "文中に@一意ユーザ名が1つある場合" do
-      context "@一意ユーザ名が文頭にある場合" do
-        it "配列で抽出できる" do
-          unique_name = "JohnSmith"
-          content = "@#{unique_name}ハロー"
-          unique_names = [unique_name].map{|v| v.downcase }
-          micropost = FactoryBot.build(:micropost, content: content)
-          expect(micropost.unique_names).to match_array(unique_names)
-        end
-      end
-      context "@一意ユーザ名が文中にある場合" do
-        it "配列で抽出できる" do
-          unique_name = "JohnSmith"
-          content = "こんにちわ@#{unique_name}ハロー"
-          unique_names = [unique_name].map{|v| v.downcase }
-          micropost = FactoryBot.build(:micropost, content: content)
-          expect(micropost.unique_names).to match_array(unique_names)
-        end
-      end
-      context "@一意ユーザ名が文末にある場合" do
-        it "配列で抽出できる" do
-          unique_name = "JohnSmith"
-          content = "こんにちわ@#{unique_name}"
-          unique_names = [unique_name].map{|v| v.downcase }
-          micropost = FactoryBot.build(:micropost, content: content)
-          expect(micropost.unique_names).to match_array(unique_names)
-        end
-      end
-      context "@一意ユーザ名のみの場合" do
-        it "配列で抽出できる" do
-          unique_name = "JohnSmith"
-          content = "@#{unique_name}"
-          unique_names = [unique_name].map{|v| v.downcase }
-          micropost = FactoryBot.build(:micropost, content: content)
-          expect(micropost.unique_names).to match_array(unique_names)
-        end
+      it "配列で抽出できる" do
+        unique_name = "JohnSmith"
+        content = "こんにちわ@#{unique_name}さん"
+        unique_names = [unique_name].map{|v| v.downcase }
+        micropost = FactoryBot.build(:micropost, content: content)
+        expect(micropost.unique_names).to match_array(unique_names)
       end
     end
 
     context "文中に@一意ユーザ名が2つ以上ある場合" do
-      context "@一意ユーザ名が文頭にある場合" do
-        it "配列で抽出できる" do
-          unique_name1 = "JohnSmith"
-          unique_name2 = "JaneSmith"
-          content = "@#{unique_name1} @#{unique_name2}ハロー"
-          unique_names = [unique_name1,unique_name2].map{|v| v.downcase }
-          micropost = FactoryBot.build(:micropost, content: content)
-          expect(micropost.unique_names).to match_array(unique_names)
-        end
-      end
-      xcontext "@一意ユーザ名が文中にある場合" do
-        it "配列で抽出できる" do
-        end
-      end
-      xcontext "@一意ユーザ名が文末にある場合" do
-        it "配列で抽出できる" do
-        end
-      end
-      xcontext "@一意ユーザ名のみの場合" do
-        it "配列で抽出できる" do
-        end
+      it "配列で抽出できる" do
+        unique_name1 = "JohnSmith"
+        unique_name2 = "JaneSmith"
+        content = "こんにちわ@#{unique_name1}さん、@#{unique_name2}さん"
+        unique_names = [unique_name1,unique_name2].map{|v| v.downcase }
+        micropost = FactoryBot.build(:micropost, content: content)
+        expect(micropost.unique_names).to match_array(unique_names)
       end
     end
   end

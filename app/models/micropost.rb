@@ -106,7 +106,7 @@ class Micropost < ApplicationRecord
     
   end
 
-  # content中から一意ユーザ名を抽出し、配列で返す。無ければ空配列。
+  # content中から一意ユーザ名を抽出し、全て小文字にして配列で返す。無ければ空配列。
   def unique_names
     # scanについて https://ref.xaio.jp/ruby/classes/string/scan
     content.scan(CommonRegexp::extract_unique_name).flatten.map{ |v| v.downcase }
