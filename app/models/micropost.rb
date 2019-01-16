@@ -1,8 +1,13 @@
 class Micropost < ApplicationRecord
-  # MicropostオブジェクトはUserオブジェクトに属する
+  # Micropostモデルは1つのUserモデルに属する
   belongs_to :user
 
-  # default_scopeメソッドは、データベースから要素を取得したときのデフォルトの順序を指定するメソッド
+  # Micropostモデルは複数のReplyモデルを持つ
+  # dependent: :destroyは、Micropostが破棄された場合、それに依存(dependent)して、
+  # Repliesも破棄されるという意味
+  has_many :replies, dependent: :destroy
+
+  #dpendent: :destroy default_scopeメソッドは、データベースから要素を取得したときのデフォルトの順序を指定するメソッド
   # 特定の順序にするためには、default_scopeの引数にorderを与える。
   # ここでは、作成日時の降順でデータを取得するの意味
   default_scope -> { order(created_at: :desc) }

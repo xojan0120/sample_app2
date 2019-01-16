@@ -13,7 +13,7 @@ RSpec.describe Micropost, type: :model do
   end
 
   it "投稿文があれば有効であること" do
-    micropost = FactoryBot.build(:micropost)
+    micropost = FactoryBot.build(:micropost, content:"test")
     expect(micropost).to be_valid
   end
 
@@ -82,6 +82,10 @@ RSpec.describe Micropost, type: :model do
   describe "投稿文中から@一意ユーザ名抽出機能について" do
     context "文中に@一意ユーザ名が無い場合" do
       it "空の配列を返す" do
+        unique_name = "JohnSmith"
+        content = "こんにちわ#{unique_name}さん"
+        micropost = FactoryBot.build(:micropost, content: content)
+        expect(micropost.unique_names).to be_empty
       end
     end
 

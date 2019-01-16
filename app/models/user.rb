@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   # Userモデルは複数のMicropostモデルを持つ
   # dependent: :destroyは、Userが破棄された場合、それに依存(dependent)して、
-  # micropostsも破棄されるという意味
+  # Micropostsも破棄されるという意味
   has_many :microposts, dependent: :destroy
 
   # Userモデルは複数のActiveRelationshipモデルを持つ。

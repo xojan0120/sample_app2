@@ -17,4 +17,14 @@ RSpec.describe User, type: :model do
     user = FactoryBot.create(:user, unique_name: unique_name)
     expect(user.unique_name).to eq unique_name.downcase
   end
+
+  describe "フィード機能について" do
+    it "自分の投稿が全て取得できる" do
+      contents = ["投稿1","投稿2"]
+      me = FactoryBot.create(:user)
+      FactoryBot.create(:micropost, user: me, content: contents[0])
+      FactoryBot.create(:micropost, user: me, content: contents[1])
+      expect(me.feed).to match_array(contents)
+    end
+  end
 end
