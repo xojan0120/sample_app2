@@ -106,22 +106,10 @@ class Micropost < ApplicationRecord
     
   end
 
-  def unique_namesx
-    str_length = 1
-    end_length = 15
-    re = /@([0-9a-z_]{#{str_length},#{end_length}})/i # /@[0-9a-zA-Z_]{1,15}/
-    content.match(re)
-
-    if $1
-      [$1]
-    end
-  end
-
+  # content中から一意ユーザ名を抽出し、配列で返す。無ければ空配列。
   def unique_names
-    str_length = 1   # => configでやる
-    end_length = 15
-    re = /@+([0-9a-z_]{#{str_length},#{end_length}})/i # /@[0-9a-zA-Z_]{1,15}/
-    content.match(re)&.captures&.map{ |v| v.downcase }
+    # scanについて https://ref.xaio.jp/ruby/classes/string/scan
+    content.scan(CommonRegexp::extract_unique_name).flatten.map{ |v| v.downcase }
   end
 
   private

@@ -28,8 +28,9 @@ class MicropostsController < ApplicationController
     # unique_name = $1
 
     # こちらのほうがスマート
-    unique_name_length_range = "{#{Constants::UNIQUE_NAME_MIN_LENGTH},#{Constants::UNIQUE_NAME_MAX_LENGTH}}"
-    re = /@([0-9a-z_]#{unique_name_length_range})/i # /@[0-9a-zA-Z_]{1,15}/
+    min = Settings.unique_name.length.minimum
+    max = Settings.unique_name.length.maximum
+    re = /@+([0-9a-z_]{#{min},#{max}})/i # /@[0-9a-zA-Z_]{1,15}/
     @micropost.content.match(re)
 
     if $1
@@ -38,7 +39,7 @@ class MicropostsController < ApplicationController
     end
 
     # 複数回マッチ用
-    #re = /@[0-9a-zA-Z_]#{unique_name_length_range}/ # /@[0-9a-zA-Z_]{1,15}/
+    #re = /@[0-9a-zA-Z_]#{#{min},#{max}}/ # /@[0-9a-zA-Z_]{1,15}/
     #if unique_name = @micropost.content.scan(re).first
     #  unique_name.sub!("@","")
     #end

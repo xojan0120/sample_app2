@@ -79,16 +79,13 @@ class User < ApplicationRecord
 
   validates :name, presence: true, length: { maximum: 50 }
 
-  VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
   validates :email, presence: true,
                     length: { maximum: 255 },
-                    format: { with: VALID_EMAIL_REGEX },
+                    format: { with: CommonRegexp::format_email },
                     uniqueness: { case_sensitive: false }
 
-  VALID_UNIQUE_NAME_REGEX = /\A[a-z0-9_]+\z/i
-  unique_name_length_range = Constants::UNIQUE_NAME_MIN_LENGTH..Constants::UNIQUE_NAME_MAX_LENGTH
-  validates :unique_name, presence: true, length: { in: unique_name_length_range },
-                          format: { with: VALID_UNIQUE_NAME_REGEX },
+  validates :unique_name, presence: true, length: { in: Settings.unique_name.length.minimum..Settings.unique_name.length.maximum },
+                          format: { with: CommonRegexp::format_unique_name },
                           uniqueness: { case_sensitive: false }
 
   has_secure_password
