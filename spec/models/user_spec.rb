@@ -19,12 +19,10 @@ RSpec.describe User, type: :model do
   end
 
   describe "フィード機能について" do
-    it "自分の投稿が全て取得できる" do
-      contents = ["投稿1","投稿2"]
+    it "内部でMicropost.including_repliesが呼ばれている" do
       me = FactoryBot.create(:user)
-      FactoryBot.create(:micropost, user: me, content: contents[0])
-      FactoryBot.create(:micropost, user: me, content: contents[1])
-      expect(me.feed).to match_array(contents)
+      expect(Micropost).to receive(:including_replies).with(me.id)
+      me.feed
     end
   end
 end

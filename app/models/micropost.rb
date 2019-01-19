@@ -79,7 +79,7 @@ class Micropost < ApplicationRecord
   #  
   #end
   
-  def Micropost.including_replies(user_id)
+  def self.including_replies(user_id)
     # following_idsとはrailsが自動的に生成したメソッドである。
     # Userモデルでhas_many :followingを定義したことで生成される。
     # メソッド名の通り、あるUserがフォローしているユーザのidの配列を返す
@@ -99,9 +99,9 @@ class Micropost < ApplicationRecord
     #                 OR in_reply_to =   :user_id"       ,following_ids: user.following_ids, user_id: user.id)
     
     # 書き方B
-    Micropost.where("   user_id     IN (#{following_ids})
-                     OR user_id     =   :user_id
-                     OR in_reply_to =   :user_id"       , user_id: user_id)
+    #Micropost.where("   user_id     IN (#{following_ids})
+    #                 OR user_id     =   :user_id
+    #                 OR in_reply_to =   :user_id"       , user_id: user_id)
 
     # 書き方Aより書き方Bのほうが、userのフォロー数が多い場合に効率がよい。
     # 書き方Aの場合は、userがフォローしているユーザIDを
@@ -109,6 +109,16 @@ class Micropost < ApplicationRecord
     # 書き方Bの場合は、SQL側で保持するため。
     # 集合の操作において、Rails側で処理させるよりSQL側で処理させるほうが効率がよい。
     
+    #debugger
+    #Micropost.where("   user_id     IN (#{following_ids})
+    #                 OR user_id     =   :user_id" , user_id: user_id)
+    #r = Micropost.left_joins(:replies)
+    #r.merge(Reply.where(reply_to:1)).or(r.where(user_id:1))
+    r1 = Micropost.left_outer_joins(:replies).where(user_id: user_id)
+    r2 = Micropost.left_outer_joins(:replies).merge(Reply.where(reply_to: user_id))
+    r1.or(r2)
+
+
   end
 
   # content中から一意ユーザ名を抽出し、全て小文字にして配列で返す。無ければ空配列。
