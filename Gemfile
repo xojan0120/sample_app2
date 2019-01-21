@@ -34,6 +34,9 @@ group :development, :test do
   # rspec関連
   gem 'rspec-rails', '~>3.8.0'
   gem 'factory_bot_rails', '~> 4.10.0'
+
+  # N+1クエリ問題用
+  gem 'bullet'
 end
 
 # 開発環境のみで使用するgem

@@ -149,11 +149,21 @@ class Micropost < ApplicationRecord
     r_reply_micropost_id = Micropost.joins(:replies).select(:id).distinct.merge(Reply.where(reply_to: user_id))
 
     # 自分の投稿を取得
-    r1 = Micropost.where(user_id: user_id)
+    r1 = Micropost.where(user_id: user_id).includes(:user)
     # フォローしている人の投稿を取得
-    r2 = Micropost.where(user_id: r_followed_id)
+    r2 = Micropost.where(user_id: r_followed_id).includes(:user)
     # 自分が返信先になっている投稿を取得
-    r3 = Micropost.where(id: r_reply_micropost_id)
+    r3 = Micropost.where(id: r_reply_micropost_id).includes(:user)
+
+    # 下記の書き方だとN+1クエリ問題発生
+    # https://qiita.com/hirotakasasaki/items/e0be0b3fd7b0eb350327
+    #
+    # # 自分の投稿を取得
+    # r1 = Micropost.where(user_id: user_id)
+    # # フォローしている人の投稿を取得
+    # r2 = Micropost.where(user_id: r_followed_id)
+    # # 自分が返信先になっている投稿を取得
+    # r3 = Micropost.where(id: r_reply_micropost_id)
 
     r1.or(r2).or(r3)
   end

@@ -171,7 +171,7 @@ RSpec.describe Micropost, type: :model do
         expect(me.feed).to match_array(microposts)
       end
 
-      fit "自分、フォローしている人、自分宛の投稿が全て取得できる" do
+      it "自分、フォローしている人、自分宛の投稿が全て取得できる" do
         #ActiveRecord::Base.logger = Logger.new(STDOUT)
 
         me = FactoryBot.create(:user)
