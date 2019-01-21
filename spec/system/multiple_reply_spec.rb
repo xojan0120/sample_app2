@@ -19,12 +19,12 @@ RSpec.feature "MultipleReply", type: :system do
 
     log_in_as receiver1
     visit_home
-    expect(page).to have_content msg
+    expect(page).to have_content msg, count: 1
     log_out
 
     log_in_as receiver2
     visit_home
-    expect(page).to have_content msg
+    expect(page).to have_content msg, count: 1
     log_out
 
     log_in_as other
