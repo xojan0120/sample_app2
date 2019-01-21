@@ -7,7 +7,7 @@ RSpec.feature "MultipleReply", type: :system do
   let!(:receiver2) { FactoryBot.create(:user, unique_name: "Ms_Receiver2") }
   let!(:other) { FactoryBot.create(:user) }
 
-  xscenario "ユーザは2人に返信ができる", js: true do
+  scenario "ユーザは2人に返信ができる", js: true do
     msg = "@#{receiver1.unique_name} @#{receiver2.unique_name} こんにちわ"
 
     visit root_path

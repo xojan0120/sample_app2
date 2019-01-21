@@ -1,4 +1,5 @@
 class Micropost < ApplicationRecord
+  after_save :register_reply
   # Micropostモデルは1つのUserモデルに属する
   belongs_to :user
 
@@ -79,14 +80,15 @@ class Micropost < ApplicationRecord
   #  
   #end
   
+=begin
   def self.including_replies(user_id)
     # following_idsとはrailsが自動的に生成したメソッドである。
     # Userモデルでhas_many :followingを定義したことで生成される。
     # メソッド名の通り、あるUserがフォローしているユーザのidの配列を返す
     # なお、下記では(:following_ids)に直接、following_idsによるidの配列がセットされてしまうように
     # 見えるが、実際は、railsが自動的に配列からidのカンマ区切りの状態に変換してくれる。
-    following_ids = "SELECT followed_id FROM relationships
-                     WHERE follower_id = :user_id"
+    #following_ids = "SELECT followed_id FROM relationships
+    #                 WHERE follower_id = :user_id"
 
     # Micropostsテーブルから、下記のいずれか条件のマイクロポストを取得する
     #   自分がフォローしている人
@@ -109,16 +111,51 @@ class Micropost < ApplicationRecord
     # 書き方Bの場合は、SQL側で保持するため。
     # 集合の操作において、Rails側で処理させるよりSQL側で処理させるほうが効率がよい。
     
-    #debugger
-    #Micropost.where("   user_id     IN (#{following_ids})
-    #                 OR user_id     =   :user_id" , user_id: user_id)
-    #r = Micropost.left_joins(:replies)
-    #r.merge(Reply.where(reply_to:1)).or(r.where(user_id:1))
+    #r1 = Micropost.left_outer_joins(:replies).where(user_id: user_id)
+    #r2 = Micropost.left_outer_joins(:replies).merge(Reply.where(reply_to: user_id))
+    #r1.or(r2)
+    
+    #following_ids = Relationship.where(follower_id: user_id).pluck(:followed_id)
+    #r1 = Micropost.left_outer_joins(:replies).where(user_id: [user_id] + following_ids)
+    #r2 = Micropost.left_outer_joins(:replies).merge(Reply.where(reply_to: user_id))
+    #r1.or(r2)
+    
+    # A.micropostsとrepliesを結合し、自分の投稿を取得
     r1 = Micropost.left_outer_joins(:replies).where(user_id: user_id)
-    r2 = Micropost.left_outer_joins(:replies).merge(Reply.where(reply_to: user_id))
-    r1.or(r2)
 
+    # B.relationshipsから、フォローしている人のidを取得
+    #   micropostsとrepliesを結合し、自分がフォローしている人の投稿を取得
+    r2 = Relationship.select(:followed_id).where(follower_id: user_id)
+    r3 = Micropost.left_outer_joins(:replies).where(user_id: r2)
 
+    # C.micropostsとrepliesを結合し、自分が返信先になっている投稿を取得
+    r4 = Micropost.left_outer_joins(:replies).merge(Reply.where(reply_to: user_id))
+
+    # 上記、A,B,Cのいずれかにあてはまる投稿を取得
+    r1.or(r3).or(r4)
+  end
+=end
+
+  def self.including_replies(user_id)
+    # Micropostsテーブルから、下記のいずれか条件のマイクロポストを取得する
+    #   自分がフォローしている人
+    #   自分のマイクロポスト
+    #   返信先が自分になっているマイクロポスト
+
+    # フォローしている人のユーザIDを取得
+    r_followed_id = Relationship.select(:followed_id).where(follower_id: user_id)
+
+    # 自分が返信先になっている投稿のマイクロポストIDを取得
+    r_reply_micropost_id = Micropost.joins(:replies).select(:id).distinct.merge(Reply.where(reply_to: user_id))
+
+    # 自分の投稿を取得
+    r1 = Micropost.where(user_id: user_id)
+    # フォローしている人の投稿を取得
+    r2 = Micropost.where(user_id: r_followed_id)
+    # 自分が返信先になっている投稿を取得
+    r3 = Micropost.where(id: r_reply_micropost_id)
+
+    r1.or(r2).or(r3)
   end
 
   # content中から一意ユーザ名を抽出し、全て小文字にして配列で返す。無ければ空配列。
@@ -128,6 +165,17 @@ class Micropost < ApplicationRecord
   end
 
   private
+    def register_reply
+      unique_names.each do |unique_name|
+        if reply_user = User.find_by(unique_name: unique_name)
+          # 下記のいずれでも正しくrepliesに登録できる。
+          # buildでもなぜか登録できてしまう。謎。
+          #Reply.create(micropost_id: id, reply_to: reply_user.id)
+          #replies.build(micropost_id: id, reply_to: reply_user.id)
+          replies.create(micropost_id: id, reply_to: reply_user.id)
+        end
+      end
+    end
 
     # 下記は独自のバリデーション
     # 独自のバリデーションを上記で使うにはvalidatesメソッドではなくvalidateメソッドを使う

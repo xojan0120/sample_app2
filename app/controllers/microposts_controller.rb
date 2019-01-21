@@ -27,6 +27,7 @@ class MicropostsController < ApplicationController
     # @micropost.content.match re
     # unique_name = $1
 
+=begin
     # こちらのほうがスマート
     min = Settings.unique_name.length.minimum
     max = Settings.unique_name.length.maximum
@@ -44,7 +45,7 @@ class MicropostsController < ApplicationController
     #  unique_name.sub!("@","")
     #end
     #reply_user = User.find_by(unique_name: unique_name)
-
+=end
 
     # マイクロポストを保存する。
     if @micropost.save
