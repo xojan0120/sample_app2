@@ -37,6 +37,10 @@ group :development, :test do
 
   # N+1クエリ問題用
   gem 'bullet'
+
+  # rails consoleでデータを見やすくする
+  gem 'hirb'
+  gem 'hirb-unicode'
 end
 
 # 開発環境のみで使用するgem
