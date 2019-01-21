@@ -1,5 +1,6 @@
 class Micropost < ApplicationRecord
   after_save :register_reply
+
   # Micropostモデルは1つのUserモデルに属する
   belongs_to :user
 

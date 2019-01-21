@@ -1,5 +1,7 @@
 require 'rails_helper'
 
+#ActiveRecord::Base.logger = Logger.new(STDOUT)
+
 RSpec.describe Micropost, type: :model do
   it "ユーザに紐付いていれば有効であること" do
     micropost = FactoryBot.build(:micropost)
@@ -133,35 +135,24 @@ RSpec.describe Micropost, type: :model do
   end
 
   describe "including_repliesメソッドについて" do
-    context "フォロー人数が0の場合" do
-      #it "自分の投稿のみ全て取得できる" do
-      #  me = FactoryBot.create(:user)
-      #  other = FactoryBot.create(:user)
-      #  FactoryBot.create(:micropost, user: me)
-      #  FactoryBot.create(:micropost, user: me)
-      #  FactoryBot.create(:micropost, user: other)
+    let(:me) { FactoryBot.create(:user) }
 
-      #  expect(me.feed).to match_array(me.microposts)
-      #end
-      
+    context "フォロー人数が0の場合" do
       it "自分の投稿が全て取得できる" do
-        me = FactoryBot.create(:user)
         FactoryBot.create(:micropost, user: me)
         FactoryBot.create(:micropost, user: me)
         expect(me.feed).to match_array(me.microposts)
       end
 
       it "自分宛の投稿が全て取得できる" do
-        me = FactoryBot.create(:user)
-        replies = [FactoryBot.create(:reply, reply_to: me.id).micropost]
-        replies << FactoryBot.create(:reply, reply_to: me.id).micropost
+        replies =  [FactoryBot.create(:micropost, :with_reply, reply_to: me.id)]
+        replies << FactoryBot.create(:micropost, :with_reply, reply_to: me.id)
         expect(me.feed).to match_array(replies)
       end
     end
     
     context "フォロー人数が1以上の場合" do
       it "自分とフォローしている人の投稿が全て取得できる" do
-        me = FactoryBot.create(:user)
         other = FactoryBot.create(:user)
         me.follow(other)
         FactoryBot.create(:micropost, user: me)
@@ -172,9 +163,7 @@ RSpec.describe Micropost, type: :model do
       end
 
       it "自分、フォローしている人、自分宛の投稿が全て取得できる" do
-        #ActiveRecord::Base.logger = Logger.new(STDOUT)
 
-        me = FactoryBot.create(:user)
         FactoryBot.create(:micropost, user: me)
 
         followed = FactoryBot.create(:user)
@@ -188,23 +177,5 @@ RSpec.describe Micropost, type: :model do
         expect(me.feed).to match_array(microposts)
       end
     end
-
-    #it "自分の投稿と自分宛の投稿が全て取得できる" do
-    #  me = FactoryBot.create(:user)
-    #  FactoryBot.create(:micropost, user: me)
-
-    #  other1 = FactoryBot.create(:user)
-    #  reply_micropost1 = FactoryBot.create(:micropost, user: other1, content: "@#{me.unique_name}さん、こんにちわ")
-    #  # ↓Micropostのafter_saveコールバックでReplyへ登録するようにしたので不要
-    #  #reply_micropost1.replies.create(reply_to: me.id)
-
-    #  other2 = FactoryBot.create(:user)
-    #  reply_micropost2 = FactoryBot.create(:micropost, user: other2, content: "@#{me.unique_name}, hello")
-    #  # ↓Micropostのafter_saveコールバックでReplyへ登録するようにしたので不要
-    #  #reply_micropost2.replies.create(reply_to: me.id)
-
-    #  microposts = me.microposts + [reply_micropost1, reply_micropost2]
-    #  expect(me.feed).to match_array(microposts)
-    #end
   end
 end

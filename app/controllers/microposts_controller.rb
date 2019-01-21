@@ -9,44 +9,6 @@ class MicropostsController < ApplicationController
     # ログインユーザのマイクロポストをマイクロポスト用パラメータで作成する
     @micropost = current_user.microposts.build(micropost_params)
 
-    # @(.+?)
-    #   -> @から始まる任意の1文字以上にマッチ
-    # (?:\p{Hiragana}|\p{Katakana}|[ー－、。]|[一-龠々]|\s|　|[\p{P}\p{S}]|\Z)
-    #   -> ?: キャプチャしないグループに設定。これがなければ$2でキャプチャできるが、それを敢えてしないことで多少の速度UPらしい。
-    #      \p{Hiragana} ひらがなにマッチ
-    #      \p{Katakana} カタカナにマッチ
-    #      [ー－、。]   括弧内のいずれかにマッチ
-    #      [一-龠々]    漢字にマッチ
-    #      \s           半角スペースにマッチ
-    #      　           全角スペースにマッチ
-    #      [\p{P}\p{S}] あらゆるASCII記号にマッチ
-    #      \Z           文字列の末尾にマッチ。但し文字列の最後の文字が改行ならばそれの手前にマッチ。
-    
-    # @返信のunique_name部分を抽出(unique_nameを1個だけ抽出) 
-    # re = /@(.+?)(\p{Hiragana}|\p{Katakana}|[ー－、。]|[一-龠々]|\s|　|[\p{P}\p{S}]|\Z)/
-    # @micropost.content.match re
-    # unique_name = $1
-
-=begin
-    # こちらのほうがスマート
-    min = Settings.unique_name.length.minimum
-    max = Settings.unique_name.length.maximum
-    re = /@+([0-9a-z_]{#{min},#{max}})/i # /@[0-9a-zA-Z_]{1,15}/
-    @micropost.content.match(re)
-
-    if $1
-      reply_user = User.find_by(unique_name: $1.downcase)
-      @micropost.in_reply_to = reply_user.id if reply_user
-    end
-
-    # 複数回マッチ用
-    #re = /@[0-9a-zA-Z_]#{#{min},#{max}}/ # /@[0-9a-zA-Z_]{1,15}/
-    #if unique_name = @micropost.content.scan(re).first
-    #  unique_name.sub!("@","")
-    #end
-    #reply_user = User.find_by(unique_name: unique_name)
-=end
-
     # マイクロポストを保存する。
     if @micropost.save
       flash[:success] = "Micropost created!"
