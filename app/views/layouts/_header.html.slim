@@ -12,6 +12,10 @@ header.navbar.navbar-fixed-top.navbar-inverse
         - if logged_in?
           li
             = link_to "Users", users_path
+          li
+            / remote: trueにしてajax化しておかないと、modal-openのあと
+            / ページが更新されてしまい、モーダルウィンドウが一瞬しか表示されない。
+            = link_to "DM", "#", data: { modal: 'open' }, remote: true
           li.dropdown
             a.dropdown-toggle href="#" data-toggle="dropdown"
               |  Account 
