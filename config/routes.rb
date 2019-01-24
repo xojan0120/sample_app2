@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  get 'direct_messages/index'
+
   get 'password_resets/new'
 
   get 'password_resets/edit'

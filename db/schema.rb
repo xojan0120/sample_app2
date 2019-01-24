@@ -10,7 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190116063943) do
+ActiveRecord::Schema.define(version: 20190124123938) do
+
+  create_table "direct_messages", force: :cascade do |t|
+    t.string "content"
+    t.string "sender_id"
+    t.string "receiver_id"
+    t.boolean "sender_display"
+    t.boolean "receiver_display"
+    t.string "picture"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "microposts", force: :cascade do |t|
     t.text "content"
