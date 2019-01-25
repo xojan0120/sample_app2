@@ -10,6 +10,19 @@ RSpec.feature "DirectMessage", type: :system do
     user1.follow(user2)
   end
 
+  fscenario "test", js: true do
+    visit root_path
+
+    log_in_as(user1) do
+      click_link "DM"
+      expect(page).to have_content "Direct Message Users"
+      find(".iziModal-button-close").click
+      wait_for_css_disappear(".iziModal-button-close", 5) do 
+        expect(page).to_not have_content "Direct Message Users"
+      end
+    end
+  end
+
   scenario "ダイレクトメッセージ機能システムテスト", js: true do
 
     visit root_path
@@ -24,6 +37,9 @@ RSpec.feature "DirectMessage", type: :system do
       expect(page).to_not have_content user1.name
       expect(page).to_not have_content user2.name
       expect(page).to_not have_content user3.name
+
+      click_button "Create DM"
+      expect(page).to have_content "Create DM"
 
       # DMユーザ一覧画面を閉じる
       click_link "✕"

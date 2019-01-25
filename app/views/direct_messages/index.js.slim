@@ -1,0 +1,5 @@
+| $("#modal").remove();
+| $("body").append($("<div>",{ 'id': 'modal' }));
+| $("#modal").html("#{escape_javascript(render('direct_messages/index'))}");
+| $('#modal').iziModal({padding: 20, title:"ほげ"});
+| $('#modal').iziModal('open');

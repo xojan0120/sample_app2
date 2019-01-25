@@ -11,7 +11,7 @@ html
       - flash.each do |message_type, message|
         = content_tag(:div, message, class: "alert alert-#{message_type}")
       = yield
-      = render 'layouts/modal'
+      /= render 'layouts/modal'
       = render 'layouts/footer'
 
       / 本番環境のみデバッグ情報表示

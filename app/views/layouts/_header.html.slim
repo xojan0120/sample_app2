@@ -15,7 +15,8 @@ header.navbar.navbar-fixed-top.navbar-inverse
           li
             / remote: trueにしてajax化しておかないと、modal-openのあと
             / ページが更新されてしまい、モーダルウィンドウが一瞬しか表示されない。
-            = link_to "DM", "#", data: { modal: 'open' }, remote: true
+            /= link_to "DM", direct_messages_index_path, data: { modal: 'open' }, remote: true
+            = link_to "DM", direct_messages_index_path, remote: true
           li.dropdown
             a.dropdown-toggle href="#" data-toggle="dropdown"
               |  Account 
