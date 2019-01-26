@@ -67,6 +67,7 @@ group :test do
 
   # rspec関連
   gem 'guard-rspec', require: false
+  gem 'shoulda-matchers', git: 'https://github.com/thoughtbot/shoulda-matchers.git', branch: 'rails-5'
 
   # Capybara関連
   gem 'capybara',              '~> 2.15.2' 

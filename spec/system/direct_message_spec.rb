@@ -31,7 +31,7 @@ RSpec.feature "DirectMessage", type: :system do
   #  end
   #end
 
-  fscenario "DMユーザ一覧画面テスト", js: true do
+  scenario "DMユーザ一覧画面テスト", js: true do
     # アプリケーションルートへアクセスする
     visit root_path
 
@@ -48,8 +48,8 @@ RSpec.feature "DirectMessage", type: :system do
       expect(page).to_not have_selector "#modal", text: user2.name
       expect(page).to_not have_selector "#modal", text: user3.name
 
-      # Create DMボタンをクリックする
-      click_button "Create DM"
+      # Create DMリンクをクリックする
+      click_link "Create DM"
 
       # DM宛先選択画面が表示されていることを検証する
       expect(page).to have_selector ".iziModal-header", text: "Create DM"

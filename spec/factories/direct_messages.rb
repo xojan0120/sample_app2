@@ -1,10 +1,18 @@
 FactoryBot.define do
   factory :direct_message do
-    content "MyString"
-    sender_id "MyString"
-    receiver_id "MyString"
-    sender_display false
-    receiver_display false
-    picture "MyString"
+    sequence(:content) { |n| "message#{n}" }
+    sender_id nil
+    receiver_id nil
+    sender_display true
+    receiver_display true
+    picture nil
+
+    before(:create) do |direct_message|
+      user1 = FactoryBot.create(:user)
+      user2 = FactoryBot.create(:user)
+      direct_message.sender_id = user1.id
+      direct_message.receiver_id = user2.id
+    end
+
   end
 end
