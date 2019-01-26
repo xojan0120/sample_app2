@@ -1,4 +1,5 @@
-* 2019/01/27現在
+# 2019/01/27現在
+
 Railsチュートリアルを2周し、機能拡張課題に挑戦しています。
 課題リストは[issue](https://github.com/xojan0120/sample_app2/issues)を御覧ください。
 現在進行中のものは[Projects](https://github.com/xojan0120/sample_app2/projects)で確認できます。
