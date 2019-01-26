@@ -3,11 +3,11 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 # iziModalイベント登録(これでもいいけど、わかりにくい？)
-$ ->
-  $("[data-modal]").click (event) ->
-    event.preventDefault()
-    command = $(this).data('modal')
-    $('#modal').iziModal(command)
+#$ ->
+#  $("[data-modal]").click (event) ->
+#    event.preventDefault()
+#    command = $(this).data('modal')
+#    $('#modal').iziModal(command)
 
 #$ ->
 #  $("a[data-modal]").click (event) ->

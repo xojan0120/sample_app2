@@ -2,53 +2,68 @@ require 'rails_helper'
 
 RSpec.feature "DirectMessage", type: :system do
 
-  let!(:user1) { FactoryBot.create(:user, name: "ユーザ１", unique_name: "user1") }
-  let!(:user2) { FactoryBot.create(:user, name: "ユーザ２", unique_name: "user2") }
-  let!(:user3) { FactoryBot.create(:user, name: "ユーザ３", unique_name: "user3") }
+  let!(:user1) { FactoryBot.create(:user, name: "ユーザ1", unique_name: "user1") }
+  let!(:user2) { FactoryBot.create(:user, name: "ユーザ2", unique_name: "user2") }
+  let!(:user3) { FactoryBot.create(:user, name: "ユーザ3", unique_name: "user3") }
 
   before do
     user1.follow(user2)
   end
 
-  fscenario "test", js: true do
+  #fscenario "test", js: true do
+  #  visit root_path
+
+  #  log_in_as(user1) do
+  #    click_link "DM"
+  #    expect(page).to have_content "Direct Message Users"
+  #    find(".iziModal-button-close").click
+  #    wait_for_css_disappear(".iziModal-button-close", 5) do 
+  #      expect(page).to_not have_content "Direct Message Users"
+  #    end
+  #  end
+  #end
+  
+  #fscenario "test", js: true do
+  #  visit root_path
+  #  log_in_as(user1) do
+  #    click_link "DM"
+  #    expect(page).to have_selector "#modal", text: "Find me in app"
+  #  end
+  #end
+
+  fscenario "DMユーザ一覧画面テスト", js: true do
+    # アプリケーションルートへアクセスする
     visit root_path
 
+    # ユーザ1でログインする
     log_in_as(user1) do
+      # DMリンクをクリックする
       click_link "DM"
-      expect(page).to have_content "Direct Message Users"
+
+      # DMユーザ一覧画面が表示されていることを検証する
+      expect(page).to have_selector ".iziModal-header", text: "Direct Message Users"
+
+      # DMユーザ一覧画面の過去にやりとりをしたことがあるユーザは表示されていないことを検証する
+      expect(page).to_not have_selector "#modal", text: user1.name
+      expect(page).to_not have_selector "#modal", text: user2.name
+      expect(page).to_not have_selector "#modal", text: user3.name
+
+      # Create DMボタンをクリックする
+      click_button "Create DM"
+
+      # DM宛先選択画面が表示されていることを検証する
+      expect(page).to have_selector ".iziModal-header", text: "Create DM"
+
+      # ✕アイコンをクリックする
       find(".iziModal-button-close").click
       wait_for_css_disappear(".iziModal-button-close", 5) do 
+        # DMユーザ一覧画面が消えることを検証する
         expect(page).to_not have_content "Direct Message Users"
       end
     end
   end
 
-  scenario "ダイレクトメッセージ機能システムテスト", js: true do
-
-    visit root_path
-
-    log_in_as(user1) do
-      click_link "DM"
-
-      # DMユーザ一覧画面が表示されている
-      expect(page).to have_content "Direct Message Users"
-
-      # DMユーザ一覧画面の過去にやりとりをしたことがあるユーザは表示されていないことを検証する
-      expect(page).to_not have_content user1.name
-      expect(page).to_not have_content user2.name
-      expect(page).to_not have_content user3.name
-
-      click_button "Create DM"
-      expect(page).to have_content "Create DM"
-
-      # DMユーザ一覧画面を閉じる
-      click_link "✕"
-      
-      # DMユーザ一覧画面が消去されている
-      expect(page).to_not have_content "Direct Message Users"
-    end
-
-=begin
+  xscenario "DMユーザ覧画面テスト", js: true do
     # 送信者コメント
     log_in_as(sender) do
       visit_home
@@ -91,6 +106,5 @@ RSpec.feature "DirectMessage", type: :system do
       visit_home
       expect(page).to_not have_content msg
     end
-=end
   end
 end
