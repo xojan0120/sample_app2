@@ -26,7 +26,7 @@ RSpec.describe User, type: :model do
     end
   end
 
-  fdescribe "フォローユーザ検索機能について" do
+  describe "フォローユーザ検索機能について" do
     let(:me) { FactoryBot.create(:user) }
 
     context "ユーザ名でヒットした場合" do

@@ -240,7 +240,10 @@ class User < ApplicationRecord
     #r1.or(r2)
     
     # 書き方2
-    following.where("name LIKE LOWER(?) OR unique_name LIKE LOWER(?)", "%#{query_name}%", "%#{query_name}%")
+    #following.where("name LIKE LOWER(?) OR unique_name LIKE LOWER(?)", "%#{query_name}%", "%#{query_name}%")
+
+    # 書き方3(ransack使用)
+    following.ransack(name_or_unique_name_cont: query_name).result
   end
 
   private

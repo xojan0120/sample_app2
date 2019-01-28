@@ -9,7 +9,7 @@ class DirectMessagesController < ApplicationController
   def to_search
     @search_name = params[:user] ? params[:user][:name] : ""
     if @search_name.present?
-      @search_result_user = User.find_by_name(@search_name)
+      @search_result_user = current_user.following_search(@search_name)
     end
 
     respond_to do |format|

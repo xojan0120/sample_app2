@@ -23,6 +23,7 @@ gem 'jquery-rails',            '4.3.1'
 gem 'turbolinks',              '5.0.1'
 gem 'jbuilder',                '2.7.0'
 gem 'config',                  '1.7.1'
+gem 'ransack'
 
 # 開発環境とテスト環境のみで使用するgem
 group :development, :test do
