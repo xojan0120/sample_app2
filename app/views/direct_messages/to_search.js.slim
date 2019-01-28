@@ -1,0 +1,6 @@
+| modal.iziModal('setTitle',"Create DM");
+| modal.iziModal('setContent',"#{j(render('direct_messages/to_search'))}");
+
+| var result = $('.result');
+| result.empty();
+| result.html("#{j(@search_result_user&.email)}");

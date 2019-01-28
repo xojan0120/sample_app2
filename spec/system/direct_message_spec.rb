@@ -6,6 +6,9 @@ RSpec.feature "DirectMessage", type: :system do
   let!(:user2) { FactoryBot.create(:user, name: "ユーザ2", unique_name: "user2") }
   let!(:user3) { FactoryBot.create(:user, name: "ユーザ3", unique_name: "user3") }
 
+  let(:users_title)     { "Direct Message Users" }
+  let(:to_search_title) { "Create DM" }
+
   before do
     user1.follow(user2)
   end
@@ -31,80 +34,85 @@ RSpec.feature "DirectMessage", type: :system do
   #  end
   #end
 
+  def expect_to_have_title(title)
+    expect(page).to have_selector ".iziModal-header-title", text: title
+  end
+  def expect_to_not_have_title(title)
+    expect(page).to_not have_selector ".iziModal-header-title", text: title
+  end
+
   scenario "DMユーザ一覧画面テスト", js: true do
-    # アプリケーションルートへアクセスする
     visit root_path
 
-    # ユーザ1でログインする
     log_in_as(user1) do
-      # DMリンクをクリックする
+      # DMユーザ一覧画面が表示される
       click_link "DM"
+      expect_to_have_title(users_title)
 
-      # DMユーザ一覧画面が表示されていることを検証する
-      expect(page).to have_selector ".iziModal-header", text: "Direct Message Users"
-
-      # DMユーザ一覧画面の過去にやりとりをしたことがあるユーザは表示されていないことを検証する
+      # DMユーザ一覧画面の過去にやりとりをしたことがあるユーザは表示されていない
       expect(page).to_not have_selector "#modal", text: user1.name
       expect(page).to_not have_selector "#modal", text: user2.name
       expect(page).to_not have_selector "#modal", text: user3.name
 
-      # Create DMリンクをクリックする
+      # DM宛先選択画面が表示されている
       click_link "Create DM"
+      expect_to_have_title(to_search_title)
 
-      # DM宛先選択画面が表示されていることを検証する
-      expect(page).to have_selector ".iziModal-header", text: "Create DM"
-
-      # ✕アイコンをクリックする
+      # 閉じるボタンでDMユーザ一覧画面が閉じる
       find(".iziModal-button-close").click
       wait_for_css_disappear(".iziModal-button-close", 5) do 
-        # DMユーザ一覧画面が消えることを検証する
-        expect(page).to_not have_content "Direct Message Users"
+        expect_to_not_have_title(users_title)
       end
     end
   end
 
-  xscenario "DMユーザ覧画面テスト", js: true do
-    # 送信者コメント
-    log_in_as(sender) do
-      visit_home
-      post_content msg
-    end
+  fscenario "DM宛先選択画面テスト", js: true do
+    visit root_path
+    
+    log_in_as(user1) do
+      click_link "DM"
 
-    # 受信者1のHomeに返信がある
-    log_in_as(receiver1) do
-      visit_home
-      expect(page).to have_content msg, count: 1
-    end
+      # 戻るリンクでDMユーザ一覧画面に戻る
+      click_link "Create DM"
+      click_link "←"
+      expect_to_have_title(users_title)
 
-    # 受信者2のHomeに返信がある
-    log_in_as(receiver2) do
-      visit_home
-      expect(page).to have_content msg, count: 1
-    end
+      click_link "Create DM"
 
-    # 受信者以外のHomeに返信はない
-    log_in_as(other) do
-      visit_home
-      expect(page).to_not have_content msg
-    end
+      # -----------------------------------
+      # 以下フォローしているユーザについて
+      # -----------------------------------
+      # ユーザ名で検索ができる
+      fill_in "To", with: user2.name
+      expect(page).to have_selector "#search_result", text: user2.name
 
-    # 送信者が返信を削除する
-    log_in_as(sender) do
-      visit_home
-      delete_first_content
-      expect(page).to_not have_content msg
-    end
+      # 一意ユーザ名で検索ができる
+      fill_in "To", with: user2.unique_name
+      expect(page).to have_selector "#search_result", text: user2.unique_name
+      # -----------------------------------
+      # ここまで
+      # -----------------------------------
 
-    # 受信者1のHomeからも返信が削除されている
-    log_in_as(receiver1) do
-      visit_home
-      expect(page).to_not have_content msg
-    end
+      # -----------------------------------
+      # 以下フォローしていないユーザについて
+      # -----------------------------------
+      # ユーザ名で検索しても出さない
+      fill_in "To", with: user3.name
+      expect(page).to_not have_selector "#search_result", text: user3.name
 
-    # 受信者2のHomeからも返信が削除されている
-    log_in_as(receiver2) do
-      visit_home
-      expect(page).to_not have_content msg
+      # 一意ユーザ名で検索しても出さない
+      fill_in "To", with: user3.unique_name
+      expect(page).to have_selector "#search_result", text: user3.unique_name
+      # -----------------------------------
+      # ここまで
+      # -----------------------------------
+      
+      # 閉じるボタンでDM宛先選択画面が閉じる
+      find(".iziModal-button-close").click
+      wait_for_css_disappear(".iziModal-button-close", 5) do 
+        expect_to_not_have_title(to_search_title)
+      end
     end
   end
+
 end

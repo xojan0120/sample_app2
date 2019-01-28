@@ -17,11 +17,12 @@ RSpec.describe DirectMessage, type: :model do
   #it { is_expected.to validate_inclusion_of(:sender_display).in_array([true, false]) }
   #it { is_expected.to validate_inclusion_of(:receiver_display).in_array([true, false]) }
 
-  it "test" do
-    sender = FactoryBot.create(:user)
-    receiver = FactoryBot.create(:user)
-    dm = FactoryBot.build(:direct_message, sender_id: sender.id, receiver_id: receiver.id, sender_display: false)
-    expect(dm).to be_valid
-  end
+
+  #it "test" do
+  #  sender = FactoryBot.create(:user)
+  #  receiver = FactoryBot.create(:user)
+  #  dm = FactoryBot.build(:direct_message, sender_id: sender.id, receiver_id: receiver.id, sender_display: false)
+  #  expect(dm).to be_valid
+  #end
 
 end
