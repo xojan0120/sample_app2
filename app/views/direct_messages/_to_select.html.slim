@@ -1,0 +1,14 @@
+= link_to "←", direct_messages_user_index_path, remote: true
+| ここは宛先を選択する画面
+
+/input#to_search_form type="form"
+= text_field_tag "query_word", nil, id: "to_search_form", data: { path: direct_messages_to_search_path }
+
+ul.result
+
+/= form_with id: "to_search_form", scope: :user, url: direct_messages_to_search_path, method: 'get'  do |f|
+/  = f.label :To
+/  = f.text_field :name, id: 'direct_message_to'
+/  = f.submit value: "検索"
+/
+/.result

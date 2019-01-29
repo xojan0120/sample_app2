@@ -1,6 +1,0 @@
-| modal.iziModal('setTitle',"Create DM");
-| modal.iziModal('setContent',"#{j(render('to_search'))}");
-| var result = $('.result');
-| result.empty();
-- if @search_result_user.present?
-  | result.html("#{j(render('to_search_result', search_result_user: @search_result_user))}");

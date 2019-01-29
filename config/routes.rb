@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   get     '/microposts', to: 'static_pages#home'
 
   get                        'direct_messages/user_index'
+  get                        'direct_messages/to_select'
   get                        'direct_messages/to_search'
 
   # resourcesは主要な7つ(index,create,new,edit,show,update,destroy)のルーティングが自動追加されるが、

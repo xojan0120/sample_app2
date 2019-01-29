@@ -1,9 +1,0 @@
-= link_to "←", direct_messages_user_index_path, remote: true
-| ここは宛先を選択する画面
-
-= form_with scope: :user, url: direct_messages_to_search_path, method: 'get'  do |f|
-  = f.label :To
-  = f.text_field :name
-  = f.submit value: "検索"
-
-.result

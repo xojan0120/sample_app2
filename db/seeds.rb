@@ -18,6 +18,15 @@
               )
 end
 
+User.create!(name: "木戸涼介",
+             email: "user4@gmail.com",
+             password: "foobar",
+             password_confirmation: "foobar",
+             activated: true,
+             activated_at: Time.zone.now,
+             unique_name: "kido_ryosuke"
+            )
+
 
 
 99.times do |n|

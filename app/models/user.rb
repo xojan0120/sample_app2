@@ -230,20 +230,22 @@ class User < ApplicationRecord
     following.include?(other_user)
   end
 
-  def following_search(query_name)
+  def following_search(query_word)
     # 開発環境のsqlite3において、LIKE演算子は大文字小文字を区別しないため、
     # LOWERは不要だが、他DBの場合を考慮してLOWERしておく。
     
     # 書き方1
-    #r1 = following.where("name        LIKE LOWER(?)", "%#{query_name}%")
-    #r2 = following.where("unique_name LIKE LOWER(?)", "%#{query_name}%")
+    #r1 = following.where("name        LIKE LOWER(?)", "%#{query_word}%")
+    #r2 = following.where("unique_name LIKE LOWER(?)", "%#{query_word}%")
     #r1.or(r2)
     
     # 書き方2
-    #following.where("name LIKE LOWER(?) OR unique_name LIKE LOWER(?)", "%#{query_name}%", "%#{query_name}%")
+    #following.where("name LIKE LOWER(?) OR unique_name LIKE LOWER(?)", "%#{query_word}%", "%#{query_word}%")
 
     # 書き方3(ransack使用)
-    following.ransack(name_or_unique_name_cont: query_name).result
+    # 注意: query_wordが空だと全件返す
+    # ToDo: LIMITをかける
+    following.ransack(name_or_unique_name_cont: query_word).result
   end
 
   private
