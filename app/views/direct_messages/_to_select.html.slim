@@ -4,7 +4,7 @@
 /input#to_search_form type="form"
 = text_field_tag "query_word", nil, id: "to_search_form", data: { search_path: direct_messages_to_search_path }
 
-ul#result
+ul#result.users
 
 /= form_with id: "to_search_form", scope: :user, url: direct_messages_to_search_path, method: 'get'  do |f|
 /  = f.label :To

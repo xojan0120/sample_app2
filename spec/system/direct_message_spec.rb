@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.feature "DirectMessage", type: :system do
+RSpec.feature "DirectMessage", type: :system, js: true do
 
   let!(:me)               { FactoryBot.create(:user, name: "ユーザ1", unique_name: "John_smith") }
   let!(:following_user)   { FactoryBot.create(:user, name: "ユーザ2", unique_name: "Jane_smith") }
@@ -13,35 +13,20 @@ RSpec.feature "DirectMessage", type: :system do
     me.follow(following_user)
   end
 
-  #fscenario "test", js: true do
-  #  visit root_path
-
-  #  log_in_as(me) do
-  #    click_link "DM"
-  #    expect(page).to have_content "Direct Message Users"
-  #    find(".iziModal-button-close").click
-  #    wait_for_css_disappear(".iziModal-button-close", 5) do 
-  #      expect(page).to_not have_content "Direct Message Users"
-  #    end
-  #  end
-  #end
-  
-  #fscenario "test", js: true do
-  #  visit root_path
-  #  log_in_as(me) do
-  #    click_link "DM"
-  #    expect(page).to have_selector "#modal", text: "Find me in app"
-  #  end
-  #end
-
   def expect_to_have_title(title)
     expect(page).to have_selector ".iziModal-header-title", text: title
   end
+
   def expect_to_not_have_title(title)
     expect(page).to_not have_selector ".iziModal-header-title", text: title
   end
 
-  scenario "DMユーザ一覧画面テスト", js: true do
+  def close_modal
+    find(".iziModal-button-close").click
+    wait_for_css_disappear(".iziModal-button-close", 5)
+  end
+
+  scenario "DMユーザ一覧画面テスト" do
     visit root_path
 
     log_in_as(me) do
@@ -59,22 +44,12 @@ RSpec.feature "DirectMessage", type: :system do
       expect_to_have_title(to_search_title)
 
       # 閉じるボタンでDMユーザ一覧画面が閉じる
-      find(".iziModal-button-close").click
-      wait_for_css_disappear(".iziModal-button-close", 5) do 
-        expect_to_not_have_title(users_index_title)
-      end
+      close_modal
+      expect_to_not_have_title(users_index_title)
     end
   end
 
-  xscenario "testest", js: true do
-    visit root_path
-    log_in_as(me) do
-      click_link "Home"
-      debugger
-    end
-  end
-
-  scenario "DM宛先選択画面1(戻るリンクでDMユーザ一覧画面に戻る)", js: true do
+  scenario "DM宛先選択画面1(戻るリンクでDMユーザ一覧画面に戻る)" do
     visit root_path
     log_in_as(me) do
       # 戻るリンクでDMユーザ一覧画面に戻る
@@ -86,18 +61,14 @@ RSpec.feature "DirectMessage", type: :system do
       expect_to_have_title(users_index_title)
 
       # 閉じるボタンでDM宛先選択画面が閉じる
-      find(".iziModal-button-close").click
-      wait_for_css_disappear(".iziModal-button-close", 5) do 
-        expect_to_not_have_title(to_search_title)
-      end
+      close_modal
+      expect_to_not_have_title(to_search_title)
     end
   end
 
-  #fscenario "DM宛先選択画面2(ユーザ名または一意ユーザ名で検索ができる)", js: true do
-  fscenario "test", js: true do
+  scenario "DM宛先選択画面2(ユーザ名または一意ユーザ名で検索ができる)" do
     visit root_path
     log_in_as(me) do
-      # 戻るリンクでDMユーザ一覧画面に戻る
       click_link "DM"
       click_link "Create DM"
 
@@ -106,7 +77,11 @@ RSpec.feature "DirectMessage", type: :system do
       # -------------------------------------------
       # ユーザ名で検索ができる
       fill_in "to_search_form", with: following_user.name
-      expect(page).to have_selector "#resultx", text: following_user.name
+      expect(page).to have_selector "#result", text: following_user.name
+
+      # 検索ボックスの内容を消去し、検索結果が消える
+      # ※中身が空の要素を探す方法不明
+      #fill_in "to_search_form", with: ""
 
       # 一意ユーザ名で検索
       fill_in "to_search_form", with: following_user.unique_name
@@ -124,90 +99,49 @@ RSpec.feature "DirectMessage", type: :system do
       expect(page).to_not have_selector "#result", text: unfollowing_user.unique_name
 
       # 閉じるボタンでDM宛先選択画面が閉じる
-      find(".iziModal-button-close").click
-      wait_for_css_disappear(".iziModal-button-close", 5) do 
-        expect_to_not_have_title(to_search_title)
-      end
+      close_modal
+      expect_to_not_have_title(to_search_title)
     end
   end
 
-  xscenario "test", js: true do
+  fscenario "DM一覧画面テスト(ユーザ1→ユーザ2へのメッセージ送信)" do
     visit root_path
-    
-    log_in_as(me) do
-      click_link "DM"
-      expect_to_have_title(users_index_title)
-      click_link "Create DM"
-      expect_to_have_title(to_search_title)
-      click_link "←"
-      expect_to_have_title(users_index_title)
-      click_link "Create DM"
-      expect_to_have_title(to_search_title)
-      # ユーザ名で検索ができる
-      fill_in "direct_message_to", with: following_user.name
-      click_button "検索"
-      expect(page).to have_selector ".result", text: following_user.name
-      # 閉じるボタンでDM宛先選択画面が閉じる
-      find(".iziModal-button-close").click
-      wait_for_css_disappear(".iziModal-button-close", 5) do 
-        expect_to_not_have_title(to_search_title)
-      end
-    end
-  end
-
-  xscenario "DM宛先選択画面テスト", js: true do
-    visit root_path
-    
     log_in_as(me) do
       click_link "DM"
       click_link "Create DM"
+
+      # DM宛先画面から検索してユーザ2を選択し、DM一覧画面が表示される
+      fill_in "to_search_form", with: following_user.name
+      expect(page).to have_selector "#result", text: following_user.name
+      click_link following_user.name
+      expect_to_have_title(following_user.name)
+
+      # 戻るリンクでDM宛先画面に戻る
       click_link "←"
-      # # ★click_link "←"のあとモーダルが消えている
-      # expect_to_have_title(users_index_title)
+      expect_to_have_title(to_search_title)
 
-      # # ここでユーザ一覧画面が表示しきる前に次のCreate DMを
-      # # 押そうとして押せずにモーダルが消える？
+      # 再びDM宛先画面からユーザ2を検索しDM一覧画面を表示する
+      fill_in "to_search_form", with: following_user.name
+      expect(page).to have_selector "#result", text: following_user.name
+      click_link following_user.name
 
-      # #find_link "Create DM"
-      # click_link "Create DM"
-      # expect_to_have_title(to_search_title)
-      # #page.execute_script "$('#modal').iziModal('open')"
+      # メッセージを入力
+      msg = "こんにちわ"
+      fill_in "message_form", with: msg
 
-      # ## -----------------------------------
-      # ## 以下フォローしているユーザについて
-      # ## -----------------------------------
-      # ## ユーザ名で検索ができる
-      # #fill_in "#test_inp", with: "hoge"
-      fill_in "direct_message_to", with: following_user.name  # →ここの入力がうまくいかない。
-      take_screenshot
-      #expect(page).to have_selector ".result", text: following_user.name
+      # 画像をセット
+      expect(page).to have_css(".glyphicon-picture")
+      image_path = 'spec/factories/images/rails.png'
+      image_full_path = Rails.root.join(image_path)
+      attach_file('direct_message[picture]', image_full_path)
 
-      ## 一意ユーザ名で検索ができる
-      #fill_in "name", with: following_user.unique_name
-      #expect(page).to have_selector ".result", text: following_user.unique_name
-      ## -----------------------------------
-      ## ここまで
-      ## -----------------------------------
+      # 送信後、メッセージと画像が表示される
+      click_button "Send"
+      expect(page).to have_selector "#messages", text: msg
+      expect(find('img')['src']).to have_content(File.basename(image_path))
 
-      ## -----------------------------------
-      ## 以下フォローしていないユーザについて
-      ## -----------------------------------
-      ## ユーザ名で検索しても出さない
-      #fill_in "name", with: unfollowing_user.name
-      #expect(page).to_not have_selector ".result", text: unfollowing_user.name
-
-      ## 一意ユーザ名で検索しても出さない
-      #fill_in "name", with: unfollowing_user.unique_name
-      #expect(page).to have_selector ".result", text: unfollowing_user.unique_name
-      ## -----------------------------------
-      ## ここまで
-      ## -----------------------------------
-      #
-      ## 閉じるボタンでDM宛先選択画面が閉じる
-      #find(".iziModal-button-close").click
-      #wait_for_css_disappear(".iziModal-button-close", 5) do 
-      #  expect_to_not_have_title(to_search_title)
-      #end
+      close_modal
+      expect_to_not_have_title(following_user.name)
     end
   end
 

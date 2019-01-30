@@ -4,7 +4,7 @@ module WaitForCss
     Timeout.timeout(wait_time) do
       loop until has_css?(selector)
     end
-    yield
+    yield if block_given?
   end
 
   # cssが表示されなくなるまで待つ
@@ -12,7 +12,7 @@ module WaitForCss
     Timeout.timeout(wait_time) do
       loop until has_no_css?(selector)
     end
-    yield
+    yield if block_given?
   end
 end
 
