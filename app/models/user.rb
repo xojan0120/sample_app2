@@ -245,7 +245,7 @@ class User < ApplicationRecord
     # 書き方3(ransack使用)
     # 注意: query_wordが空だと全件返す
     # ToDo: LIMITをかける
-    following.ransack(name_or_unique_name_cont: query_word).result
+    following.ransack(name_or_unique_name_cont: query_word).result.limit(10)
   end
 
   private

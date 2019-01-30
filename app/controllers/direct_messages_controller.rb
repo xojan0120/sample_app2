@@ -15,10 +15,8 @@ class DirectMessagesController < ApplicationController
 
   def to_search
     if params[:query_word].present?
-      result = current_user.following_search(params[:query_word])
-      render json: result
-    else
-      render json: []
+      users = current_user.following_search(params[:query_word])
+      render json: users
     end
   end
   

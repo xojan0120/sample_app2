@@ -54,4 +54,4 @@ incremental_search = (query_url, query_word, ul_element) ->
 # その要素は存在しないためイベント定義ができない。そこで、最初から存在する
 # $(document)に対してイベントを定義する。
 $(document).on 'keyup', '#to_search_form', (event) ->
-  incremental_search($(this).data('path'), $.trim($(this).val()), $(".result"))
+  incremental_search($(this).data('search-path'), $.trim($(this).val()), $("#result"))

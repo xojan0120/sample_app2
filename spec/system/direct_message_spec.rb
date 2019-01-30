@@ -93,7 +93,8 @@ RSpec.feature "DirectMessage", type: :system do
     end
   end
 
-  scenario "DM宛先選択画面2(ユーザ名または一意ユーザ名で検索ができる)", js: true do
+  #fscenario "DM宛先選択画面2(ユーザ名または一意ユーザ名で検索ができる)", js: true do
+  fscenario "test", js: true do
     visit root_path
     log_in_as(me) do
       # 戻るリンクでDMユーザ一覧画面に戻る
@@ -104,27 +105,23 @@ RSpec.feature "DirectMessage", type: :system do
       # フォローユーザについて
       # -------------------------------------------
       # ユーザ名で検索ができる
-      fill_in "direct_message_to", with: following_user.name
-      click_button "検索"
-      expect(page).to have_selector ".result", text: following_user.name
+      fill_in "to_search_form", with: following_user.name
+      expect(page).to have_selector "#resultx", text: following_user.name
 
       # 一意ユーザ名で検索
-      fill_in "direct_message_to", with: following_user.unique_name
-      click_button "検索"
-      expect(page).to have_selector ".result", text: following_user.unique_name
+      fill_in "to_search_form", with: following_user.unique_name
+      expect(page).to have_selector "#result", text: following_user.unique_name
 
       # -------------------------------------------
       # フォローしていないユーザについて
       # -------------------------------------------
       # ユーザ名で検索しても出さない
-      fill_in "direct_message_to", with: unfollowing_user.name
-      click_button "検索"
-      expect(page).to_not have_selector ".result", text: unfollowing_user.name
+      fill_in "to_search_form", with: unfollowing_user.name
+      expect(page).to_not have_selector "#result", text: unfollowing_user.name
 
       # 一意ユーザ名で検索しても出さない
-      fill_in "direct_message_to", with: unfollowing_user.unique_name
-      click_button "検索"
-      expect(page).to_not have_selector ".result", text: unfollowing_user.unique_name
+      fill_in "to_search_form", with: unfollowing_user.unique_name
+      expect(page).to_not have_selector "#result", text: unfollowing_user.unique_name
 
       # 閉じるボタンでDM宛先選択画面が閉じる
       find(".iziModal-button-close").click
@@ -134,7 +131,7 @@ RSpec.feature "DirectMessage", type: :system do
     end
   end
 
-  fscenario "test", js: true do
+  xscenario "test", js: true do
     visit root_path
     
     log_in_as(me) do
