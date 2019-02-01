@@ -2,8 +2,18 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
+ajax_request = (url, type, data) ->
+  $.ajax(
+    url:          url
+    type:        "GET"
+    data:        "query_word=#{query_word}"
+  )
+  return
+
 $(document).on 'click', '[data-user-id]', (event) ->
-  alert($(this).data('user-id'))
+  data = $.param({ user_id: $(this).data('user-id') })
+  $.ajax($(this).data('url'), "GET", data)
+  return
 
 # iziModalイベント登録(これでもいいけど、わかりにくい？)
 #$ ->

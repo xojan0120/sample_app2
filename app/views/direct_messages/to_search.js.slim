@@ -1,4 +1,7 @@
 | var result = $('#result');
 | result.find("li").remove();
 - @users.each do |user|
-  | result.append('<li data-user-id="#{user.id}">#{gravatar_for(user,size:40)} #{user.name} @#{user.unique_name} </li>');
+  | result.append('<li data-url="#{direct_messages_index_path}" data-user-id="#{user.id}">#{gravatar_for(user,size:40)} #{user.name} @#{user.unique_name} </li>');
+
+  /- link = link_to(user.name, direct_messages_index_path + "?to_user=#{user.id}", remote: true)
+  /| result.append('<li>#{gravatar_for(user,size:40)} #{link} @#{user.unique_name} </li>');

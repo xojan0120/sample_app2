@@ -7,11 +7,13 @@ FactoryBot.define do
     receiver_display true
     picture nil
 
-    before(:create) do |direct_message|
-      user1 = FactoryBot.create(:user)
-      user2 = FactoryBot.create(:user)
-      direct_message.sender_id = user1.id
-      direct_message.receiver_id = user2.id
+    trait :with_sender_receiver do
+      before(:create) do |direct_message|
+        user1 = FactoryBot.create(:user)
+        user2 = FactoryBot.create(:user)
+        direct_message.sender_id = user1.id
+        direct_message.receiver_id = user2.id
+      end
     end
 
   end
