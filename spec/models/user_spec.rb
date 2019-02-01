@@ -89,4 +89,56 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe "メッセージ機能について" do
+    let(:me)    { FactoryBot.create(:user) }
+    let(:other) { FactoryBot.create(:user) }
+    let(:msg1)  { "this is send message1" }
+    let(:msg2)  { "this is send message2" }
+
+    it "自分のメッセージを取得できる" do
+      me.send_dm(msg1, other)
+      me.send_dm(msg2, other)
+      expect(me.sent_direct_messages.pluck(:content)).to match_array([msg1,msg2])
+    end
+
+    it "相手のメッセージを取得できる" do
+      other.send_dm(msg1, me)
+      other.send_dm(msg2, me)
+      expect(me.received_direct_messages.pluck(:content)).to match_array([msg1,msg2])
+    end
+
+    context "自分のメッセージを削除(非表示)した場合" do
+      it "相手のメッセージは取得できるが、自分のメッセージは取得できない" do
+        my_dm_id    = me.send_dm(msg1, other)
+        other_dm_id = other.send_dm(msg2, me)
+
+        # ここで取得できるのは自分が送ったメッセージ
+        me.sent_direct_messages.first.hide(:sender)
+
+        sent_dms     = me.sent_direct_messages
+        received_dms = me.received_direct_messages
+
+        expect(sent_dms).to         be_empty
+        expect(received_dms).to_not be_empty
+      end
+    end
+
+    context "相手のメッセージを削除(非表示)した場合" do
+      fit "自分のメッセージは取得できるが、相手のメッセージは取得できない" do
+        my_dm_id    = me.send_dm(msg1, other)
+        other_dm_id = other.send_dm(msg2, me)
+
+        # ここで取得できるのは送信者、つまり自分の送ったメッセージ
+        me.received_direct_messages.first.hide(:sender)
+
+        sent_dms     = me.sent_direct_messages
+        received_dms = me.received_direct_messages
+
+        expect(sent_dms).to_not be_empty
+        expect(received_dms).to be_empty
+      end
+    end
+  end
+
 end

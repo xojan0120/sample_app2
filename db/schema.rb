@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190124123938) do
+ActiveRecord::Schema.define(version: 20190201013502) do
 
   create_table "direct_messages", force: :cascade do |t|
     t.string "content"
-    t.string "sender_id"
-    t.string "receiver_id"
+    t.integer "sender_id"
+    t.integer "receiver_id"
     t.boolean "sender_display"
     t.boolean "receiver_display"
     t.string "picture"

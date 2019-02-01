@@ -69,6 +69,11 @@ class User < ApplicationRecord
   #             WHERE relationships.followed_id = 「user.id」
   has_many :followers, through: :passive_relationships, source: :follower
 
+  has_many :sent_direct_messages,
+    -> { where(sender_display:   true) }, class_name: 'DirectMessage', foreign_key: :sender_id
+  has_many :received_direct_messages,
+    -> { where(receiver_display: true) }, class_name: 'DirectMessage', foreign_key: :receiver_id
+
   attr_accessor :remember_token, :activation_token, :reset_token
 
   before_save   :downcase_email
@@ -244,8 +249,17 @@ class User < ApplicationRecord
 
     # 書き方3(ransack使用)
     # 注意: query_wordが空だと全件返す
-    # ToDo: LIMITをかける
     following.ransack(name_or_unique_name_cont: query_word).result.limit(10)
+  end
+
+  def send_dm(msg, receiver)
+    DirectMessage.create(
+      content:          msg,
+      sender_id:        id,
+      receiver_id:      receiver.id,
+      sender_display:   true,
+      receiver_display: true
+    )
   end
 
   private
