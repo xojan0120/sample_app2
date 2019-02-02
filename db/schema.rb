@@ -10,17 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190201013502) do
+ActiveRecord::Schema.define(version: 20190202013929) do
+
+  create_table "direct_message_stats", force: :cascade do |t|
+    t.integer "direct_message_id"
+    t.integer "user_id"
+    t.boolean "display"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["direct_message_id"], name: "index_direct_message_stats_on_direct_message_id"
+    t.index ["user_id"], name: "index_direct_message_stats_on_user_id"
+  end
 
   create_table "direct_messages", force: :cascade do |t|
     t.string "content"
-    t.integer "sender_id"
-    t.integer "receiver_id"
-    t.boolean "sender_display"
-    t.boolean "receiver_display"
     t.string "picture"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.integer "room_id"
+    t.index ["room_id"], name: "index_direct_messages_on_room_id"
+    t.index ["user_id"], name: "index_direct_messages_on_user_id"
   end
 
   create_table "microposts", force: :cascade do |t|
@@ -49,6 +59,20 @@ ActiveRecord::Schema.define(version: 20190201013502) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["micropost_id"], name: "index_replies_on_micropost_id"
+  end
+
+  create_table "rooms", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "user_rooms", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "room_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["room_id"], name: "index_user_rooms_on_room_id"
+    t.index ["user_id"], name: "index_user_rooms_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|

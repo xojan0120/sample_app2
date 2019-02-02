@@ -2,22 +2,26 @@ require 'rails_helper'
 
 RSpec.describe DirectMessage, type: :model do
 
-  it "有効なファクトリを持つこと" do
-    dm = FactoryBot.create(:direct_message, :with_sender_receiver)
+  it "userとroomがあれば有効な状態であること" do
+    user = FactoryBot.create(:user)
+    room = FactoryBot.create(:room)
+    dm = DirectMessage.new(user: user, room: room)
     expect(dm).to be_valid
   end
 
-  # バリデーションテスト
-  it { is_expected.to validate_presence_of :sender_id }
-  it { is_expected.to validate_presence_of :receiver_id }
+  it "userがなければ無効な状態であること" do
+    room = FactoryBot.create(:room)
+    dm = DirectMessage.new(room: room)
+    expect(dm).to be_invalid
+  end
 
-  # boolean型のバリデーションについては、バリデーション対象のカラムにセットされるときに
-  # ActiveRecordが何でもboolean型にしてしまうため、意味がないため削除。
-  # https://qiita.com/YumaInaura/items/b26fdfee8affd4cb77ef
-  #it { is_expected.to validate_inclusion_of(:sender_display).in_array([true, false]) }
-  #it { is_expected.to validate_inclusion_of(:receiver_display).in_array([true, false]) }
+  it "roomがなければ無効な状態であること" do
+    user = FactoryBot.create(:user)
+    dm = DirectMessage.new(user: user)
+    expect(dm).to be_invalid
+  end
 
-  it "2人のユーザのメッセージが取得できる" do
+  xit "2人のユーザのメッセージが取得できる" do
     user1 = FactoryBot.create(:user)
     user2 = FactoryBot.create(:user)
     pair_user_id = [user1.id, user2.id]

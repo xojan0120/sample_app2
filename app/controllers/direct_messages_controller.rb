@@ -32,10 +32,21 @@ class DirectMessagesController < ApplicationController
   end
 
   def index
-    @to_user = params[:to_user]
+    @user_name = User.find(params[:user_id]).name
     respond_to do |format|
       format.js
     end
   end
+
+  def create
+    dm = DirectMessage.new(direct_message_params)
+    debugger
+  end
+
+  private
+
+    def direct_message_params
+      params.require(:direct_message).permit(:content, :picture)
+    end
   
 end

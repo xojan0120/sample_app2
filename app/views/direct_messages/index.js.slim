@@ -1,4 +1,3 @@
 / 変数modalはapp/views/layouts/_modal.html.slimで定義
-/| modal.iziModal('setTitle',   "Direct Message Users");
-/| modal.iziModal('setContent',"#{j(render('index'))}");
-/| if(modal.iziModal('getState') != 'opened') modal.iziModal('open');
+| modal.iziModal('setTitle',"#{@user_name}");
+| modal.iziModal('setContent',"#{j(render('index'))}");

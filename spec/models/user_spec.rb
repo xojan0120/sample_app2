@@ -90,7 +90,33 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe "メッセージ機能について" do
+  #describe "メッセージ機能について" do
+  #  it "ユーザは複数のメッセージを持てる" do
+  #    user = FactoryBot.create(:user)
+  #    room = FactoryBot.create(:room)
+  #    dm1 = user.direct_messages.create(content: "test message1", user: user, room: room)
+  #    dm2 = user.direct_messages.create(content: "test message2", user: user, room: room)
+  #    expect(user.direct_messages).to match_array([dm1,dm2])
+  #  end
+
+  #  it "ユーザはuser_roomsを通して複数のRoomを持てる" do
+  #    user = FactoryBot.create(:user)
+  #    room1 = FactoryBot.create(:room)
+  #    room2 = FactoryBot.create(:room)
+  #    user.user_rooms.create(user: user, room: room1)
+  #    user.user_rooms.create(user: user, room: room2)
+  #    expect(user.rooms).to match_array([room1,room2])
+  #  end
+
+  #  it "ユーザは複数のメッセージの状態を持てる" do
+  #    user = FactoryBot.create(:user)
+  #    st1 = user.direct_message_stats.create()
+  #    st2 = user.direct_message_stats.create()
+  #    expect(user.direct_message_stats).to match_array([st1,st2])
+  #  end
+  #end
+
+  xdescribe "メッセージ機能について" do
     let(:me)    { FactoryBot.create(:user) }
     let(:other) { FactoryBot.create(:user) }
     let(:msg1)  { "this is send message1" }

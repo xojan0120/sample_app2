@@ -2,7 +2,7 @@
 | ここは宛先を選択する画面
 
 /input#to_search_form type="form"
-= text_field_tag "query_word", nil, id: "to_search_form", data: { search_path: direct_messages_to_search_path }
+= text_field_tag "query_word", nil, id: "to_search_form", data: { url: direct_messages_to_search_path }
 
 ul#result.users
 
