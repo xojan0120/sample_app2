@@ -248,14 +248,15 @@ class User < ApplicationRecord
     #following.where("name LIKE LOWER(?) OR unique_name LIKE LOWER(?)", "%#{query_word}%", "%#{query_word}%")
 
     # 書き方3(ransack使用)
-    # 注意: query_wordが空だと全件返す
+    # 補足: query_wordが空だと全件返されるのでlimitで制限する
     following.ransack(name_or_unique_name_cont: query_word).result.limit(10)
   end
 
   def send_dm(room, content, picture = nil)
     dm = direct_messages.create(content: content, picture: picture, room: room)
     room.users.each do |user|
-      DirectMessageStat.create(display: true, user: user, direct_message: dm)
+      #DirectMessageStat.create(display: true, user: user, direct_message: dm)
+      dm.direct_message_stats.create(display: true, user: user)
     end
     dm
   end
