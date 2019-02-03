@@ -26,7 +26,7 @@ ajax = (url, type, data, processData = true, contentType = true) ->
 # $(document)に対してイベントを定義する。
 $(document).on 'keyup', '#to_search_form', (event) ->
   url  = $(this).data('url')
-  data = "query_word=#{$.trim($(this).val())}"
+  data = $.param({ query_word: $.trim($(this).val()) })
   ajax(url, "GET", data, false, false)
   return
 
