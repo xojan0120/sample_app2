@@ -2,4 +2,10 @@ class DirectMessage < ApplicationRecord
   belongs_to :user
   has_many :direct_message_stats
   belongs_to :room
+
+  validates :content, presence: true
+
+  def get_state_for(user)
+    direct_message_stats.find_by(user: user)
+  end
 end

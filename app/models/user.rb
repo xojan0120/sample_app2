@@ -252,6 +252,18 @@ class User < ApplicationRecord
     following.ransack(name_or_unique_name_cont: query_word).result.limit(10)
   end
 
+  def send_dm(room, content, picture = nil)
+    dm = direct_messages.create(content: content, picture: picture, room: room)
+    room.users.each do |user|
+      DirectMessageStat.create(display: true, user: user, direct_message: dm)
+    end
+    dm
+  end
+
+  def hide_dm(direct_message)
+    direct_message.get_state_for(self).invisible
+  end
+
   private
 
     # メールアドレスをすべて小文字にする

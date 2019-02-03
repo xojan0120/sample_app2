@@ -2,10 +2,11 @@ require 'rails_helper'
 
 RSpec.describe DirectMessage, type: :model do
 
-  it "userとroomがあれば有効な状態であること" do
+  it "userとroomとcontentがあれば有効な状態であること" do
     user = FactoryBot.create(:user)
     room = FactoryBot.create(:room)
-    dm = DirectMessage.new(user: user, room: room)
+    content = "test message"
+    dm = DirectMessage.new(user: user, room: room, content: content)
     expect(dm).to be_valid
   end
 
@@ -21,16 +22,19 @@ RSpec.describe DirectMessage, type: :model do
     expect(dm).to be_invalid
   end
 
-  xit "2人のユーザのメッセージが取得できる" do
-    user1 = FactoryBot.create(:user)
-    user2 = FactoryBot.create(:user)
-    pair_user_id = [user1.id, user2.id]
-
-    user1.send_dm("my name is #{user1.name}", user2)
-    user2.send_dm("my name is #{user2.name}", user1)
-    dms = [user1.sent_direct_messages.first, user2.sent_direct_messages.first]
-
-    expect(DirectMessage.get_dm(pair_user_id)).to match_array(dms)
+  it "contentがなければ無効な状態であること" do
+    user = FactoryBot.create(:user)
+    room = FactoryBot.create(:room)
+    dm = DirectMessage.new(user: user, room: room)
+    expect(dm).to be_invalid
   end
 
+  it "メッセージの表示状態が取得できること" do
+    user = FactoryBot.create(:user)
+    room = Room.make([user])
+    content = "#{user.name}'s message"
+    dm = user.send_dm(room, content)
+    dm_stat = dm.get_state_for(user)
+    expect(dm_stat.display).to be_truthy
+  end
 end
