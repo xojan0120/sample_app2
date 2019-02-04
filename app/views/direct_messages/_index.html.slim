@@ -2,10 +2,15 @@
 | ここはDM一覧のページ
 
 #messages
-  | ここにメッセージ一覧
+  - @direct_messages.each do |dm|
+    li
+      span #{dm.content}
+      span.glyphicon.glyphicon-trash.small
+      - if dm.picture?
+        = image_tag dm.picture.url 
 
 = form_with model: DirectMessage.new, url: direct_messages_create_path, remote: true do |f|
-  = f.text_field "content"
+  = f.text_field :content
   span.glyphicon.glyphicon-picture
-  = f.file_field "picture"
+  = f.file_field :picture
   = f.submit "Send"

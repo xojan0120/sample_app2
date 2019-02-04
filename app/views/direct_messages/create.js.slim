@@ -1,0 +1,4 @@
+/ 変数modalはapp/views/layouts/_modal.html.slimで定義
+- if @direct_message
+  | $('#messages').append("<li>#{@direct_message.content}</li>");
+/ ToDo:入力後にフォームの内容が残る問題

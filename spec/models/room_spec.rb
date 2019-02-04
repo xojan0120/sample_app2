@@ -22,6 +22,15 @@ RSpec.describe Room, type: :model do
     expect(room.users).to match_array(users)
   end
 
+  it "ルームの存在確認ができること" do
+    users = FactoryBot.create_list(:user, 2)
+    other = FactoryBot.create(:user)
+    Room.make(users)
+
+    expect(Room.exist?(users)).to be_truthy
+    expect(Room.exist?(users << other)).to be_falsey
+  end
+
   it "ルームのメッセージを全て取得できること" do
     user1 = FactoryBot.create(:user)
     user2 = FactoryBot.create(:user)

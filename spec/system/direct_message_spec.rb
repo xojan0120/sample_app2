@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.feature "DirectMessage", type: :system, js: true do
+RSpec.feature "DirectMessage", type: :system do
 
   let!(:me)               { FactoryBot.create(:user, name: "ユーザ1", unique_name: "John_smith") }
   let!(:following_user)   { FactoryBot.create(:user, name: "ユーザ2", unique_name: "Jane_smith") }
@@ -26,7 +26,7 @@ RSpec.feature "DirectMessage", type: :system, js: true do
     wait_for_css_disappear(".iziModal-button-close", 5)
   end
 
-  scenario "DMユーザ一覧画面テスト" do
+  scenario "DMユーザ一覧画面テスト", js: true do
     visit root_path
 
     log_in_as(me) do
@@ -49,7 +49,7 @@ RSpec.feature "DirectMessage", type: :system, js: true do
     end
   end
 
-  scenario "DM宛先選択画面1(戻るリンクでDMユーザ一覧画面に戻る)" do
+  scenario "DM宛先選択画面1(戻るリンクでDMユーザ一覧画面に戻る)", js: true do
     visit root_path
     log_in_as(me) do
       # 戻るリンクでDMユーザ一覧画面に戻る
@@ -66,7 +66,7 @@ RSpec.feature "DirectMessage", type: :system, js: true do
     end
   end
 
-  scenario "DM宛先選択画面2(ユーザ名または一意ユーザ名で検索ができる)" do
+  scenario "DM宛先選択画面2(ユーザ名または一意ユーザ名で検索ができる)", js: true do
     visit root_path
     log_in_as(me) do
       click_link "DM"
@@ -104,7 +104,7 @@ RSpec.feature "DirectMessage", type: :system, js: true do
     end
   end
 
-  fscenario "DM一覧画面テスト(ユーザ1→ユーザ2へのメッセージ送信)" do
+  fscenario "DM一覧画面テスト(ユーザ1→ユーザ2へのメッセージ送信)", js: true do
     visit root_path
     log_in_as(me) do
       click_link "DM"

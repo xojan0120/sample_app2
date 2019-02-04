@@ -19,10 +19,11 @@ class Room < ApplicationRecord
     room
   end
 
-  # users_arrayの全ユーザが所属しているルームのみ取得する
-  # 無い場合はnilを返す
   def self.pick(users_array)
-    user_room = UserRoom.where(user_id: users_array.pluck(:id)).select(:room_id).distinct.first
-    user_room&.room
+    UserRoom.identify_room(users_array)
+  end
+
+  def self.exist?(users_array)
+    UserRoom.identify_room(users_array) ? true : false
   end
 end

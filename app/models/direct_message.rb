@@ -5,6 +5,8 @@ class DirectMessage < ApplicationRecord
 
   validates :content, presence: true
 
+  mount_uploader :picture, PictureUploader
+
   def get_state_for(user)
     direct_message_stats.find_by(user: user)
   end

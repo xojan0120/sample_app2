@@ -32,21 +32,30 @@ class DirectMessagesController < ApplicationController
   end
 
   def index
-    @user_name = User.find(params[:user_id]).name
+    @partner = User.find(params[:user_id])
+    member = [current_user,@partner]
+
+    room = Room.exist?(member) ? Room.pick(member) : Room.make(member)
+    @direct_messages = room.direct_messages_for(current_user)
+    session[:room_id] = room.id
+
     respond_to do |format|
       format.js
     end
   end
 
   def create
-    dm = DirectMessage.new(direct_message_params)
-    debugger
+    room = current_user.rooms.find(session[:room_id])
+    content = params[:direct_message][:content]
+    picture = params[:direct_message][:picture]
+    @direct_message = current_user.send_dm(room, content, picture)
+    #redirect_to direct_messages_index_path(user_id: 1)
   end
 
   private
 
-    def direct_message_params
-      params.require(:direct_message).permit(:content, :picture)
-    end
+    #def direct_message_params
+    #  params.require(:direct_message).permit(:content, :picture,)
+    #end
   
 end

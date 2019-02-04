@@ -253,12 +253,15 @@ class User < ApplicationRecord
   end
 
   def send_dm(room, content, picture = nil)
-    dm = direct_messages.create(content: content, picture: picture, room: room)
-    room.users.each do |user|
-      #DirectMessageStat.create(display: true, user: user, direct_message: dm)
-      dm.direct_message_stats.create(display: true, user: user)
+    dm = direct_messages.build(content: content, picture: picture, room: room)
+    debugger
+    if dm.save
+      room.users.each do |user|
+        #DirectMessageStat.create(display: true, user: user, direct_message: dm)
+        dm.direct_message_stats.create(display: true, user: user)
+      end
+      dm
     end
-    dm
   end
 
   def hide_dm(direct_message)
