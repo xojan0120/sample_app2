@@ -138,7 +138,9 @@ RSpec.feature "DirectMessage", type: :system do
       # 送信後、メッセージと画像が表示される
       click_button "Send"
       expect(page).to have_selector "#messages", text: msg
-      expect(find('img')['src']).to have_content(File.basename(image_path))
+      within "#messages" do
+        expect(find('img')['src']).to have_content(File.basename(image_path))
+      end
 
       close_modal
       expect_to_not_have_title(following_user.name)
