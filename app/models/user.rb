@@ -254,7 +254,6 @@ class User < ApplicationRecord
 
   def send_dm(room, content, picture = nil)
     dm = direct_messages.build(content: content, picture: picture, room: room)
-    debugger
     if dm.save
       room.users.each do |user|
         #DirectMessageStat.create(display: true, user: user, direct_message: dm)

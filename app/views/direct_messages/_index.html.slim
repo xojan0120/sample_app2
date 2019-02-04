@@ -3,13 +3,9 @@
 
 #messages
   - @direct_messages.each do |dm|
-    li
-      span #{dm.content}
-      span.glyphicon.glyphicon-trash.small
-      - if dm.picture?
-        = image_tag dm.picture.url 
+    = render 'direct_message', { dm: dm }
 
-= form_with model: DirectMessage.new, url: direct_messages_create_path, remote: true do |f|
+= form_with model: DirectMessage.new, url: direct_messages_create_path, remote: true, id: "message_input_form"  do |f|
   = f.text_field :content
   span.glyphicon.glyphicon-picture
   = f.file_field :picture

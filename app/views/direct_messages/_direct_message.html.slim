@@ -1,0 +1,6 @@
+li
+  span
+    | #{dm.content}
+    span.glyphicon.glyphicon-trash.small
+      - if dm.picture?
+        = image_tag dm.picture.url 
