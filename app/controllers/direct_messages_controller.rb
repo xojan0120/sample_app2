@@ -37,7 +37,6 @@ class DirectMessagesController < ApplicationController
 
     @room = Room.exist?(member) ? Room.pick(member) : Room.make(member)
     @direct_messages = @room.direct_messages_for(current_user)
-    #session[:room_id] = room.id
 
     respond_to do |format|
       format.js

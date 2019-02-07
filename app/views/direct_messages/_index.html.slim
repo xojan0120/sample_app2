@@ -5,11 +5,11 @@
   - @direct_messages.each do |dm|
     = render 'direct_message', { dm: dm }
 
-= form_with model: DirectMessage.new, url: "" , id: "message_input_form", data: { room_id: @room.id }   do |f|
-  = f.text_field :content, id: "js-content"
+= form_with model: DirectMessage.new, url: "" , data: { form: "", room_id: @room.id }   do |f|
+  = f.text_field :content, data: { content: "" }
   span.glyphicon.glyphicon-picture
-  = f.file_field :picture, id: "js-picture"
-  = f.submit "Send", id: "js-send"
+  = f.file_field :picture, data: { picture: "" }
+  = f.submit "Send", data: { send: "" }
 
 coffee:
-  $(document).trigger("channel_room_create_subscriptions")
+  $(document).trigger("channels_room_create_subscriptions")

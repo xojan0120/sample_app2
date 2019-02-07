@@ -1,10 +1,10 @@
 # -----------------------------------------------------------------------------------------------------------------------------
 # セレクタ定義
 # -----------------------------------------------------------------------------------------------------------------------------
-form_selector    = '#message_input_form'
-content_selector = '#js-content'
-picture_selector = '#js-picture'
-send_selector    = '#js-send'
+form_selector    = '[data-form]'
+content_selector = '[data-content]'
+picture_selector = '[data-picture]'
+send_selector    = '[data-send]'
 
 # -----------------------------------------------------------------------------------------------------------------------------
 # 関数定義
@@ -47,11 +47,10 @@ create_subscriptions = (params) ->
       # Called when the subscription has been terminated by the server
   
     received: (data) ->
-      $('#messages').prepend(data['message_html'])
+      $('#messages').append(data['html'])
   
     send_dm: (content, data_uri, file_name) ->
-      #@perform('send_dm', { content: content, data_uri: data_uri, file_name: file_name })
-      alert "send!"
+      @perform('send_dm', { content: content, data_uri: data_uri, file_name: file_name })
       clear_form(form_selector)
 
 # -----------------------------------------------------------------------------------------------------------------------------
@@ -62,7 +61,7 @@ create_subscriptions = (params) ->
 # create_subscriptionsする。理由は、_index.html.slim内のform要素のdata-room-id属性に
 # room-idを持たせており、その要素がレンダリングされたあとで無いと、ここで欲しいroom_idが
 # 取得できないため。
-$(document).on 'channel_room_create_subscriptions', ->
+$(document).on 'channels_room_create_subscriptions', ->
   room_id = $(form_selector).data("room-id")
   create_subscriptions({ channel: "RoomChannel", room_id: room_id })
 
