@@ -28,4 +28,6 @@
           | #{direct_message.content}
       span.glyphicon.glyphicon-trash.small
         - if direct_message.picture?
-          = image_tag direct_message.picture.url 
+          = link_to direct_message.picture.url, data: { lightbox: "octocat" }
+            = image_tag direct_message.picture.url , width: 128
+          /= image_tag direct_message.picture.url 
