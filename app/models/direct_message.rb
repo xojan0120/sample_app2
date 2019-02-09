@@ -11,7 +11,7 @@ class DirectMessage < ApplicationRecord
   # つまり、contentとpictureの両方が存在しなに場合は、パスしない
 
   mount_uploader :picture, PictureUploader
-  validates :picture_data_uri, size: { maximum: 5.megabytes }
+  validates :picture_data_uri, size: { maximum: 5.megabytes }, if: :picture?
 
   def get_state_for(user)
     direct_message_stats.find_by(user: user)

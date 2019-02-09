@@ -1,14 +1,31 @@
-- if dm.errors.any?
-  - dm.errors.full_messages.each do |message|
+/- debugger
+
+/- if dm.errors.any?
+/  - dm.errors.full_messages.each do |message|
+/    li
+/      span
+/        | [ERORR!] #{message}
+/- else
+/  - if dm.content || dm.picture?
+/    li
+/      span
+/        - if dm.content
+/          | #{dm.content}
+/      span.glyphicon.glyphicon-trash.small
+/        - if dm.picture?
+/          = image_tag dm.picture.url 
+
+- if direct_message.errors.any?
+  - direct_message.errors.full_messages.each do |message|
     li
       span
         | [ERORR!] #{message}
 - else
-  - if dm.content || dm.picture?
+  - if direct_message.content || direct_message.picture?
     li
       span
-        - if dm.content
-          | #{dm.content}
+        - if direct_message.content
+          | #{direct_message.content}
       span.glyphicon.glyphicon-trash.small
-        - if dm.picture?
-          = image_tag dm.picture.url 
+        - if direct_message.picture?
+          = image_tag direct_message.picture.url 

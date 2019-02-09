@@ -20,26 +20,27 @@ class RoomChannel < ApplicationCable::Channel
     room = current_user.rooms.find(params['room_id'])
     content = data['content']
     picture_data_uri = data['data_uri']
-    dm = current_user.send_dm(room, content, picture_data_uri)
+    direct_message = current_user.send_dm(room, content, picture_data_uri)
 
     # 第一引数のチャンネル名に対してブロードキャストする
-    #ActionCable.server.broadcast("room_channel_#{params['room_id']}", cast_data(dm))
+    #ActionCable.server.broadcast("room_channel_#{params['room_id']}", cast_data(direct_message))
     
     # 第一引数のモデルに紐付いたチャンネルに対してブロードキャストする
-    if dm.errors.any?
-      RoomChannel.broadcast_to(current_user, cast_data(dm))
+    if direct_message.errors.any?
+      # エラーがあったら、現在のユーザにのみブロードキャストする
+      RoomChannel.broadcast_to(current_user, cast_data(direct_message))
     else
-      RoomChannel.broadcast_to(Room.find(params['room_id']), cast_data(dm))
+      RoomChannel.broadcast_to(Room.find(params['room_id']), cast_data(direct_message))
     end
   end
 
   private
 
-    def cast_data(dm)
+    def cast_data(direct_message)
       {
         html: ApplicationController.renderer.render(
                 partial: 'direct_messages/direct_message',
-                locals: { dm: dm })
+                locals: { direct_message: direct_message })
       }
     end
 end
