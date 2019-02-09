@@ -252,15 +252,23 @@ class User < ApplicationRecord
     following.ransack(name_or_unique_name_cont: query_word).result.limit(10)
   end
 
-  def send_dm(room, content, picture = nil)
-    dm = direct_messages.build(content: content, picture: picture, room: room)
+  def send_dm(room, content, picture_data_uri)
+    dm = direct_messages.build(content: content, picture_data_uri: picture_data_uri, room: room)
+
+    # テスト用。意図的にエラーを起こす場合は、"raise"と入力。
+    #if content == "raise"
+    #  dm = direct_messages.build(content: nil, picture_data_uri: nil, room: room)
+    #else
+    #  dm = direct_messages.build(content: content, picture_data_uri: picture_data_uri, room: room)
+    #end
+
     if dm.save
       room.users.each do |user|
         #DirectMessageStat.create(display: true, user: user, direct_message: dm)
         dm.direct_message_stats.create(display: true, user: user)
       end
-      dm
     end
+    dm
   end
 
   def hide_dm(direct_message)

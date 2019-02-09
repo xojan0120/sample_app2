@@ -1,6 +1,14 @@
-li
-  span
-    | #{dm.content}
-    span.glyphicon.glyphicon-trash.small
-      - if dm.picture?
-        = image_tag dm.picture.url 
+- if dm.errors.any?
+  - dm.errors.full_messages.each do |message|
+    li
+      span
+        | [ERORR!] #{message}
+- else
+  - if dm.content || dm.picture?
+    li
+      span
+        - if dm.content
+          | #{dm.content}
+      span.glyphicon.glyphicon-trash.small
+        - if dm.picture?
+          = image_tag dm.picture.url 

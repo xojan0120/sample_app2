@@ -18,12 +18,23 @@ get_reader = (file) ->
   reader.readAsDataURL(file)
   return reader
 
+# 既に購読しているチャンネルかどうかチェックする
+check_subscribe = (channel, room_id) ->
+  result = false
+  subscriptions = App.cable.subscriptions['subscriptions']
+  subscriptions.forEach (subscription) ->
+    identifier = subscription.identifier
+    json = JSON.parse(identifier)
+    if json.channel == channel && json.room_id == room_id
+      result = true
+  return result
+
 send_dm = ->
   content = $.trim($(content_selector).val())
   picture = $(picture_selector).get(0).files[0]
 
-  has_content = if content.length   >  0          then true else false
-  has_picture = if typeof(picture) != 'undefined' then true else false
+  has_content = if content.length > 0 then true else false
+  has_picture = if (picture != undefined && picture != null) then true else false
 
   if has_content || has_picture
     if has_picture
@@ -37,6 +48,8 @@ send_dm = ->
   return
 
 create_subscriptions = (params) ->
+  # クライアント側でApp.cable.subscriptions.createが呼ばれると
+  # サーバのチャンネルと通信が始まる？
   # paramsはapp/channels/room_channel.rbに渡される。
   # room_channel.rbの中でparams['room_id']等でアクセスできる。
   App.room = App.cable.subscriptions.create (params),
@@ -63,7 +76,11 @@ create_subscriptions = (params) ->
 # 取得できないため。
 $(document).on 'channels_room_create_subscriptions', ->
   room_id = $(form_selector).data("room-id")
-  create_subscriptions({ channel: "RoomChannel", room_id: room_id })
+  # 既に購読済みチャンネルならcreate_subscriptionsしない。
+  # これがないと、ブラウザバックした後、戻ってきた時に同じチャンネルを
+  # ２重で購読し、メッセージを２重で受信してしまう
+  unless check_subscribe("RoomChannel",room_id)
+    create_subscriptions({ channel: "RoomChannel", room_id: room_id })
 
 $(document).on 'keypress', content_selector, (event) ->
   if event.which is 13 # = Enter
