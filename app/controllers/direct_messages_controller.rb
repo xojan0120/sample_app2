@@ -1,5 +1,6 @@
 class DirectMessagesController < ApplicationController
   def user_index
+    @latest_dm_users = current_user.latest_dm_users(10)
     respond_to do |format|
       format.js
     end

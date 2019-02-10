@@ -54,4 +54,15 @@ RSpec.describe DirectMessage, type: :model do
     dm_stat = dm.get_state_for(user)
     expect(dm_stat.display).to be_truthy
   end
+
+  it "メッセージの受信ユーザを取得できること" do
+    fr_user  = FactoryBot.create(:user)
+    to_user1 = FactoryBot.create(:user)
+    to_user2 = FactoryBot.create(:user)
+    room = Room.make([fr_user,to_user1,to_user2])
+    content = "test"
+    dm = fr_user.send_dm(room, content)
+
+    expect(dm.received_users).to match_array([to_user1,to_user2])
+  end
 end

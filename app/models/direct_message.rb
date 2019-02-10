@@ -16,4 +16,12 @@ class DirectMessage < ApplicationRecord
   def get_state_for(user)
     direct_message_stats.find_by(user: user)
   end
+
+  def received_users
+    users = Array.new
+    room.user_rooms.where.not(user: user).each do |user_room|
+      users << user_room.user
+    end
+    users
+  end
 end

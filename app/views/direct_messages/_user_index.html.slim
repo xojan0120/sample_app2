@@ -1,14 +1,5 @@
 = link_to "Create DM", direct_messages_to_select_path, class: "btn btn-primary", remote: true
-p The quick brown fox jumps over the lazy dog
-p The quick brown fox jumps over the lazy dog
-p The quick brown fox jumps over the lazy dog
-p The quick brown fox jumps over the lazy dog
-p The quick brown fox jumps over the lazy dog
-p The quick brown fox jumps over the lazy dog
-p The quick brown fox jumps over the lazy dog
-p The quick brown fox jumps over the lazy dog
-p The quick brown fox jumps over the lazy dog
-p The quick brown fox jumps over the lazy dog
-p The quick brown fox jumps over the lazy dog
-p The quick brown fox jumps over the lazy dog
-p LAST
+ul#latest_dm_users.users
+  - @latest_dm_users.each do |user|
+    li data-url="#{direct_messages_index_path}" data-user-id="#{user.id}"
+      | #{gravatar_for(user,size:40)} #{user.name} @#{user.unique_name}

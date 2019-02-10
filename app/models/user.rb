@@ -252,7 +252,7 @@ class User < ApplicationRecord
     following.ransack(name_or_unique_name_cont: query_word).result.limit(10)
   end
 
-  def send_dm(room, content, picture_data_uri)
+  def send_dm(room, content = "", picture_data_uri = "")
     dm = direct_messages.build(content: content, picture_data_uri: picture_data_uri, room: room)
 
     # テスト用。意図的にエラーを起こす場合は、"raise"と入力。
@@ -273,6 +273,16 @@ class User < ApplicationRecord
 
   def hide_dm(direct_message)
     direct_message.get_state_for(self).invisible
+  end
+
+  def latest_dm_users(count)
+    users = Array.new
+    # 自分が送った直近DM(room毎)をcount件取得
+    dms = direct_messages.select([:user_id, :room_id]).order(created_at: :desc).distinct([:user_id, :room_id]).limit(count)
+    dms.each do |direct_message|
+      users << direct_message.received_users
+    end
+    users.flatten
   end
 
   private

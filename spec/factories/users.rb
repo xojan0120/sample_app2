@@ -37,4 +37,24 @@ FactoryBot.define do
       user.followers << create_list(:user, evaluator.follower_number)
     }
   end
+
+  # to_user_num の人数分のDM送信済み
+  # DMのcreated_atは最後に送ったものが一番新しくなる
+  # 下記トレイトを用意したが、送り先のユーザを取得しにくいなどの理由で
+  # 使いにくいので没
+  #trait :with_sent do
+  #  transient do
+  #    to_user_num 1
+  #  end
+
+  #  after(:create) {|fr_user ,evaluator|
+  #    to_users = create_list(:user, evaluator.to_user_num).sort
+  #    t = Time.now
+  #    to_users.each do |to_user|
+  #      room = Room.make([fr_user, to_user])
+  #      dm = fr_user.send_dm(room, "hello, #{to_user.name}")
+  #      dm.update_attribute(:created_at, t += 1)
+  #    end
+  #  }
+  #end
 end
