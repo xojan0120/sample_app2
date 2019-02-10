@@ -17,7 +17,7 @@ RSpec.feature "DirectMessage", type: :system do
     expect(page).to have_selector ".iziModal-header-title", text: title
   end
 
-  def expect_to_not_have_title(title)
+  def expect_to_not_have_title(page)
     expect(page).to_not have_selector ".iziModal-header-title", text: title
   end
 
@@ -104,30 +104,55 @@ RSpec.feature "DirectMessage", type: :system do
     end
   end
 
-  fscenario "DM一覧画面テスト(ユーザ1→ユーザ2へのメッセージ送信)", js: true do
-    visit root_path
-    log_in_as(me) do
-      click_link "DM"
-      click_link "Create DM"
+  scenario "DM一覧画面テスト(ユーザ1とユーザ2間のメッセージ送信)", js: true do
+    user1 = me
+    user2 = following_user
+    user2.follow(user1)
 
-      # DM宛先選択画面から検索してユーザ2を選択し、DM一覧画面が表示される
-      fill_in "to_search_form", with: following_user.name
-      expect(page).to have_selector "#result", text: following_user.name
-      find(%Q( [data-user-id="#{following_user.id}"] )).click
-      expect_to_have_title(following_user.name)
+    # ユーザ1用のセッションを作成する
+    using_session :user1 do
+      visit root_path
+      log_in_as(user1, log_out_user: false) do
+        click_link "DM"
+        click_link "Create DM"
 
-      # 戻るリンクでDM宛先選択画面に戻る
-      click_link "←"
-      expect_to_have_title(to_select_title)
+        # DM宛先選択画面から検索してユーザ2を選択し、DM一覧画面が表示される
+        fill_in "to_search_form", with: user2.name
+        expect(page).to have_selector "#result", text: user2.name
+        find(%Q( [data-user-id="#{user2.id}"] )).click
+        expect_to_have_title(user2.name)
 
-      # 再びDM宛先選択画面からユーザ2を検索しDM一覧画面を表示する
-      fill_in "to_search_form", with: following_user.name
-      expect(page).to have_selector "#result", text: following_user.name
-      find(%Q( [data-user-id="#{following_user.id}"] )).click
+        # 戻るリンクでDM宛先選択画面に戻る
+        click_link "←"
+        expect_to_have_title(to_select_title)
 
+        # 再びDM宛先選択画面からユーザ2を検索しDM一覧画面を表示する
+        fill_in "to_search_form", with: user2.name
+        expect(page).to have_selector "#result", text: user2.name
+        find(%Q( [data-user-id="#{user2.id}"] )).click
+      end
+    end
+
+    # ユーザ2用のセッションを作成する
+    using_session :user2 do
+      visit root_path
+      log_in_as(user2, log_out_user: false) do
+        click_link "DM"
+        click_link "Create DM"
+
+        # DM宛先選択画面から検索してユーザ1を選択し、DM一覧画面が表示される
+        fill_in "to_search_form", with: user1.name
+        expect(page).to have_selector "#result", text: user1.name
+        find(%Q( [data-user-id="#{user1.id}"] )).click
+        expect_to_have_title(user1.name)
+      end
+    end
+
+    # ユーザ1用のセッションに対して
+    msg1 = "こんにちわ,#{user2.name}"
+    using_session :user1 do
       # メッセージを入力
-      msg = "こんにちわ"
-      fill_in "direct_message[content]", with: msg
+      fill_in "direct_message[content]", with: msg1
 
       # 画像をセット
       expect(page).to have_css(".glyphicon-picture")
@@ -137,13 +162,59 @@ RSpec.feature "DirectMessage", type: :system do
 
       # 送信後、メッセージと画像が表示される
       click_button "Send"
-      expect(page).to have_selector "#messages", text: msg
+      expect(page).to have_selector "#messages", text: msg1
       within "#messages" do
-        expect(find('img')['src']).to have_content(File.basename(image_path))
+        expect(page).to have_selector("img", count: 1)
+      end
+    end
+
+    # ユーザ2用のセッションに対して
+    msg2 = "やあ、#{user1.name}"
+    using_session :user2 do
+      expect(page).to have_selector "#messages", text: msg1
+      within "#messages" do
+        expect(page).to have_selector("img", count: 1)
       end
 
+      # メッセージを入力
+      fill_in "direct_message[content]", with: msg2
+
+      # 画像をセット
+      expect(page).to have_css(".glyphicon-picture")
+      image_path = 'spec/factories/images/rails.png'
+      image_full_path = Rails.root.join(image_path)
+      attach_file('direct_message[picture]', image_full_path)
+
+      # 送信後、メッセージと画像が表示される
+      click_button "Send"
+      expect(page).to have_selector "#messages", text: msg2
+      within "#messages" do
+        expect(page).to have_selector("img", count: 2)
+      end
+    end
+
+    # ユーザ1用のセッションに対して
+    using_session :user1 do
+      expect(page).to have_selector "#messages", text: msg2
+      within "#messages" do
+        expect(page).to have_selector("img", count: 2)
+      end
+    end
+
+    # ユーザ1用のセッションに対して
+    using_session :user1 do
+      # 閉じるボタンでDM一覧画面が閉じる
       close_modal
-      expect_to_not_have_title(following_user.name)
+      expect_to_not_have_title(user2.name)
+      log_out
+    end
+
+    # ユーザ2用のセッションに対して
+    using_session :user2 do
+      # 閉じるボタンでDM一覧画面が閉じる
+      close_modal
+      expect_to_not_have_title(user1.name)
+      log_out
     end
   end
 
