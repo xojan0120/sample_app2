@@ -9,8 +9,15 @@
       span
         - if direct_message.content
           | #{direct_message.content}
+
       span
         - if direct_message.picture?
           = link_to direct_message.picture.url, data: { lightbox: "octocat" }
             = image_tag direct_message.picture.url , width: 128
-      span.glyphicon.glyphicon-trash.small
+
+      / ゴミ箱アイコン
+      = form_with model: DirectMessage.new,
+          url: direct_messages_hide_path,
+          id: "dm-hide-form", method: :post do |f|
+        = f.hidden_field :id, value: direct_message.id
+        span.glyphicon.glyphicon-trash.small

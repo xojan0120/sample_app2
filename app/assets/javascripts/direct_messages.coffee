@@ -1,4 +1,9 @@
 # -----------------------------------------------------------------------------------------------------------------------------
+# セレクタ定義
+# -----------------------------------------------------------------------------------------------------------------------------
+hide_dm_form_selector = "#dm-hide-form"
+
+# -----------------------------------------------------------------------------------------------------------------------------
 # 関数定義
 # -----------------------------------------------------------------------------------------------------------------------------
 # --------------------------------------
@@ -59,25 +64,32 @@ ajax = (url, type, data, processData = true, contentType = true) ->
 # 最初に読み込むjavascript内で定義する場合において、最初に定義される時点では
 # その要素は存在しないためイベント定義ができない。そこで、最初から存在する
 # $(document)に対してイベントを定義する。
+
+# インクリメンタル検索
 $(document).on 'keyup', '#to_search_form', (event) ->
-  url  = $(this).data('url')
+  url  = $(event.target).data('url')
   data = $.param({ query_word: $.trim($(this).val()) })
   ajax(url, "GET", data, false, false)
   return
 
 # DM宛先選択画面のインクリメンタル検索結果クリック時
 $(document).on 'click', '[data-user-id]', (event) ->
-  url = $(this).data('url')
+  url  = $(event.target).data('url')
   data = $.param({ user_id: $(this).data('user-id') }) # params => user_id=1
   ajax(url, "GET", data)
   return
 
 # DM一覧画面のゴミ箱アイコンクリック時
-$(document).on 'click', '.glyphicon-trash', (event) ->
-  swal({
-    title: "delete?",
-    showCancelButton: true
-  }).then( (result) ->
-    dm_id = $(event.target.parentElement).data('dm-id')
-    console.log(dm_id)  # ここらへんから！！！
-  )
+$(document).on "click", ".glyphicon-trash", (event) ->
+  swal(
+    {text: "delete?", showCancelButton: true }
+  ).then (result) ->
+    if result.value
+      Rails.fire(event.target.parentElement, "submit")
+
+$(document).on "ajax:success", hide_dm_form_selector, (event) ->
+  $(event.target.parentElement).remove()
+  #event.target.parentElement.remove()  # →これだとIE11が対応していない。
+  
+$(document).on "ajax:error", hide_dm_form_selector, (event) ->
+  console.log("hide_dm_form_error")

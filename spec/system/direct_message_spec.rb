@@ -261,6 +261,8 @@ RSpec.feature "DirectMessage", type: :system do
   fscenario "DM一覧画面テスト(メッセージ削除)", js: true do
     user1 = me
     user2 = following_user
+    user2.follow(me)
+    msg = "削除テスト"
 
     visit root_path
     log_in_as(user1) do
@@ -272,9 +274,9 @@ RSpec.feature "DirectMessage", type: :system do
       find(%Q( [data-user-id="#{user2.id}"] )).click
 
       # メッセージを入力・送信
-      msg = "削除テスト"
       fill_in "direct_message[content]", with: msg
       click_button "Send"
+      sleep 0.5
       msg_id = DirectMessage.find_by(content: msg).id
 
       # 入力したメッセージのゴミ箱アイコンをクリックする
@@ -306,7 +308,7 @@ RSpec.feature "DirectMessage", type: :system do
 
       # DM宛先選択画面から検索してユーザ1を選択し、DM一覧画面表示
       fill_in "to_search_form", with: user1.name
-      find(%Q( [data-user-id="#{user2.id}"] )).click
+      find(%Q( [data-user-id="#{user1.id}"] )).click
 
       # DM一覧画面にユーザ1が削除したメッセージが消えていないことを検証する
       expect(page).to have_content(msg)

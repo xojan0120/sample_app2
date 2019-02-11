@@ -1,4 +1,6 @@
 class DirectMessagesController < ApplicationController
+  before_action :logged_in_user
+
   def user_index
     @latest_dm_users = current_user.latest_dm_users(10)
     respond_to do |format|
@@ -49,7 +51,11 @@ class DirectMessagesController < ApplicationController
     content = params[:direct_message][:content]
     picture = params[:direct_message][:picture]
     @direct_message = current_user.send_dm(room, content, picture)
-    #redirect_to direct_messages_index_path(user_id: 1)
+  end
+
+  def hide
+    direct_message = DirectMessage.find(params[:direct_message][:id])
+    current_user.hide_dm(direct_message)
   end
 
   private
