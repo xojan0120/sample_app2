@@ -162,8 +162,8 @@ RSpec.feature "DirectMessage", type: :system do
 
       # 送信後、メッセージと画像が表示される
       click_button "Send"
-      expect(page).to have_selector "#messages", text: msg1
-      within "#messages" do
+      expect(page).to have_selector "ul.messages", text: msg1
+      within "ul.messages" do
         expect(page).to have_selector("img", count: 1)
       end
     end
@@ -171,8 +171,8 @@ RSpec.feature "DirectMessage", type: :system do
     # ユーザ2用のセッションに対して
     msg2 = "やあ、#{user1.name}"
     using_session :user2 do
-      expect(page).to have_selector "#messages", text: msg1
-      within "#messages" do
+      expect(page).to have_selector "ul.messages", text: msg1
+      within "ul.messages" do
         expect(page).to have_selector("img", count: 1)
       end
 
@@ -187,16 +187,16 @@ RSpec.feature "DirectMessage", type: :system do
 
       # 送信後、メッセージと画像が表示される
       click_button "Send"
-      expect(page).to have_selector "#messages", text: msg2
-      within "#messages" do
+      expect(page).to have_selector "ul.messages", text: msg2
+      within "ul.messages" do
         expect(page).to have_selector("img", count: 2)
       end
     end
 
     # ユーザ1用のセッションに対して
     using_session :user1 do
-      expect(page).to have_selector "#messages", text: msg2
-      within "#messages" do
+      expect(page).to have_selector "ul.messages", text: msg2
+      within "ul.messages" do
         expect(page).to have_selector("img", count: 2)
       end
     end

@@ -1,7 +1,6 @@
 = link_to "←", direct_messages_to_select_path, remote: true
 | ここはDM一覧のページ
-
-#messages
+ul.messages
   = render @direct_messages
   /- @direct_messages.each do |dm|
   /  = render 'direct_message', { dm: dm }

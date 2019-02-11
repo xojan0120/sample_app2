@@ -1,3 +1,4 @@
 / 変数modalはapp/views/layouts/_modal.html.slimで定義
 | modal.iziModal('setTitle',"#{@partner.name}");
 | modal.iziModal('setContent',"#{j(render('index'))}");
+| $('[data-content]').focus();

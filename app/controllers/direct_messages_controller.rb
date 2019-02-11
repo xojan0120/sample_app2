@@ -40,17 +40,11 @@ class DirectMessagesController < ApplicationController
 
     @room = Room.exist?(member) ? Room.pick(member) : Room.make(member)
     @direct_messages = @room.direct_messages_for(current_user)
+    @current_user_id = current_user.id
 
     respond_to do |format|
       format.js
     end
-  end
-
-  def create
-    room = current_user.rooms.find(session[:room_id])
-    content = params[:direct_message][:content]
-    picture = params[:direct_message][:picture]
-    @direct_message = current_user.send_dm(room, content, picture)
   end
 
   def hide

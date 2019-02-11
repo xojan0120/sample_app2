@@ -301,6 +301,7 @@ span.picture {
 }
 
 /* direct_messages */
-#messages {
+ul.messages {
   margin-bottom: 1em;
+  list-style-type: none;
 }

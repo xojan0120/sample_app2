@@ -60,7 +60,7 @@ create_subscriptions = (params) ->
       # Called when the subscription has been terminated by the server
   
     received: (data) ->
-      $('#messages').append(data['html'])
+      $('ul.messages').append(data['html'])
   
     send_dm: (content, data_uri, file_name) ->
       @perform('send_dm', { content: content, data_uri: data_uri, file_name: file_name })
