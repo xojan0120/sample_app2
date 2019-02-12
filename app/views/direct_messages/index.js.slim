@@ -1,4 +1,7 @@
 / 変数modalはapp/views/layouts/_modal.html.slimで定義
 | modal.iziModal('setTitle',"#{@partner.name}");
-| modal.iziModal('setContent',"#{j(render('index'))}");
-| $('[data-content]').focus();
+ruby:
+  render_data = j(
+    render partial: 'index', locals: { current_user_id: @current_user_id }
+    )
+| modal.iziModal('setContent',"#{render_data}");

@@ -1,14 +1,16 @@
 = link_to "←", direct_messages_to_select_path, remote: true
-| ここはDM一覧のページ
-ul.messages
-  = render @direct_messages
-  /- @direct_messages.each do |dm|
-  /  = render 'direct_message', { dm: dm }
 
-= form_with model: DirectMessage.new, url: "" , data: { form: "", room_id: @room.id , user_id: 1}   do |f|
+/ メッセージエリア
+ul.messages
+  = render partial: @direct_messages, locals: { current_user_id: current_user_id }
+
+/ 入力フォーム
+= form_with model: DirectMessage.new,
+            url: "" ,
+            data: { form: "", room_id: @room.id },
+            method: :post do |f|
   = f.text_field :content, data: { content: "" }
-  span.glyphicon.glyphicon-picture
-  = f.file_field :picture, data: { picture: "" }
+  = f.file_field :picture, data: { picture: "" }, value: "img"
   = f.submit "Send", data: { send: "" }
 
 coffee:

@@ -40,7 +40,10 @@ class RoomChannel < ApplicationCable::Channel
       {
         html: ApplicationController.renderer.render(
                 partial: 'direct_messages/direct_message',
-                locals: { direct_message: direct_message })
+                locals: { 
+                  direct_message: direct_message,
+                  current_user_id: current_user.id
+                })
       }
     end
 end

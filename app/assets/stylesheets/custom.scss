@@ -301,7 +301,62 @@ span.picture {
 }
 
 /* direct_messages */
+
 ul.messages {
   margin-bottom: 1em;
   list-style-type: none;
+
+  @mixin li_base($left_or_right) {
+    $message-bg-color: #e1edf8;
+
+    // 枠
+    background-color: $message-bg-color;
+    position: relative;
+    margin: 10px if($left_or_right == right, 0, -35px);
+    padding: 10px;
+    border-radius: 20px;
+    clear: both;
+    float: $left_or_right;
+
+    // 吹き出し
+    &::after {
+      content: "";
+      border-#{if($left_or_right == left, right, left)}: 20px solid $message-bg-color;
+      border-top: 10px solid transparent;
+      border-bottom: 10px solid transparent;
+      position: absolute;
+      #{$left_or_right}: -10px;
+      top: 10px;
+    }
+
+    // ゴミ箱
+    form {
+      .glyphicon-trash {
+        position: absolute;
+        #{$left_or_right}: -15px;
+        top: 30px;
+      }
+    }
+  }
+
+  li.right_side {
+    @include li_base(right);
+  }
+
+  li.left_side {
+    @include li_base(left);
+  }
+}
+
+.iziModal .iziModal-header-title {
+  line-height: 2.3 !important; 
+
+  .glyphicon .glyphicon-circle-arrow-left {
+    font-size: x-large;
+  }
+}
+
+.modal-header-link {
+  float: right;
+  clear: both;
 }

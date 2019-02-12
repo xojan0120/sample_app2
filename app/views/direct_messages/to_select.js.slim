@@ -1,6 +1,6 @@
+/ 変数modalはapp/views/layouts/_modal.html.slimで定義
 | modal.iziModal('setTitle',"Create DM");
 | modal.iziModal('setContent',"#{j(render('to_select'))}");
-/| var result = $('.result');
-/| result.empty();
-/- if @search_result_user.present?
-/  | result.html("#{j(render('to_search_result', search_result_user: @search_result_user))}");
+
+- render_data = j( render partial: 'modal_header_links', locals: { name: "back_to_user_index" })
+| $('.iziModal-header-title').prepend("#{render_data}");
