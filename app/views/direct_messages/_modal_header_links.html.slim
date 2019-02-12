@@ -1,6 +1,7 @@
-- case name
-- when "direct_dm_link"
-  = link_to "Create DM", direct_messages_to_select_path, class: "btn btn-primary modal-header-link", remote: true
+- case link_name
+- when "create_dm"
+  .modal-header-link
+    = link_to "Create DM", direct_messages_to_select_path, class: "btn btn-primary modal-header-link", remote: true
 - when "back_to_user_index"
   = link_to direct_messages_user_index_path, remote: true do
-    span.glyphicon.glyphicon-circle-arrow-left
+    span.glyphicon.glyphicon-circle-arrow-left.back_link_icon

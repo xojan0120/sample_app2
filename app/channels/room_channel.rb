@@ -8,7 +8,7 @@ class RoomChannel < ApplicationCable::Channel
     #stream_from "room_channel_#{params['room_id']}"
 
     # 引数のモデルに紐付いたチャンネルのストリームを購読する
-    stream_for Room.find(params['room_id'])
+    #stream_for Room.find(params['room_id'])
     stream_for current_user
   end
 
@@ -30,19 +30,22 @@ class RoomChannel < ApplicationCable::Channel
       # エラーがあったら、現在のユーザにのみブロードキャストする
       RoomChannel.broadcast_to(current_user, cast_data(direct_message))
     else
-      RoomChannel.broadcast_to(Room.find(params['room_id']), cast_data(direct_message))
+      room = Room.find(params['room_id'])
+      room.users.each do |user|
+        RoomChannel.broadcast_to(user, cast_data(user,direct_message))
+      end
     end
   end
 
   private
 
-    def cast_data(direct_message)
+    def cast_data(user,direct_message)
       {
         html: ApplicationController.renderer.render(
                 partial: 'direct_messages/direct_message',
                 locals: { 
                   direct_message: direct_message,
-                  current_user_id: current_user.id
+                  current_user_id: user.id
                 })
       }
     end

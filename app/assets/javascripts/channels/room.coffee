@@ -79,7 +79,7 @@ $(document).on 'channels_room_create_subscriptions', ->
   # 既に購読済みチャンネルならcreate_subscriptionsしない。
   # これがないと、ブラウザバックした後、戻ってきた時に同じチャンネルを
   # ２重で購読し、メッセージを２重で受信してしまう
-  unless check_subscribe("RoomChannel",room_id)
+  unless check_subscribe("RoomChannel", room_id)
     create_subscriptions({ channel: "RoomChannel", room_id: room_id })
 
 $(document).on 'keypress', content_selector, (event) ->

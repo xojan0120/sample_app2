@@ -278,7 +278,7 @@ class User < ApplicationRecord
   def latest_dm_users(count)
     users = Array.new
     # 自分が送った直近DM(room毎)をcount件取得
-    dms = direct_messages.select([:user_id, :room_id]).order(created_at: :desc).distinct([:user_id, :room_id]).limit(count)
+    dms = direct_messages.select([:user_id, :room_id]).order(created_at: :asc).distinct([:user_id, :room_id]).limit(count)
     dms.each do |direct_message|
       users << direct_message.received_users
     end

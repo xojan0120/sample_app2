@@ -306,17 +306,21 @@ ul.messages {
   margin-bottom: 1em;
   list-style-type: none;
 
+  img {
+    max-width: 256px;
+  }
+
   @mixin li_base($left_or_right) {
     $message-bg-color: #e1edf8;
 
-    // 枠
+    // メッセージ枠
     background-color: $message-bg-color;
     position: relative;
     margin: 10px if($left_or_right == right, 0, -35px);
     padding: 10px;
     border-radius: 20px;
-    clear: both;
     float: $left_or_right;
+    clear: both;
 
     // 吹き出し
     &::after {
@@ -329,8 +333,8 @@ ul.messages {
       top: 10px;
     }
 
-    // ゴミ箱
     form {
+      // ゴミ箱
       .glyphicon-trash {
         position: absolute;
         #{$left_or_right}: -15px;
@@ -348,15 +352,29 @@ ul.messages {
   }
 }
 
+.input-form {
+  clear: both; // 各メッセージのfloat解除のため
+}
+
 .iziModal .iziModal-header-title {
   line-height: 2.3 !important; 
-
-  .glyphicon .glyphicon-circle-arrow-left {
+  .back_link_icon {
     font-size: x-large;
+    vertical-align: sub;
+    margin-right: 10px;
+    color: #abbcce;
   }
 }
 
 .modal-header-link {
   float: right;
   clear: both;
+  background-color: #abbcce;
+  border-color: #abbcce;
+  border-radius: 30px;
+  color: #fff;
+}
+
+.iziModal input[type="text"] {
+  text-indent: 0.5em;
 }

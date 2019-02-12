@@ -1,5 +1,3 @@
-= link_to "←", direct_messages_to_select_path, remote: true
-
 / メッセージエリア
 ul.messages
   = render partial: @direct_messages, locals: { current_user_id: current_user_id }
@@ -8,6 +6,7 @@ ul.messages
 = form_with model: DirectMessage.new,
             url: "" ,
             data: { form: "", room_id: @room.id },
+            class: "input-form",
             method: :post do |f|
   = f.text_field :content, data: { content: "" }
   = f.file_field :picture, data: { picture: "" }, value: "img"

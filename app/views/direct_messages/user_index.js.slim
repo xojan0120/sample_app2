@@ -2,7 +2,7 @@
 | modal.iziModal('setTitle', "Direct Message Users" );
 | modal.iziModal('setContent',"#{j(render('user_index'))}");
 
-- render_data = j( render partial: 'modal_header_links', locals: { name: "direct_dm_link" })
+- render_data = j( render partial: 'modal_header_links', locals: { link_name: "create_dm" })
 | $('.modal-header-link').remove();
 | $('.iziModal-header-title').append("#{render_data}");
 

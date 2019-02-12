@@ -1,6 +1,7 @@
 / 変数modalはapp/views/layouts/_modal.html.slimで定義
 | modal.iziModal('setTitle',"Create DM");
-| modal.iziModal('setContent',"#{j(render('to_select'))}");
 
-- render_data = j( render partial: 'modal_header_links', locals: { name: "back_to_user_index" })
-| $('.iziModal-header-title').prepend("#{render_data}");
+- render_back_link = j( render partial: 'modal_header_links', locals: { link_name: "back_to_user_index" })
+| $('.iziModal-header-title').prepend("#{render_back_link}");
+
+| modal.iziModal('setContent',"#{j(render('to_select'))}");
