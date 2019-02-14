@@ -339,6 +339,7 @@ ul.messages {
         position: absolute;
         #{$left_or_right}: -15px;
         top: 30px;
+        cursor: pointer;
       }
     }
   }

@@ -1,10 +1,11 @@
 # -----------------------------------------------------------------------------------------------------------------------------
 # セレクタ定義
 # -----------------------------------------------------------------------------------------------------------------------------
-form_selector    = '[data-form]'
-content_selector = '[data-content]'
-picture_selector = '[data-picture]'
-send_selector    = '[data-send]'
+form_selector       = '[data-form]'
+content_selector    = '[data-content]'
+picture_selector    = '[data-picture]'
+send_selector       = '[data-send]'
+modal_wrap_selector = '.iziModal-wrap'
 
 # -----------------------------------------------------------------------------------------------------------------------------
 # 関数定義
@@ -12,6 +13,12 @@ send_selector    = '[data-send]'
 clear_form = (selector) ->
   $(selector).find(":text, :file").val("")
   return
+
+scroll_bottom = (targetSelector) ->
+  $(document).delay(500).queue ->
+    #$(targetSelector).scrollTop($(targetSelector).get(0).scrollHeight)
+    alert("sc")
+    $(targetSelector).scrollTop(9999)
 
 get_reader = (file) ->
   reader = new FileReader()
@@ -64,6 +71,7 @@ create_subscriptions = (params) ->
       if params['current_user_id'] != data['sent_by']
         html = html.replace("right_side","left_side")
       $('ul.messages').append(html)
+      scroll_bottom(modal_wrap_selector)
   
     send_dm: (content, data_uri, file_name) ->
       @perform('send_dm', { content: content, data_uri: data_uri, file_name: file_name })
@@ -86,6 +94,8 @@ $(document).on 'channels_room_create_subscriptions', ->
   # ２重で購読し、メッセージを２重で受信してしまう
   unless check_subscribe(channel, room_id)
     create_subscriptions({ channel: channel, room_id: room_id, current_user_id: current_user_id })
+
+  scroll_bottom(modal_wrap_selector)
 
 $(document).on 'keypress', content_selector, (event) ->
   if event.which is 13 # = Enter

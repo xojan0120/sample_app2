@@ -6,4 +6,14 @@
 / ためである。1031にすると、ナビゲーションバーと背景オーバーレイが同じ1030になってしまい、背景オーバーレイの
 / 上にナビゲーションバーが出て、モーダルウィンドウを出していても、後ろのリンクが押せてしまう。
 javascript:
-  var modal = $('#modal').iziModal({padding: 20, top: 100, bottom: 50, zindex: 1032});
+  var modal = $('#modal').iziModal( {
+    padding: 20,
+    top: 100,
+    bottom: 50,
+    zindex: 1032
+    });
+
+/ coffeeで書くとなぜか動かない。。。
+/coffee:
+/  modal = $('#modal').iziModal({ padding: 20, top: 100, bottom: 50, zindex: 1032 })
+

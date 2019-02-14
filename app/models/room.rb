@@ -6,7 +6,7 @@ class Room < ApplicationRecord
   # ルームのメッセージを取得する
   # 但し、userに指定したユーザが非表示にしたものは除く
   def direct_messages_for(user)
-    r1 = direct_messages.joins(:direct_message_stats)
+    r1 = direct_messages.joins(:direct_message_stats).includes(:user)
     r2 = DirectMessageStat.where(user: user, display: true)
     r1.merge(r2)
   end
