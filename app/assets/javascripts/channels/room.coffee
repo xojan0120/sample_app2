@@ -15,8 +15,8 @@ clear_form = (selector) ->
   return
 
 scroll_bottom = (targetSelector) ->
-  $(document).delay(500).queue ->
-    $(targetSelector).scrollTop($(targetSelector).get(0).scrollHeight)
+  #$(document).delay(500).queue ->
+  $(targetSelector).scrollTop($(targetSelector).get(0).scrollHeight)
 
 get_reader = (file) ->
   reader = new FileReader()
@@ -93,7 +93,8 @@ $(document).on 'channels_room_create_subscriptions', ->
   unless check_subscribe(channel, room_id)
     create_subscriptions({ channel: channel, room_id: room_id, current_user_id: current_user_id })
 
-  scroll_bottom(modal_wrap_selector)
+$(document).on 'channels_room_auto_acroll', ->
+  setTimeout (-> scroll_bottom(modal_wrap_selector)), 500
 
 $(document).on 'keypress', content_selector, (event) ->
   if event.which is 13 # = Enter
