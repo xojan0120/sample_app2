@@ -74,7 +74,7 @@ $(document).on 'keyup', '#to_search_form', (event) ->
 
 # DM宛先選択画面のインクリメンタル検索結果クリック時
 $(document).on 'click', '[data-user-id]', (event) ->
-  url  = $(event.target).data('url')
+  url  = $(event.currentTarget).data('url')
   data = $.param({ user_id: $(this).data('user-id') }) # params => user_id=1
   ajax(url, "GET", data)
   return

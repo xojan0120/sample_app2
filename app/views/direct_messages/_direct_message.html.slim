@@ -1,14 +1,12 @@
+- class_name = "right_side"
 - if direct_message.errors.any?
   - direct_message.errors.full_messages.each do |message|
-    li
+    li class="#{class_name}"
       span
         | [ERORR!] #{message}
 - else
   ruby:
-    class_name = ""
-    if current_user_id == direct_message.user.id
-      class_name = "right_side"
-    else
+    if current_user_id != direct_message.user.id
       class_name = "left_side"
     end
 

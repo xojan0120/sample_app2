@@ -60,7 +60,10 @@ create_subscriptions = (params) ->
       # Called when the subscription has been terminated by the server
   
     received: (data) ->
-      $('ul.messages').append(data['html']) if JSON.parse(App.room.identifier)["room_id"] == data['room_id']
+      html = data['html']
+      if params['current_user_id'] != data['sent_by']
+        html = html.replace("right_side","left_side")
+      $('ul.messages').append(html)
   
     send_dm: (content, data_uri, file_name) ->
       @perform('send_dm', { content: content, data_uri: data_uri, file_name: file_name })
@@ -75,12 +78,14 @@ create_subscriptions = (params) ->
 # room-idを持たせており、その要素がレンダリングされたあとで無いと、ここで欲しいroom_idが
 # 取得できないため。
 $(document).on 'channels_room_create_subscriptions', ->
+  channel  = "RoomChannel"
   room_id = $(form_selector).data("room-id")
+  current_user_id = $(form_selector).data("current-user-id")
   # 既に購読済みチャンネルならcreate_subscriptionsしない。
   # これがないと、ブラウザバックした後、戻ってきた時に同じチャンネルを
   # ２重で購読し、メッセージを２重で受信してしまう
-  unless check_subscribe("RoomChannel", room_id)
-    create_subscriptions({ channel: "RoomChannel", room_id: room_id })
+  unless check_subscribe(channel, room_id)
+    create_subscriptions({ channel: channel, room_id: room_id, current_user_id: current_user_id })
 
 $(document).on 'keypress', content_selector, (event) ->
   if event.which is 13 # = Enter

@@ -253,22 +253,18 @@ class User < ApplicationRecord
   end
 
   def send_dm(room, content = "", picture_data_uri = "")
-    dm = direct_messages.build(content: content, picture_data_uri: picture_data_uri, room: room)
+    direct_message = direct_messages.build(content: content, picture_data_uri: picture_data_uri, room: room)
 
     # テスト用。意図的にエラーを起こす場合は、"raise"と入力。
-    #if content == "raise"
-    #  dm = direct_messages.build(content: nil, picture_data_uri: nil, room: room)
-    #else
-    #  dm = direct_messages.build(content: content, picture_data_uri: picture_data_uri, room: room)
-    #end
+    direct_message = direct_messages.build(content: nil, picture_data_uri: nil, room: room) if content == "raise"
 
-    if dm.save
+    if direct_message.save
       room.users.each do |user|
         #DirectMessageStat.create(display: true, user: user, direct_message: dm)
-        dm.direct_message_stats.create(display: true, user: user)
+        direct_message.direct_message_stats.create(display: true, user: user)
       end
     end
-    dm
+    direct_message
   end
 
   def hide_dm(direct_message)

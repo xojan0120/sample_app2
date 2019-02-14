@@ -363,6 +363,14 @@ ul.messages {
     vertical-align: sub;
     margin-right: 10px;
     color: #abbcce;
+    position: relative;
+    top: 2px;
+    color: #f5f5f5;
+    opacity: .3;
+  }
+  .back_link_icon:hover {
+    opacity: 1;
+    transition: transform .5s cubic-bezier(.16,.81,.32,1),opacity .5s ease;
   }
 }
 
@@ -372,7 +380,6 @@ ul.messages {
   background-color: #abbcce;
   border-color: #abbcce;
   border-radius: 30px;
-  color: #fff;
 }
 
 .iziModal input[type="text"] {
