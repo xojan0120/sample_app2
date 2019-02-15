@@ -1,0 +1,4 @@
+| var result = $('#result');
+| result.find("li").remove();
+- @users.each do |user|
+  | result.append('<li data-url="#{direct_messages_index_path}" data-user-id="#{user.id}">#{gravatar_for(user,size:40)} #{user.name} @#{user.unique_name}</li>');

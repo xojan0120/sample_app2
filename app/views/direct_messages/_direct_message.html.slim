@@ -1,0 +1,32 @@
+- class_name = "right_side"
+- if direct_message.errors.any?
+  - direct_message.errors.full_messages.each do |message|
+    li class="#{class_name}"
+      span
+        | [ERORR!] #{message}
+- else
+  ruby:
+    if current_user_id != direct_message.user.id
+      class_name = "left_side"
+    end
+
+  - if direct_message.content || direct_message.picture?
+    li data-dm-id="#{direct_message.id}" class="#{class_name}"
+      / 画像
+      span
+        - if direct_message.picture?
+          = link_to direct_message.picture.url, data: { lightbox: "octocat" }
+            = image_tag direct_message.picture.url
+          br
+      / メッセージ
+      span
+        - if direct_message.content
+          | #{direct_message.content}
+
+      / ゴミ箱アイコン
+      = form_with model: DirectMessage.new,
+                  url: direct_messages_hide_path,
+                  id:    "dm-hide-form",
+                  method: :post do |f|
+        = f.hidden_field :id, value: direct_message.id
+        span.glyphicon.glyphicon-trash.small

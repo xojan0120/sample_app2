@@ -14,9 +14,18 @@
                admin: true,
                activated: true,
                activated_at: Time.zone.now,
-               unique_name: "user#{i}"
+               unique_name: "uniq_user#{i}"
               )
 end
+
+User.create!(name: "木戸涼介",
+             email: "user4@gmail.com",
+             password: "foobar",
+             password_confirmation: "foobar",
+             activated: true,
+             activated_at: Time.zone.now,
+             unique_name: "kido_ryosuke"
+            )
 
 99.times do |n|
   name = Faker::Name.name
@@ -44,7 +53,10 @@ end
 # リレーションシップ
 users = User.all
 user = users.first # 最初のユーザ
-following = users[2..50] # usersの3番目～51番目を、最初のユーザにフォローされる人たちとして取得
+following = users[1..50] # usersの2番目～51番目を、最初のユーザにフォローされる人たちとして取得
 followers = users[3..40] # usersの4番目～41番目を、最初のユーザをフォローする人たちとして取得
 following.each { |followed| user.follow(followed) } # 最初のユーザがfollowingの人たちをフォローする
 followers.each { |follower| follower.follow(user) } # followersの人たちが最初のユーザをフォローする
+
+user_kido = User.find_by(name:"木戸涼介")
+following.each { |followed| user_kido.follow(followed) }

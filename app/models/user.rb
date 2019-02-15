@@ -69,6 +69,11 @@ class User < ApplicationRecord
   #             WHERE relationships.followed_id = 「user.id」
   has_many :followers, through: :passive_relationships, source: :follower
 
+  has_many :direct_messages
+  has_many :user_rooms
+  has_many :rooms, through: :user_rooms
+  has_many :direct_message_stats
+
   attr_accessor :remember_token, :activation_token, :reset_token
 
   before_save   :downcase_email
@@ -228,6 +233,52 @@ class User < ApplicationRecord
   def following?(other_user)
     # followingはfollowed(フォローされる側の人)の集合
     following.include?(other_user)
+  end
+
+  def following_search(query_word)
+    # 開発環境のsqlite3において、LIKE演算子は大文字小文字を区別しないため、
+    # LOWERは不要だが、他DBの場合を考慮してLOWERしておく。
+    
+    # 書き方1
+    #r1 = following.where("name        LIKE LOWER(?)", "%#{query_word}%")
+    #r2 = following.where("unique_name LIKE LOWER(?)", "%#{query_word}%")
+    #r1.or(r2)
+    
+    # 書き方2
+    #following.where("name LIKE LOWER(?) OR unique_name LIKE LOWER(?)", "%#{query_word}%", "%#{query_word}%")
+
+    # 書き方3(ransack使用)
+    # 補足: query_wordが空だと全件返されるのでlimitで制限する
+    following.ransack(name_or_unique_name_cont: query_word).result.limit(10)
+  end
+
+  def send_dm(room, content = "", picture_data_uri = "")
+    direct_message = direct_messages.build(content: content, picture_data_uri: picture_data_uri, room: room)
+
+    # テスト用。意図的にエラーを起こす場合は、"raise"と入力。
+    direct_message = direct_messages.build(content: nil, picture_data_uri: nil, room: room) if content == "raise"
+
+    if direct_message.save
+      room.users.each do |user|
+        #DirectMessageStat.create(display: true, user: user, direct_message: dm)
+        direct_message.direct_message_stats.create(display: true, user: user)
+      end
+    end
+    direct_message
+  end
+
+  def hide_dm(direct_message)
+    direct_message.get_state_for(self).invisible
+  end
+
+  def latest_dm_users(count)
+    users = Array.new
+    # 自分が送った直近DM(room毎)をcount件取得
+    dms = direct_messages.select([:user_id, :room_id]).order(created_at: :asc).distinct([:user_id, :room_id]).limit(count)
+    dms.each do |direct_message|
+      users << direct_message.received_users
+    end
+    users.flatten
   end
 
   private

@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+
   get 'password_resets/new'
 
   get 'password_resets/edit'
@@ -15,6 +16,13 @@ Rails.application.routes.draw do
   post    '/login',      to: 'sessions#create'
   delete  '/logout',     to: 'sessions#destroy'
   get     '/microposts', to: 'static_pages#home'
+
+  get                        'direct_messages/user_index'
+  get                        'direct_messages/to_select'
+  get                        'direct_messages/to_search'
+  get                        'direct_messages/index'
+  post                       'direct_messages/create'
+  post                       'direct_messages/hide'
 
   # resourcesは主要な7つ(index,create,new,edit,show,update,destroy)のルーティングが自動追加されるが、
   # それ意外のルーティングを、そのリソースに追加したい場合にmemberまたはcollectionを使用する。

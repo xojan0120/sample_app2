@@ -1,0 +1,8 @@
+/ 変数modalはapp/views/layouts/_modal.html.slimで定義
+| modal.iziModal('setTitle',"#{@partner.name}");
+
+- render_back_link = j( render partial: 'modal_header_links', locals: { link_name: "back_to_user_index" })
+| $('.iziModal-header-title').prepend("#{render_back_link}");
+
+- render_index = render_data = j( render partial: 'index', locals: { current_user_id: @current_user_id })
+| modal.iziModal('setContent',"#{render_index}");

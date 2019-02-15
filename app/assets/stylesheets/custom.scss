@@ -64,6 +64,13 @@ p {
 
 /* header */
 
+.navbar {
+  // モーダルウィンドウ表示時にナビゲーションバーが横にスクロールバー分
+  // ずれこむのを防げる。vwはviewportの横幅。スクロールバーの幅も含む。
+  // 100%はスクロールバーの幅を含まない。
+  width: 100vw;
+}
+
 #logo {
   float: left;
   margin-right: 10px;
@@ -291,4 +298,91 @@ span.picture {
   input {
     border: 0;
   }
+}
+
+/* direct_messages */
+
+ul.messages {
+  margin-bottom: 1em;
+  list-style-type: none;
+
+  img {
+    max-width: 256px;
+  }
+
+  @mixin li_base($left_or_right) {
+    $message-bg-color: #e1edf8;
+
+    // メッセージ枠
+    background-color: $message-bg-color;
+    position: relative;
+    margin: 10px if($left_or_right == right, 0, -35px);
+    padding: 10px;
+    border-radius: 20px;
+    float: $left_or_right;
+    clear: both;
+
+    // 吹き出し
+    &::after {
+      content: "";
+      border-#{if($left_or_right == left, right, left)}: 20px solid $message-bg-color;
+      border-top: 10px solid transparent;
+      border-bottom: 10px solid transparent;
+      position: absolute;
+      #{$left_or_right}: -10px;
+      top: 10px;
+    }
+
+    form {
+      // ゴミ箱
+      .glyphicon-trash {
+        position: absolute;
+        #{$left_or_right}: -15px;
+        top: 30px;
+        cursor: pointer;
+      }
+    }
+  }
+
+  li.right_side {
+    @include li_base(right);
+  }
+
+  li.left_side {
+    @include li_base(left);
+  }
+}
+
+.input-form {
+  clear: both; // 各メッセージのfloat解除のため
+}
+
+.iziModal .iziModal-header-title {
+  line-height: 2.3 !important; 
+  .back_link_icon {
+    font-size: x-large;
+    vertical-align: sub;
+    margin-right: 10px;
+    color: #abbcce;
+    position: relative;
+    top: 2px;
+    color: #f5f5f5;
+    opacity: .3;
+  }
+  .back_link_icon:hover {
+    opacity: 1;
+    transition: transform .5s cubic-bezier(.16,.81,.32,1),opacity .5s ease;
+  }
+}
+
+.modal-header-link {
+  float: right;
+  clear: both;
+  background-color: #abbcce;
+  border-color: #abbcce;
+  border-radius: 30px;
+}
+
+.iziModal input[type="text"] {
+  text-indent: 0.5em;
 }
