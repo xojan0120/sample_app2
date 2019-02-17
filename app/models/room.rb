@@ -26,4 +26,8 @@ class Room < ApplicationRecord
   def self.exist?(users_array)
     UserRoom.identify_room(users_array) ? true : false
   end
+
+  def self.find_or_make_by(users_array)
+    Room.exist?(users_array) ? Room.pick(users_array) : Room.make(users_array)
+  end
 end

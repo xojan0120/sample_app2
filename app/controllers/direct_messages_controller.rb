@@ -38,8 +38,8 @@ class DirectMessagesController < ApplicationController
     @partner = User.find(params[:user_id])
     member = [current_user,@partner]
 
-    @room = Room.exist?(member) ? Room.pick(member) : Room.make(member)
-    @direct_messages = @room.direct_messages_for(current_user)
+    @room = Room.find_or_make_by(member)
+    @direct_messages = @room.direct_messages_for(current_user).limit(5)
     @current_user_id = current_user.id
 
     respond_to do |format|
