@@ -23,6 +23,7 @@ Rails.application.routes.draw do
   get                        'direct_messages/index'
   post                       'direct_messages/create'
   post                       'direct_messages/hide'
+  get                        'direct_messages/fetch_messages'
 
   # resourcesは主要な7つ(index,create,new,edit,show,update,destroy)のルーティングが自動追加されるが、
   # それ意外のルーティングを、そのリソースに追加したい場合にmemberまたはcollectionを使用する。

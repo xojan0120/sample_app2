@@ -39,12 +39,20 @@ class DirectMessagesController < ApplicationController
     member = [current_user,@partner]
 
     @room = Room.find_or_make_by(member)
-    @direct_messages = @room.direct_messages_for(current_user).limit(5)
+    @page = 1
+    @direct_messages = @room.direct_messages_for(current_user, page: @page, cnt: 5)
     @current_user_id = current_user.id
 
     respond_to do |format|
       format.js
     end
+  end
+
+  def fetch_messages
+    @page = params[:page].to_i
+    room = Room.find(params[:room_id].to_i)
+    @direct_messages = room.direct_messages_for(current_user, page: @page, cnt: 5)
+    @current_user_id = current_user.id
   end
 
   def hide

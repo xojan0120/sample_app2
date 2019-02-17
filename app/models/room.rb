@@ -5,10 +5,15 @@ class Room < ApplicationRecord
 
   # ルームのメッセージを取得する
   # 但し、userに指定したユーザが非表示にしたものは除く
-  def direct_messages_for(user)
-    r1 = direct_messages.joins(:direct_message_stats).includes(:user)
-    r2 = DirectMessageStat.where(user: user, display: true)
-    r1.merge(r2)
+  def direct_messages_for(user, page: nil, cnt: nil)
+    messages = fetch_messages_for(user)
+
+    if page.present? || cnt.present?
+      ofs = (page - 1) * cnt
+      messages.offset(ofs).last(cnt)
+    else
+      messages
+    end
   end
 
   def self.make(users_array)
@@ -30,4 +35,12 @@ class Room < ApplicationRecord
   def self.find_or_make_by(users_array)
     Room.exist?(users_array) ? Room.pick(users_array) : Room.make(users_array)
   end
+
+  private
+
+    def fetch_messages_for(user)
+      r1 = direct_messages.joins(:direct_message_stats).includes(:user)
+      r2 = DirectMessageStat.where(user: user, display: true)
+      r1.merge(r2)
+    end
 end

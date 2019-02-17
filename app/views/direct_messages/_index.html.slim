@@ -1,7 +1,6 @@
 / メッセージエリア
-ul.messages
-  = render partial: @direct_messages, locals: { current_user_id: current_user_id }
-
+ul.messages data-cur-page="#{@page}" data-fetch-messages-url="#{direct_messages_fetch_messages_path}"
+  = render partial: direct_messages, locals: { current_user_id: current_user_id }
 
 / 入力フォーム
 / current_user_idはActionCableのreceivedで受け取ったdirect_messageが、自分自身のものか判定用
