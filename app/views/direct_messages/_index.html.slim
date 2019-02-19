@@ -1,20 +1,24 @@
 / メッセージエリア
-ul.messages
-  = render partial: @direct_messages, locals: { current_user_id: current_user_id }
-
+ul.messages data-cur-page="#{@page}" data-fetch-messages-url="#{direct_messages_fetch_messages_path}"
+  = render partial: direct_messages, locals: { current_user_id: current_user_id }
 
 / 入力フォーム
 / current_user_idはActionCableのreceivedで受け取ったdirect_messageが、自分自身のものか判定用
 = form_with model: DirectMessage.new,
             url: "" ,
             data: { form: "", room_id: @room.id, current_user_id: current_user_id },
-            class: "input-form",
+            class: "dm-input-form",
             method: :post do |f|
-  = f.text_field :content, data: { content: "" }
-  = f.file_field :picture, data: { picture: "" }, value: "img"
-  = f.submit "Send", data: { send: "" }
+  .form-children
+    .preview-box
+    .content-box
+      = f.text_field :content, data: { content: "" }, class: "content"
+      span class="glyphicon glyphicon-picture"
+      span class="glyphicon glyphicon-send" data-send=""
+    .hidden-box
+      = f.file_field :picture, data: { picture: "" }, class: "picture"
+    /= f.submit "Send", data: { send: "" }
 
 coffee:
   cmn_file_size_check('[data-picture]', 5)
-  $(document).trigger("channels_room_create_subscriptions")
-  $(document).trigger("channels_room_auto_acroll")
+  $(document).trigger("direct_messages__index_loaded")

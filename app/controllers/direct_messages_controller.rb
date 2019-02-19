@@ -35,16 +35,26 @@ class DirectMessagesController < ApplicationController
   end
 
   def index
+    @prev_page_title = params[:page_title]
+
     @partner = User.find(params[:user_id])
     member = [current_user,@partner]
 
-    @room = Room.exist?(member) ? Room.pick(member) : Room.make(member)
-    @direct_messages = @room.direct_messages_for(current_user)
+    @room = Room.find_or_make_by(member)
+    @page = 1
+    @direct_messages = @room.direct_messages_for(current_user, page: @page, cnt: 5)
     @current_user_id = current_user.id
 
     respond_to do |format|
       format.js
     end
+  end
+
+  def fetch_messages
+    @page = params[:page].to_i
+    room = Room.find(params[:room_id].to_i)
+    @direct_messages = room.direct_messages_for(current_user, page: @page, cnt: 5)
+    @current_user_id = current_user.id
   end
 
   def hide

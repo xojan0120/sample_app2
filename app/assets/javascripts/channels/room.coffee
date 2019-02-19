@@ -1,39 +1,77 @@
 # -----------------------------------------------------------------------------------------------------------------------------
-# セレクタ定義
+# セレクタ
 # -----------------------------------------------------------------------------------------------------------------------------
-form_selector       = '[data-form]'
-content_selector    = '[data-content]'
-picture_selector    = '[data-picture]'
-send_selector       = '[data-send]'
-modal_wrap_selector = '.iziModal-wrap'
+form_selector        = '[data-form]'
+content_selector     = '[data-content]'
+picture_selector     = '[data-picture]'
+send_selector        = '[data-send]'
+modal_wrap_selector  = '.iziModal-wrap'
+messages_selector    = 'ul.messages'
+room_id_selector     = '[data-room-id]'
+cur_page_selector    = '[data-cur-page]'
+preview_box_selector = ".dm-input-form .preview-box"
 
 # -----------------------------------------------------------------------------------------------------------------------------
-# 関数定義
+# 関数
 # -----------------------------------------------------------------------------------------------------------------------------
-clear_form = (selector) ->
-  $(selector).find(":text, :file").val("")
-  return
+# フォームクリア(プレビューもクリア)
+clear_form = ->
+  $(preview_box_selector).empty()
+  $(content_selector).val("")
+  $(picture_selector).val("")
 
+# 最下底にスクロール
 scroll_bottom = (targetSelector) ->
-  #$(document).delay(500).queue ->
   $(targetSelector).scrollTop($(targetSelector).get(0).scrollHeight)
 
+# fileのDATA URLを取得
 get_reader = (file) ->
   reader = new FileReader()
   reader.readAsDataURL(file)
   return reader
 
 # 既に購読しているチャンネルかどうかチェックする
+# 既に購読していればそのサブスクリプションを、無ければfalseを返す。
+# これがないと、ブラウザバックした後、戻ってきた時に同じチャンネルを
+# ２重で購読し、メッセージを２重で受信してしまう。
 check_subscribe = (channel, room_id) ->
-  result = false
   subscriptions = App.cable.subscriptions['subscriptions']
-  subscriptions.forEach (subscription) ->
-    identifier = subscription.identifier
+  i = 0
+  while i < subscriptions.length
+    identifier = subscriptions[i].identifier
     json = JSON.parse(identifier)
     if json.channel == channel && json.room_id == room_id
-      result = true
-  return result
+      return subscriptions[i]
+    i++
+  return false
 
+# サブスクリプション生成
+create_subscription = (channel, room_id) ->
+  # クライアント側でApp.cable.subscriptions.createが呼ばれると
+  # サーバのチャンネルと通信が始まる？
+  # paramsはapp/channels/room_channel.rbに渡される。
+  # room_channel.rbの中でparams['room_id']等でアクセスできる。
+  current_user_id = $(form_selector).data("current-user-id")
+  params = { channel: channel, room_id: room_id, current_user_id: current_user_id }
+  App.room = App.cable.subscriptions.create (params),
+    connected: ->
+      # Called when the subscription is ready for use on the server
+  
+    disconnected: ->
+      # Called when the subscription has been terminated by the server
+  
+    received: (data) ->
+      html = data['html']
+      if params['current_user_id'] != data['sent_by']
+        html = html.replace("right_side","left_side")
+      $(messages_selector).append(html)
+      scroll_bottom(modal_wrap_selector)
+  
+    send_dm: (content, data_uri, file_name) ->
+      @perform('send_dm', { content: content, data_uri: data_uri, file_name: file_name })
+      clear_form()
+
+# ダイレクトメッセージ送信
 send_dm = ->
   content = $.trim($(content_selector).val())
   picture = $(picture_selector).get(0).files[0]
@@ -50,59 +88,57 @@ send_dm = ->
     else
         App.room.send_dm(content)
 
-  return
-
-create_subscriptions = (params) ->
-  # クライアント側でApp.cable.subscriptions.createが呼ばれると
-  # サーバのチャンネルと通信が始まる？
-  # paramsはapp/channels/room_channel.rbに渡される。
-  # room_channel.rbの中でparams['room_id']等でアクセスできる。
-  App.room = App.cable.subscriptions.create (params),
-    connected: ->
-      # Called when the subscription is ready for use on the server
-  
-    disconnected: ->
-      # Called when the subscription has been terminated by the server
-  
-    received: (data) ->
-      html = data['html']
-      if params['current_user_id'] != data['sent_by']
-        html = html.replace("right_side","left_side")
-      $('ul.messages').append(html)
-      scroll_bottom(modal_wrap_selector)
-  
-    send_dm: (content, data_uri, file_name) ->
-      @perform('send_dm', { content: content, data_uri: data_uri, file_name: file_name })
-      clear_form(form_selector)
+# ページ読み込み
+load_previous_message = (url, type = "GET", dataType = "script") ->
+  ajax = $.ajax({ url: url, type: type, dataType: dataType })
+  ajax.always ->
+    $(".loading").remove()
 
 # -----------------------------------------------------------------------------------------------------------------------------
-# イベント定義
+# ajax専用関数
 # -----------------------------------------------------------------------------------------------------------------------------
-# channel_room_create_subscriptionsはapp/views/direct_messages/_index.html.slimの
-# 下部のtriggerメソッド用のカスタムイベントである。_index.html.slimが読み込まれたら
-# create_subscriptionsする。理由は、_index.html.slim内のform要素のdata-room-id属性に
-# room-idを持たせており、その要素がレンダリングされたあとで無いと、ここで欲しいroom_idが
-# 取得できないため。
-$(document).on 'channels_room_create_subscriptions', ->
-  channel  = "RoomChannel"
-  room_id = $(form_selector).data("room-id")
-  current_user_id = $(form_selector).data("current-user-id")
-  # 既に購読済みチャンネルならcreate_subscriptionsしない。
-  # これがないと、ブラウザバックした後、戻ってきた時に同じチャンネルを
-  # ２重で購読し、メッセージを２重で受信してしまう
-  unless check_subscribe(channel, room_id)
-    create_subscriptions({ channel: channel, room_id: room_id, current_user_id: current_user_id })
+$(document).ajaxSend (event, jqxhr, settings) ->
+  event_url = $.url(settings.url).attr("path")
+  check_url = $(messages_selector).data("fetch-messages-url")
+  if event_url == check_url
+    $(messages_selector).prepend('<li class="loading">Now loading...</li>')
 
-$(document).on 'channels_room_auto_acroll', ->
-  setTimeout (-> scroll_bottom(modal_wrap_selector)), 500
+# -----------------------------------------------------------------------------------------------------------------------------
+# app/views/direct_messages/_index.html.slim読み込み時関数
+# -----------------------------------------------------------------------------------------------------------------------------
+add_modal_scroll_event = ->
+  $(modal_wrap_selector).on 'scroll', (event) ->
+    if cmn_scroll_top(event.target) && $(messages_selector).length != 0 && $(".loading").length == 0
+      next_page = $(cur_page_selector).data("cur-page") + 1
+      room_id = $(room_id_selector).data("room-id")
+      url = $(messages_selector).data("fetch-messages-url")
+      load_previous_message(url + "?page=#{next_page}&room_id=#{room_id}")
 
-$(document).on 'keypress', content_selector, (event) ->
-  if event.which is 13 # = Enter
+add_click_send_event = ->
+  $(send_selector).on 'click', (event) ->
     send_dm()
     event.preventDefault()
-  return
 
-$(document).on 'click', send_selector, (event) ->
-  send_dm()
-  event.preventDefault()
-  return
+add_enter_send_event = ->
+  $(content_selector).on 'keypress', (event) ->
+    if event.which is 13 # = Enter
+      send_dm()
+      event.preventDefault()
+
+# -----------------------------------------------------------------------------------------------------------------------------
+# app/views/direct_messages/_index.html.slim読み込み時処理
+# -----------------------------------------------------------------------------------------------------------------------------
+$(document).on 'direct_messages__index_loaded', (event) ->
+  # サブスクリプション生成
+  channel = "RoomChannel"
+  room_id = $(form_selector).data("room-id")
+  unless App.room = check_subscribe(channel, room_id)
+    create_subscription(channel, room_id)
+
+  # モーダルのスクロールを一番下にセットする
+  setTimeout (-> scroll_bottom(modal_wrap_selector)), 500
+
+  # 各種イベント登録
+  add_modal_scroll_event()
+  add_click_send_event()
+  add_enter_send_event()

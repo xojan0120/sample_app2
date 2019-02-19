@@ -73,4 +73,43 @@ RSpec.describe Room, type: :model do
     expect(room.direct_messages_for(user1)).to match([dm2,dm1])
   end
 
+  it "ルームを検索して、あれば取得すること" do
+    user1 = FactoryBot.create(:user)
+    user2 = FactoryBot.create(:user)
+    users = [user1,user2]
+    room = Room.make(users)
+
+    expect(Room.find_or_make_by(users)).to eq room
+  end
+
+  it "ルームを検索して、無ければ作成すること" do
+    user1 = FactoryBot.create(:user)
+    user2 = FactoryBot.create(:user)
+    users = [user1,user2]
+    made_room = Room.find_or_make_by(users)
+    expect(made_room.users).to match_array(users)
+  end
+
+  it "ルームからページ毎にメッセージが取得できること" do
+    user1 = FactoryBot.create(:user)
+    user2 = FactoryBot.create(:user)
+    users = [user1,user2]
+    room = Room.make(users)
+
+    dms = []
+    10.times do |i|
+      dms << user1.send_dm(room, "message#{i}")
+    end
+
+    # 5～10件目
+    expect(
+      room.direct_messages_for(user1, page: 1, cnt: 5)
+    ).to match(dms[5..9])
+
+    # 1～5件目
+    expect(
+      room.direct_messages_for(user1, page: 2, cnt: 5)
+    ).to match(dms[0..4])
+  end
+
 end

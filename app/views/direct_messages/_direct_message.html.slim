@@ -11,7 +11,7 @@
     end
 
   - if direct_message.content || direct_message.picture?
-    li data-dm-id="#{direct_message.id}" class="#{class_name}"
+    li class="#{class_name}"
       / 画像
       span
         - if direct_message.picture?

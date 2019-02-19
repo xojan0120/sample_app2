@@ -1,7 +1,15 @@
 # -----------------------------------------------------------------------------------------------------------------------------
 # セレクタ定義
 # -----------------------------------------------------------------------------------------------------------------------------
-hide_dm_form_selector = "#dm-hide-form"
+to_search_form_selector      = "#to_search_form"
+user_selector                = "[data-user-id]"
+trash_icon_selector          = "ul.messages .glyphicon-trash"
+hide_dm_form_selector        = "#dm-hide-form"
+dm_form_selector             = ".dm-input-form"
+picture_icon_selector        = "#{dm_form_selector} .glyphicon-picture"
+picture_form_selecotr        = "#{dm_form_selector} .picture"
+preview_box_selector         = "#{dm_form_selector} .preview-box"
+preview_remove_icon_selector = "#{dm_form_selector} .glyphicon-remove"
 
 # -----------------------------------------------------------------------------------------------------------------------------
 # 関数定義
@@ -57,6 +65,27 @@ ajax = (url, type, data, processData = true, contentType = true) ->
 # $(document).on 'keyup', '#to_search_form', (event) ->
 #   incremental_search($(this).data('search-path'), $.trim($(this).val()), $("#result"))
 
+# ========================================================================
+# DM一覧画面 画像プレビュー関連 begin
+# ========================================================================
+create_picture_element = (data_url) ->
+  $("<img>").prop("src", data_url)
+
+create_delete_icon = ->
+  $("<span>").prop("class", "glyphicon glyphicon-remove")
+             .prop("id", "preview_picture_delete")
+
+preview_picture = (picture) ->
+  reader = new FileReader()
+  reader.readAsDataURL(picture)
+  reader.addEventListener "loadend", (event) ->
+    $(preview_box_selector).empty()
+    $(preview_box_selector).append(create_picture_element(reader.result))
+    $(preview_box_selector).append(create_delete_icon())
+# ========================================================================
+# DM一覧画面 画像プレビュー関連 end
+# ========================================================================
+
 # -----------------------------------------------------------------------------------------------------------------------------
 # イベント定義
 # -----------------------------------------------------------------------------------------------------------------------------
@@ -66,30 +95,55 @@ ajax = (url, type, data, processData = true, contentType = true) ->
 # $(document)に対してイベントを定義する。
 
 # インクリメンタル検索
-$(document).on 'keyup', '#to_search_form', (event) ->
+$(document).on 'keyup', to_search_form_selector, (event) ->
   url  = $(event.target).data('url')
   data = $.param({ query_word: $.trim($(this).val()) })
   ajax(url, "GET", data, false, false)
   return
 
-# DM宛先選択画面のインクリメンタル検索結果クリック時
-$(document).on 'click', '[data-user-id]', (event) ->
+# DMユーザ一覧画面およびDM宛先選択画面のインクリメンタル検索結果クリック時
+$(document).on 'click', user_selector, (event) ->
   url  = $(event.currentTarget).data('url')
-  data = $.param({ user_id: $(this).data('user-id') }) # params => user_id=1
+  page_title = $(event.currentTarget).data('page-title')
+  data = $.param({ user_id: $(this).data('user-id'), page_title: page_title }) # params => user_id=1
   ajax(url, "GET", data)
   return
 
-# DM一覧画面のゴミ箱アイコンクリック時
-$(document).on "click", ".glyphicon-trash", (event) ->
+# ========================================================================
+# DM一覧画面のゴミ箱アイコンクリック時 begin
+# ========================================================================
+$(document).on "click", trash_icon_selector, (event) ->
   swal(
     {text: "delete?", showCancelButton: true }
   ).then (result) ->
     if result.value
-      Rails.fire(event.target.parentElement, "submit")
+      # fire対象は、submitするform要素を指定する。
+      form = event.target.parentElement
+      Rails.fire(form, "submit")
 
+# event.detailでajax通信結果が取得できる。
+# event.targetはhide_dm_form_selectorの要素を指す。
 $(document).on "ajax:success", hide_dm_form_selector, (event) ->
   $(event.target.parentElement).remove()
   #event.target.parentElement.remove()  # →これだとIE11が対応していない。
   
 $(document).on "ajax:error", hide_dm_form_selector, (event) ->
   console.log("hide_dm_form_error")
+# ========================================================================
+# DM一覧画面のゴミ箱アイコンクリック時 end
+# ========================================================================
+
+# DM一覧画面の画像選択アイコンクリック時
+$(document).on "click", picture_icon_selector, (event) ->
+  $(picture_form_selecotr).click()
+
+# DM一覧画面の選択画像変化時
+$(document).on "change", picture_form_selecotr, (event) ->
+  if cmn_get_file_count(picture_form_selecotr) > 0
+    picture = $(picture_form_selecotr).get(0).files[0]
+    preview_picture(picture)
+
+# DM一覧画面のプレビュー画像削除アイコンクリック時
+$(document).on "click", preview_remove_icon_selector, (event) ->
+  $(preview_box_selector).empty()
+  $(picture_form_selecotr).val("")

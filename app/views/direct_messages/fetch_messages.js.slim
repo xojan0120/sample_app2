@@ -1,0 +1,23 @@
+- if @direct_messages.present?
+  ruby:
+    render_data = j(
+      render partial: @direct_messages,
+      locals: { current_user_id: @current_user_id }
+      ) 
+  | messages = $(".messages");
+  | modal_wrap = $(".iziModal-wrap");
+  / <li>要素群をjqueryオブジェクトに変換する
+  | list = $("#{render_data}");
+  / <li>要素群の最後の要素にクラス付与(そのページの最後の要素を表す)
+  | $(list.last()).addClass("page#{@page}-last");
+  / html変換用のダミー要素作成
+  | dummy = $("<div>");
+  / ダミー要素に<li>要素群を挿入(これによりjqueryオブジェクトからhtml要素に変換できる)
+  | dummy.append(list.clone(true));
+  / jqueryオブジェクトからhtml要素に変換したデータを挿入する
+  | messages.prepend(dummy.html());
+  / <li>要素群の最後の要素の位置を算出する
+  | pos = $(".page#{@page}-last").position();
+  / <li>要素群の最後の要素の位置までスクロールする
+  | modal_wrap.scrollTop(pos.top);
+  | messages.data("cur-page", #{@page});

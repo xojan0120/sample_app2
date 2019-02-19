@@ -271,14 +271,38 @@ class User < ApplicationRecord
     direct_message.get_state_for(self).invisible
   end
 
-  def latest_dm_users(count)
+  #def latest_dm_users(count)
+  #  users = Array.new
+  #  # 自分が送った直近DM(room毎)をcount件取得
+  #  dms = direct_messages.select([:user_id, :room_id]).order(created_at: :desc).distinct([:user_id, :room_id]).limit(count)
+  #  dms.each do |direct_message|
+  #    users << direct_message.received_users
+  #  end
+  #  users.flatten
+  #end
+  
+  def latest_dm_users(limit)
     users = Array.new
-    # 自分が送った直近DM(room毎)をcount件取得
-    dms = direct_messages.select([:user_id, :room_id]).order(created_at: :asc).distinct([:user_id, :room_id]).limit(count)
-    dms.each do |direct_message|
-      users << direct_message.received_users
+
+    # limitより、現在のDMのroom数のほうが少なければ、room数分の
+    # 宛先ユーザを取得する。こうしておかないと、room数1で、一人の
+    # 相手とだけDMのやりとりをずっとしていた場合、そのDM数分だけ
+    # eachすることになるのを回避するため。
+    # 但し、これは1roomに相手が1人だけという前提である。
+    # 2人以上いた場合は、2人目以降のユーザが取得できない問題がある。
+    count = direct_messages.select(:room_id).distinct(:room_id).count
+    if limit > count
+      limit = count
     end
-    users.flatten
+
+    direct_messages.order(created_at: :desc).each do |direct_message|
+      direct_message.received_users.each do |user|
+        users << user unless users.include?(user)
+        return users if users.size >= limit
+      end
+    end
+
+    return users
   end
 
   private

@@ -18,10 +18,14 @@ class DirectMessage < ApplicationRecord
   end
 
   def received_users
-    users = Array.new
-    room.user_rooms.where.not(user: user).each do |user_room|
-      users << user_room.user
-    end
-    users
+    #users = Array.new
+    #room.user_rooms.where.not(user: user).each do |user_room|
+    #  users << user_room.user
+    #end
+    #users
+
+    # roomに所属するユーザ群のうち、自分を除くユーザ群を返す
+    # ※bulletでUSE eager loading detectedがでるが、問題無し。
+    room.users.where.not(id: user.id)
   end
 end
