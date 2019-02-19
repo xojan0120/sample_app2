@@ -5,7 +5,7 @@
 ruby:
   render_back_link = j( 
     render partial: 'modal_header_links',
-    locals: { link_name: "back_to_user_index" }
+    locals: { link_name: "back_to_#{@prev_page_title}" }
     )
 | $('.iziModal-header-title').prepend("#{render_back_link}");
 

@@ -354,8 +354,34 @@ ul.messages {
   }
 }
 
-.input-form {
+.dm-input-form {
   clear: both; // 各メッセージのfloat解除のため
+
+  .form-children {
+    text-align: center;
+    .content {
+      text-indent: 0.5em;
+      width: 80%;
+    }
+
+    .picture {
+      display: none;
+    }
+
+    .glyphicon.glyphicon-picture {
+      font-size: large;
+      position: relative;
+      top: 2px;
+      margin-left: 5px;
+    }
+
+    .glyphicon.glyphicon-send {
+      font-size: large;
+      position: relative;
+      top: 3px;
+      margin-left: 5px;
+    }
+  }
 }
 
 .iziModal .iziModal-header-title {
@@ -384,6 +410,3 @@ ul.messages {
   border-radius: 30px;
 }
 
-.iziModal input[type="text"] {
-  text-indent: 0.5em;
-}

@@ -1,7 +1,14 @@
 # -----------------------------------------------------------------------------------------------------------------------------
 # セレクタ定義
 # -----------------------------------------------------------------------------------------------------------------------------
-hide_dm_form_selector = "#dm-hide-form"
+hide_dm_form_selector    = "#dm-hide-form"
+to_search_form_selector  = "#to_search_form"
+user_selector            = "[data-user-id]"
+trash_icon_selector      = "ul.messages .glyphicon-trash"
+dm_form_selector         = ".dm-input-form"
+picture_icon_selector    = "#{dm_form_selector} .glyphicon-picture"
+picture_form_selecotr    = "#{dm_form_selector} .picture"
+picture_preview_selector = ""
 
 # -----------------------------------------------------------------------------------------------------------------------------
 # 関数定義
@@ -66,30 +73,48 @@ ajax = (url, type, data, processData = true, contentType = true) ->
 # $(document)に対してイベントを定義する。
 
 # インクリメンタル検索
-$(document).on 'keyup', '#to_search_form', (event) ->
+$(document).on 'keyup', to_search_form_selector, (event) ->
   url  = $(event.target).data('url')
   data = $.param({ query_word: $.trim($(this).val()) })
   ajax(url, "GET", data, false, false)
   return
 
-# DM宛先選択画面のインクリメンタル検索結果クリック時
-$(document).on 'click', '[data-user-id]', (event) ->
+# DMユーザ一覧画面およびDM宛先選択画面のインクリメンタル検索結果クリック時
+$(document).on 'click', user_selector, (event) ->
   url  = $(event.currentTarget).data('url')
-  data = $.param({ user_id: $(this).data('user-id') }) # params => user_id=1
+  page_title = $(event.currentTarget).data('page-title')
+  data = $.param({ user_id: $(this).data('user-id'), page_title: page_title }) # params => user_id=1
   ajax(url, "GET", data)
   return
 
-# DM一覧画面のゴミ箱アイコンクリック時
-$(document).on "click", ".glyphicon-trash", (event) ->
+# ========================================================================
+# DM一覧画面のゴミ箱アイコンクリック時 begin
+# ========================================================================
+$(document).on "click", trash_icon_selector, (event) ->
   swal(
     {text: "delete?", showCancelButton: true }
   ).then (result) ->
     if result.value
-      Rails.fire(event.target.parentElement, "submit")
+      # fire対象は、form要素を指定する。
+      # $(hide_dm_form_selector)でformのjqueryオブジェクトを取得でき、
+      # [0]でform要素が取得できる。
+      Rails.fire($(hide_dm_form_selector)[0], "submit")
 
+# hide_dm_form_selectorでsubmitされた結果がeventに入る。
+# event.targetはhide_dm_form_selectorの要素を指す。
 $(document).on "ajax:success", hide_dm_form_selector, (event) ->
   $(event.target.parentElement).remove()
   #event.target.parentElement.remove()  # →これだとIE11が対応していない。
   
+# hide_dm_form_selectorでsubmitされたajaxの結果がeventに入る
 $(document).on "ajax:error", hide_dm_form_selector, (event) ->
   console.log("hide_dm_form_error")
+# ========================================================================
+# DM一覧画面のゴミ箱アイコンクリック時 end
+# ========================================================================
+
+# DM一覧画面の画像アイコンクリック時
+$(document).on "click", picture_icon_selector, (event) ->
+  $(picture_form_selecotr).click()
+$(document).on "change", picture_form_selecotr, (event) ->
+  #show_preview()

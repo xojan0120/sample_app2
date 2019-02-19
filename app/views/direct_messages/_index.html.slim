@@ -7,11 +7,15 @@ ul.messages data-cur-page="#{@page}" data-fetch-messages-url="#{direct_messages_
 = form_with model: DirectMessage.new,
             url: "" ,
             data: { form: "", room_id: @room.id, current_user_id: current_user_id },
-            class: "input-form",
+            class: "dm-input-form",
             method: :post do |f|
-  = f.text_field :content, data: { content: "" }
-  = f.file_field :picture, data: { picture: "" }, value: "img"
-  = f.submit "Send", data: { send: "" }
+  .form-children
+    .preview
+    = f.text_field :content, data: { content: "" }, class: "content"
+    = f.file_field :picture, data: { picture: "" }, class: "picture"
+    span class="glyphicon glyphicon-picture"
+    span class="glyphicon glyphicon-send"
+    /= f.submit "Send", data: { send: "" }
 
 coffee:
   cmn_file_size_check('[data-picture]', 5)

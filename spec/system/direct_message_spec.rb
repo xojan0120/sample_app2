@@ -57,7 +57,7 @@ RSpec.feature "DirectMessage", type: :system do
       expect_to_have_title(users_index_title)
       click_link "Create DM"
       expect_to_have_title(to_select_title)
-      click_link "←"
+      find(".back_link_icon").click
       expect_to_have_title(users_index_title)
 
       # 閉じるボタンでDM宛先選択画面が閉じる
@@ -123,7 +123,7 @@ RSpec.feature "DirectMessage", type: :system do
         expect_to_have_title(user2.name)
 
         # 戻るリンクでDM宛先選択画面に戻る
-        click_link "←"
+        find(".back_link_icon").click
         expect_to_have_title(to_select_title)
 
         # 再びDM宛先選択画面からユーザ2を検索しDM一覧画面を表示する
@@ -258,7 +258,7 @@ RSpec.feature "DirectMessage", type: :system do
     end
   end
 
-  fscenario "DM一覧画面テスト(メッセージ削除)", js: true do
+  scenario "DM一覧画面テスト(メッセージ削除)", js: true do
     user1 = me
     user2 = following_user
     user2.follow(me)
