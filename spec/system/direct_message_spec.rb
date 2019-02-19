@@ -158,10 +158,10 @@ RSpec.feature "DirectMessage", type: :system do
       expect(page).to have_css(".glyphicon-picture")
       image_path = 'spec/factories/images/rails.png'
       image_full_path = Rails.root.join(image_path)
-      attach_file('direct_message[picture]', image_full_path)
+      attach_file('direct_message[picture]', image_full_path, visible: false)
 
       # 送信後、メッセージと画像が表示される
-      click_button "Send"
+      find(".glyphicon-send").click
       expect(page).to have_selector "ul.messages", text: msg1
       within "ul.messages" do
         expect(page).to have_selector("img", count: 1)
@@ -183,10 +183,10 @@ RSpec.feature "DirectMessage", type: :system do
       expect(page).to have_css(".glyphicon-picture")
       image_path = 'spec/factories/images/rails.png'
       image_full_path = Rails.root.join(image_path)
-      attach_file('direct_message[picture]', image_full_path)
+      attach_file('direct_message[picture]', image_full_path, visible: false)
 
       # 送信後、メッセージと画像が表示される
-      click_button "Send"
+      find(".glyphicon-send").click
       expect(page).to have_selector "ul.messages", text: msg2
       within "ul.messages" do
         expect(page).to have_selector("img", count: 2)
@@ -275,14 +275,12 @@ RSpec.feature "DirectMessage", type: :system do
 
       # メッセージを入力・送信
       fill_in "direct_message[content]", with: msg
-      click_button "Send"
       sleep 0.5
+      find(".glyphicon-send").click
       msg_id = DirectMessage.find_by(content: msg).id
 
       # 入力したメッセージのゴミ箱アイコンをクリックする
-      within %Q( [data-dm-id="#{msg_id}"] ) do
-        find(".glyphicon-trash").click
-      end
+      find(".glyphicon-trash").click
       # 確認メッセージが表示されていることを検証する
       expect(page).to have_content("delete?")
       # 確認メッセージのキャンセルボタンをクリックする
@@ -291,9 +289,7 @@ RSpec.feature "DirectMessage", type: :system do
       expect(page).to have_content(msg)
 
       # 入力したメッセージのゴミ箱アイコンをクリックする
-      within %Q( [data-dm-id="#{msg_id}"] ) do
-        find(".glyphicon-trash").click
-      end
+      find(".glyphicon-trash").click
       # 確認メッセージのキャンセルボタンをクリックする
       click_button "OK"
       # メッセージが消えていないことを検証する

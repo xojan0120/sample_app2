@@ -1,22 +1,24 @@
 # -----------------------------------------------------------------------------------------------------------------------------
 # セレクタ
 # -----------------------------------------------------------------------------------------------------------------------------
-form_selector       = '[data-form]'
-content_selector    = '[data-content]'
-picture_selector    = '[data-picture]'
-send_selector       = '[data-send]'
-modal_wrap_selector = '.iziModal-wrap'
-messages_selector   = 'ul.messages'
-room_id_selector    = '[data-room-id]'
-cur_page_selector   = '[data-cur-page]'
+form_selector        = '[data-form]'
+content_selector     = '[data-content]'
+picture_selector     = '[data-picture]'
+send_selector        = '[data-send]'
+modal_wrap_selector  = '.iziModal-wrap'
+messages_selector    = 'ul.messages'
+room_id_selector     = '[data-room-id]'
+cur_page_selector    = '[data-cur-page]'
+preview_box_selector = ".dm-input-form .preview-box"
 
 # -----------------------------------------------------------------------------------------------------------------------------
 # 関数
 # -----------------------------------------------------------------------------------------------------------------------------
-# フォームクリア
-clear_form = (selector) ->
-  $(selector).find(":text, :file").val("")
-  return
+# フォームクリア(プレビューもクリア)
+clear_form = ->
+  $(preview_box_selector).empty()
+  $(content_selector).val("")
+  $(picture_selector).val("")
 
 # 最下底にスクロール
 scroll_bottom = (targetSelector) ->
@@ -67,7 +69,7 @@ create_subscription = (channel, room_id) ->
   
     send_dm: (content, data_uri, file_name) ->
       @perform('send_dm', { content: content, data_uri: data_uri, file_name: file_name })
-      clear_form(form_selector)
+      clear_form()
 
 # ダイレクトメッセージ送信
 send_dm = ->

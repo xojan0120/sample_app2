@@ -117,18 +117,16 @@ $(document).on "click", trash_icon_selector, (event) ->
     {text: "delete?", showCancelButton: true }
   ).then (result) ->
     if result.value
-      # fire対象は、form要素を指定する。
-      # $(hide_dm_form_selector)でformのjqueryオブジェクトを取得でき、
-      # [0]でform要素が取得できる。
-      Rails.fire($(hide_dm_form_selector)[0], "submit")
+      # fire対象は、submitするform要素を指定する。
+      form = event.target.parentElement
+      Rails.fire(form, "submit")
 
-# hide_dm_form_selectorでsubmitされた結果がeventに入る。
+# event.detailでajax通信結果が取得できる。
 # event.targetはhide_dm_form_selectorの要素を指す。
 $(document).on "ajax:success", hide_dm_form_selector, (event) ->
   $(event.target.parentElement).remove()
   #event.target.parentElement.remove()  # →これだとIE11が対応していない。
   
-# hide_dm_form_selectorでsubmitされたajaxの結果がeventに入る
 $(document).on "ajax:error", hide_dm_form_selector, (event) ->
   console.log("hide_dm_form_error")
 # ========================================================================

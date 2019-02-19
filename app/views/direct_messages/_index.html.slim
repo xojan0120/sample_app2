@@ -14,7 +14,7 @@ ul.messages data-cur-page="#{@page}" data-fetch-messages-url="#{direct_messages_
     .content-box
       = f.text_field :content, data: { content: "" }, class: "content"
       span class="glyphicon glyphicon-picture"
-      span class="glyphicon glyphicon-send"
+      span class="glyphicon glyphicon-send" data-send=""
     .hidden-box
       = f.file_field :picture, data: { picture: "" }, class: "picture"
     /= f.submit "Send", data: { send: "" }
