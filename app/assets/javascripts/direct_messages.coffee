@@ -1,14 +1,15 @@
 # -----------------------------------------------------------------------------------------------------------------------------
 # セレクタ定義
 # -----------------------------------------------------------------------------------------------------------------------------
-hide_dm_form_selector    = "#dm-hide-form"
-to_search_form_selector  = "#to_search_form"
-user_selector            = "[data-user-id]"
-trash_icon_selector      = "ul.messages .glyphicon-trash"
-dm_form_selector         = ".dm-input-form"
-picture_icon_selector    = "#{dm_form_selector} .glyphicon-picture"
-picture_form_selecotr    = "#{dm_form_selector} .picture"
-picture_preview_selector = ""
+to_search_form_selector      = "#to_search_form"
+user_selector                = "[data-user-id]"
+trash_icon_selector          = "ul.messages .glyphicon-trash"
+hide_dm_form_selector        = "#dm-hide-form"
+dm_form_selector             = ".dm-input-form"
+picture_icon_selector        = "#{dm_form_selector} .glyphicon-picture"
+picture_form_selecotr        = "#{dm_form_selector} .picture"
+preview_box_selector         = "#{dm_form_selector} .preview-box"
+preview_remove_icon_selector = "#{dm_form_selector} .glyphicon-remove"
 
 # -----------------------------------------------------------------------------------------------------------------------------
 # 関数定義
@@ -64,6 +65,27 @@ ajax = (url, type, data, processData = true, contentType = true) ->
 # $(document).on 'keyup', '#to_search_form', (event) ->
 #   incremental_search($(this).data('search-path'), $.trim($(this).val()), $("#result"))
 
+# ========================================================================
+# DM一覧画面 画像プレビュー関連 begin
+# ========================================================================
+create_picture_element = (data_url) ->
+  $("<img>").prop("src", data_url)
+
+create_delete_icon = ->
+  $("<span>").prop("class", "glyphicon glyphicon-remove")
+             .prop("id", "preview_picture_delete")
+
+preview_picture = (picture) ->
+  reader = new FileReader()
+  reader.readAsDataURL(picture)
+  reader.addEventListener "loadend", (event) ->
+    $(preview_box_selector).empty()
+    $(preview_box_selector).append(create_picture_element(reader.result))
+    $(preview_box_selector).append(create_delete_icon())
+# ========================================================================
+# DM一覧画面 画像プレビュー関連 end
+# ========================================================================
+
 # -----------------------------------------------------------------------------------------------------------------------------
 # イベント定義
 # -----------------------------------------------------------------------------------------------------------------------------
@@ -113,8 +135,17 @@ $(document).on "ajax:error", hide_dm_form_selector, (event) ->
 # DM一覧画面のゴミ箱アイコンクリック時 end
 # ========================================================================
 
-# DM一覧画面の画像アイコンクリック時
+# DM一覧画面の画像選択アイコンクリック時
 $(document).on "click", picture_icon_selector, (event) ->
   $(picture_form_selecotr).click()
+
+# DM一覧画面の選択画像変化時
 $(document).on "change", picture_form_selecotr, (event) ->
-  #show_preview()
+  if cmn_get_file_count(picture_form_selecotr) > 0
+    picture = $(picture_form_selecotr).get(0).files[0]
+    preview_picture(picture)
+
+# DM一覧画面のプレビュー画像削除アイコンクリック時
+$(document).on "click", preview_remove_icon_selector, (event) ->
+  $(preview_box_selector).empty()
+  $(picture_form_selecotr).val("")

@@ -359,28 +359,46 @@ ul.messages {
 
   .form-children {
     text-align: center;
-    .content {
-      text-indent: 0.5em;
+
+    .preview-box {
       width: 80%;
+      margin: auto;
+      text-align: left;
+
+      img {
+        max-width: 50px;
+      }
+      .glyphicon-remove {
+        vertical-align: top;
+        cursor: pointer;
+      }
     }
 
-    .picture {
+    .content-box {
+      .content {
+        text-indent: 0.5em;
+        width: 80%;
+      }
+
+      .glyphicon.glyphicon-picture {
+        font-size: large;
+        position: relative;
+        top: 2px;
+        margin-left: 5px;
+      }
+
+      .glyphicon.glyphicon-send {
+        font-size: large;
+        position: relative;
+        top: 3px;
+        margin-left: 5px;
+      }
+    }
+
+    .hidden-box {
       display: none;
     }
 
-    .glyphicon.glyphicon-picture {
-      font-size: large;
-      position: relative;
-      top: 2px;
-      margin-left: 5px;
-    }
-
-    .glyphicon.glyphicon-send {
-      font-size: large;
-      position: relative;
-      top: 3px;
-      margin-left: 5px;
-    }
   }
 }
 

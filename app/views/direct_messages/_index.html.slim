@@ -10,11 +10,13 @@ ul.messages data-cur-page="#{@page}" data-fetch-messages-url="#{direct_messages_
             class: "dm-input-form",
             method: :post do |f|
   .form-children
-    .preview
-    = f.text_field :content, data: { content: "" }, class: "content"
-    = f.file_field :picture, data: { picture: "" }, class: "picture"
-    span class="glyphicon glyphicon-picture"
-    span class="glyphicon glyphicon-send"
+    .preview-box
+    .content-box
+      = f.text_field :content, data: { content: "" }, class: "content"
+      span class="glyphicon glyphicon-picture"
+      span class="glyphicon glyphicon-send"
+    .hidden-box
+      = f.file_field :picture, data: { picture: "" }, class: "picture"
     /= f.submit "Send", data: { send: "" }
 
 coffee:
