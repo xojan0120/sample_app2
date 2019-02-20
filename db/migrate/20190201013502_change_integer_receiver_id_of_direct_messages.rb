@@ -36,9 +36,17 @@ class ChangeIntegerReceiverIdOfDirectMessages < ActiveRecord::Migration[5.1]
     include AlterColumn
   end
   def self.up
-    alter_column :direct_messages, :receiver_id, :integer, "USING CAST(receiver_id AS integer)", 1
+    if ActiveRecord::Base.connection_config[:adapter] == "postgresql"
+      alter_column :direct_messages, :receiver_id, :integer, "USING CAST(receiver_id AS integer)", 1
+    else
+      change_column :direct_messages, :receiver_id, :integer
+    end
   end
   def self.down
-    raise ActiveRecord::IrreversibleMigration.new
+    if ActiveRecord::Base.connection_config[:adapter] == "postgresql"
+      raise ActiveRecord::IrreversibleMigration.new
+    else
+      change_column :direct_messages, :receiver_id, :string
+    end
   end
 end

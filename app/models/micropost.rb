@@ -147,14 +147,22 @@ class Micropost < ApplicationRecord
     r_followed_id = Relationship.select(:followed_id).where(follower_id: user_id)
 
     # 自分が返信先になっている投稿のマイクロポストIDを取得
-    r_reply_micropost_id = Micropost.joins(:replies).select(:id, :created_at).distinct.merge(Reply.where(reply_to: user_id))
+    #r_reply_micropost_id = Micropost.joins(:replies).select(:id, :created_at).distinct.merge(Reply.where(reply_to: user_id))
+    #puts "#########################"
+    #p ids = r_reply_micropost_id.pluck(:id)
+    #puts "#########################"
+
+    replies = Reply.where(reply_to: user_id)
+    #r3 = Micropost.find(replies.ids)
+    r3 = Micropost.where(id: replies.pluck(:micropost_id)).includes(:user)
 
     # 自分の投稿を取得
     r1 = Micropost.where(user_id: user_id).includes(:user)
     # フォローしている人の投稿を取得
     r2 = Micropost.where(user_id: r_followed_id).includes(:user)
     # 自分が返信先になっている投稿を取得
-    r3 = Micropost.where(id: r_reply_micropost_id.pluck(:id)).includes(:user)
+    #r3 = Micropost.where(id: r_reply_micropost_id.pluck(:id)).includes(:user)
+    #r3 = Micropost.where(id: ids).includes(:user)
 
     # 下記の書き方だとN+1クエリ問題発生
     # https://qiita.com/hirotakasasaki/items/e0be0b3fd7b0eb350327
