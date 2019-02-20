@@ -35,8 +35,6 @@ class DirectMessagesController < ApplicationController
   end
 
   def index
-    @prev_page_title = params[:page_title]
-
     @partner = User.find(params[:user_id])
     member = [current_user,@partner]
 
