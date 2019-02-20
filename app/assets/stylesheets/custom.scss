@@ -16,6 +16,10 @@ $gray-medium-light: #eaeaea;
 
 /* universal */
 
+html {
+  overflow-y: scroll;
+}
+
 body {
   padding-top: 60px;
 }
@@ -68,12 +72,20 @@ p {
   // モーダルウィンドウ表示時にナビゲーションバーが横にスクロールバー分
   // ずれこむのを防げる。vwはviewportの横幅。スクロールバーの幅も含む。
   // 100%はスクロールバーの幅を含まない。
-  width: 100vw;
+  // width: 100vw;
+  // ↑ html { overflow-y: scroll }で常にスクロールバー表示状態にしたので不要
+  padding-right: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .navbar{
+    padding-right: 0px;
+  }
 }
 
 #logo {
   float: left;
-  margin-right: 10px;
+  margin-left: 10px;
   font-size: 1.7em;
   color: white;
   text-transform: uppercase;
@@ -361,16 +373,19 @@ ul.messages {
     text-align: center;
 
     .preview-box {
-      width: 80%;
-      margin: auto;
-      text-align: left;
-
+			display: none;
+			margin-bottom: 5px;
       img {
-        max-width: 50px;
+        max-width: 150px;
+        box-shadow: 0 0 8px gray;
+				padding: 20px;
       }
       .glyphicon-remove {
         vertical-align: top;
         cursor: pointer;
+				position: relative;
+				left: -20px;
+				top: 5px;
       }
     }
 

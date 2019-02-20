@@ -1,16 +1,9 @@
-nav.navbar.navbar-fixed-top.navbar-default.navbar-inverse
-  .container-fuild
-    .navbar-header
-      = link_to "sample app", root_path, id: "logo"
-      button.navbar-toggle.collapsed type="button" data-toggle="collapse" data-target="#navbarExample1"
-        span.sr-only
-          | Toggle navigation
-        span.icon-bar
-        span.icon-bar
-        span.icon-bar
-
-    .collapse.navbar-collapse#navbarExample1.navbar-right
+header.navbar.navbar-fixed-top.navbar-inverse
+  .container
+    = link_to "sample app", root_path, id: "logo"
+    nav
       ul.nav.navbar-nav.navbar-right
+
         li
           = link_to "Home",   root_path
         li

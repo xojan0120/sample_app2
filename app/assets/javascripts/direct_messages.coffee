@@ -82,6 +82,7 @@ preview_picture = (picture) ->
     $(preview_box_selector).empty()
     $(preview_box_selector).append(create_picture_element(reader.result))
     $(preview_box_selector).append(create_delete_icon())
+    $(preview_box_selector).fadeIn()
 # ========================================================================
 # DM一覧画面 画像プレビュー関連 end
 # ========================================================================
