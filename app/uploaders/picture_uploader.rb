@@ -26,6 +26,8 @@ class PictureUploader < CarrierWave::Uploader::Base
       "uploads/develop/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
     elsif Rails.env.test?
       "uploads/test/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
+    else
+      "uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
     end
   end
 
