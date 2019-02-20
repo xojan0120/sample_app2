@@ -36,7 +36,7 @@ class ChangeIntegerSenderIdOfDirectMessages < ActiveRecord::Migration[5.1]
     include AlterColumn
   end
   def self.up
-    alter_column :direct_messages, :sender_id, :integer, "USING CAST(sender_id AS integer", 1
+    alter_column :direct_messages, :sender_id, :integer, "USING CAST(sender_id AS integer)", 1
   end
   def self.down
     raise ActiveRecord::IrreversibleMigration.new
