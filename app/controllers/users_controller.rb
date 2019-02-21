@@ -58,7 +58,12 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    User.find(params[:id]).destroy
+    # これだとN+1問題発生
+    # User.find(params[:id]).destroy
+    
+    # destroyに頼らず手動delete
+    destroy_user(User.find(params[:id]))
+
     flash[:success] = "User deleted"
     redirect_to users_url
   end
@@ -95,5 +100,25 @@ class UsersController < ApplicationController
     # 管理者かどうか確認
     def admin_user
       redirect_to(root_url) unless current_user.admin?
+    end
+
+    def destroy_user(user)
+      # 自分の投稿を全削除
+      user.microposts.delete_all
+      # 自分のフォロー関係を全削除
+      user.active_relationships.delete_all
+      # 自分のフォロワー関係を全削除
+      user.passive_relationships.delete_all
+      # 自分宛に送られたDM表示状態を全削除
+      user.direct_message_stats.delete_all
+      # 自分が送ったDMの表示状態を全削除
+      direct_messages = user.direct_messages
+      DirectMessageStat.where(direct_message: direct_messages).delete_all
+      # 自分のDMを全削除
+      user.direct_messages.delete_all
+      # 自分のユーザルームを全削除
+      user.user_rooms.delete_all
+      # 自分のユーザを削除
+      user.delete
     end
 end

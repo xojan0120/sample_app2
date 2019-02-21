@@ -69,10 +69,10 @@ class User < ApplicationRecord
   #             WHERE relationships.followed_id = 「user.id」
   has_many :followers, through: :passive_relationships, source: :follower
 
-  has_many :direct_messages
-  has_many :user_rooms
+  has_many :direct_messages,      dependent: :destroy
+  has_many :direct_message_stats, dependent: :destroy
+  has_many :user_rooms,           dependent: :destroy
   has_many :rooms, through: :user_rooms
-  has_many :direct_message_stats
 
   attr_accessor :remember_token, :activation_token, :reset_token
 

@@ -68,18 +68,25 @@ p {
 
 /* header */
 
-.navbar {
-  // モーダルウィンドウ表示時にナビゲーションバーが横にスクロールバー分
-  // ずれこむのを防げる。vwはviewportの横幅。スクロールバーの幅も含む。
-  // 100%はスクロールバーの幅を含まない。
-  // width: 100vw;
-  // ↑ html { overflow-y: scroll }で常にスクロールバー表示状態にしたので不要
-  padding-right: 20px;
-}
+//.navbar {
+//  // モーダルウィンドウ表示時にナビゲーションバーが横にスクロールバー分
+//  // ずれこむのを防げる。vwはviewportの横幅。スクロールバーの幅も含む。
+//  // 100%はスクロールバーの幅を含まない。
+//  // width: 100vw;
+//  // ↑ html { overflow-y: scroll }で常にスクロールバー表示状態にしたので不要
+//}
 
+// 768px以下
 @media screen and (max-width: 768px) {
   .navbar{
     padding-right: 0px;
+  }
+}
+
+// 769px以上
+@media screen and (min-width: 769px) {
+  .navbar{
+    padding: 0px 100px;
   }
 }
 
