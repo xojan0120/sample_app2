@@ -18,7 +18,7 @@
               )
 end
 
-User.create!(name: "木戸涼介",
+user_kido = User.create!(name: "木戸涼介",
              email: "user4@gmail.com",
              password: "foobar",
              password_confirmation: "foobar",
@@ -58,5 +58,6 @@ followers = users[3..40] # usersの4番目～41番目を、最初のユーザを
 following.each { |followed| user.follow(followed) } # 最初のユーザがfollowingの人たちをフォローする
 followers.each { |follower| follower.follow(user) } # followersの人たちが最初のユーザをフォローする
 
-user_kido = User.find_by(name:"木戸涼介")
 following.each { |followed| user_kido.follow(followed) }
+picture = Rack::Test::UploadedFile.new(Rails.root.join('spec/factories/images/rails.png'))
+Micropost.create!(content:"test",picture: picture, user: user_kido, created_at: Time.now)
