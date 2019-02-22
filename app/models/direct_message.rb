@@ -1,6 +1,6 @@
 class DirectMessage < ApplicationRecord
   belongs_to :user
-  has_many   :direct_message_stats, dependent: :destroy
+  has_many   :direct_message_stats, dependent: :delete_all
   belongs_to :room
 
   # 1.pictureが存在しないとき、contentの存在性を検証する

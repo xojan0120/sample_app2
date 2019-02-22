@@ -69,9 +69,15 @@ class User < ApplicationRecord
   #             WHERE relationships.followed_id = 「user.id」
   has_many :followers, through: :passive_relationships, source: :follower
 
-  has_many :direct_messages,      dependent: :destroy
-  has_many :direct_message_stats, dependent: :destroy
-  has_many :user_rooms,           dependent: :destroy
+  # dependent: :delete_allは、上記destroyと同じく、それに依存する子オブジェクトも
+  # 破棄してくれるが、違いは一括で破棄してくれる点である。
+  # destroyはDELETE文を削除する子オブジェクトの件数分発行する。
+  # delete_allはDELETE文を1回発行する。
+  # 但し、delete_allの場合は、コールバックやバリデーションを介さず、
+  # 直接SQLが実行される点に注意。
+  has_many :direct_messages,      dependent: :delete_all
+  has_many :direct_message_stats, dependent: :delete_all
+  has_many :user_rooms,           dependent: :delete_all
   has_many :rooms, through: :user_rooms
 
   attr_accessor :remember_token, :activation_token, :reset_token

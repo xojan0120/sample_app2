@@ -1,7 +1,7 @@
 class Room < ApplicationRecord
-  has_many :user_rooms, dependent: :destroy
+  has_many :user_rooms, dependent: :delete_all
   has_many :users, through: :user_rooms
-  has_many :direct_messages, -> { order(created_at: :asc) }, dependent: :destroy
+  has_many :direct_messages, -> { order(created_at: :asc) }, dependent: :delete_all
 
   # ルームのメッセージを取得する
   # 但し、userに指定したユーザが非表示にしたものは除く
