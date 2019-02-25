@@ -75,10 +75,12 @@ class User < ApplicationRecord
   # delete_allはDELETE文を1回発行する。
   # 但し、delete_allの場合は、コールバックやバリデーションを介さず、
   # 直接SQLが実行される点に注意。
-  has_many :direct_messages,      dependent: :delete_all
-  has_many :direct_message_stats, dependent: :delete_all
-  has_many :user_rooms,           dependent: :delete_all
+  has_many :direct_messages,            dependent: :delete_all
+  has_many :direct_message_stats,       dependent: :delete_all
+  has_many :user_rooms,                 dependent: :delete_all
   has_many :rooms, through: :user_rooms
+
+  has_one  :user_follower_notification, dependent: :destroy
 
   attr_accessor :remember_token, :activation_token, :reset_token
 

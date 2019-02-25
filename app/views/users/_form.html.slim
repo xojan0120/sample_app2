@@ -17,4 +17,7 @@
   = f.label :password_confirmation, "Confirmation"
   = f.password_field :password_confirmation, class: 'form-control'
 
+  = f.label :follower_notification, "Follower notification"
+  = f.check_box :follower_notification, class: 'form-control'
+
   = f.submit yield(:button_text), class: "btn btn-primary"
