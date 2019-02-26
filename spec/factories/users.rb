@@ -38,6 +38,13 @@ FactoryBot.define do
     }
   end
 
+  # フォロワー通知設定ON
+  trait :with_follower_notification do
+    after(:create) {|user,evaluator|
+      user.create_follower_notification(enabled: true)
+    }
+  end
+
   # to_user_num の人数分のDM送信済み
   # DMのcreated_atは最後に送ったものが一番新しくなる
   # 下記トレイトを用意したが、送り先のユーザを取得しにくいなどの理由で

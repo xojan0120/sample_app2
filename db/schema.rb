@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190202013929) do
+ActiveRecord::Schema.define(version: 20190225012322) do
 
   create_table "direct_message_stats", force: :cascade do |t|
     t.integer "direct_message_id"
@@ -31,6 +31,23 @@ ActiveRecord::Schema.define(version: 20190202013929) do
     t.integer "room_id"
     t.index ["room_id"], name: "index_direct_messages_on_room_id"
     t.index ["user_id"], name: "index_direct_messages_on_user_id"
+  end
+
+  create_table "follower_notification_logs", force: :cascade do |t|
+    t.integer "follower_id"
+    t.datetime "mail_sent_at"
+    t.integer "follower_notification_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["follower_notification_id"], name: "index_follower_notification_logs_on_follower_notification_id"
+  end
+
+  create_table "follower_notifications", force: :cascade do |t|
+    t.boolean "enabled"
+    t.integer "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_follower_notifications_on_user_id"
   end
 
   create_table "microposts", force: :cascade do |t|

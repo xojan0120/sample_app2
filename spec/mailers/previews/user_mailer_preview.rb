@@ -24,4 +24,12 @@ class UserMailerPreview < ActionMailer::Preview
     # Userメーラーでuser宛にパスワード再設定メールを送信する
     UserMailer.password_reset(user)
   end
+
+  # Preview this email at http://localhost:3000/rails/mailers/user_mailer/follower_notification
+  def follower_notification
+    follow_user   = User.first
+    followed_user = User.second
+
+    UserMailer.follower_notification(follow_user, followed_user)
+  end
 end

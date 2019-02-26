@@ -28,5 +28,7 @@ module SampleApp
         routing_specs: false,
         request_specs: false
     end
+
+    config.time_zone = 'Tokyo'
   end
 end

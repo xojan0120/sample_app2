@@ -42,22 +42,25 @@ user_kido = User.create!(name: "木戸涼介",
               )
 end
 
+# フォロワー通知設定
+User.first.create_follower_notification(enabled: true)
+User.second.create_follower_notification(enabled: true)
+
 # ユーザーテーブルから作成日時順で6人のUserオブジェクトを配列で取得する
 users = User.order(:created_at).take(6)
-
 50.times do
   content = Faker::Lorem.sentence(5)
   users.each { |user| user.microposts.create!(content: content) }
 end
 
 # リレーションシップ
-users = User.all
-user = users.first # 最初のユーザ
-following = users[1..50] # usersの2番目～51番目を、最初のユーザにフォローされる人たちとして取得
-followers = users[3..40] # usersの4番目～41番目を、最初のユーザをフォローする人たちとして取得
-following.each { |followed| user.follow(followed) } # 最初のユーザがfollowingの人たちをフォローする
-followers.each { |follower| follower.follow(user) } # followersの人たちが最初のユーザをフォローする
-
+following = User.all[1..50] # User.allの2番目～51番目を、最初のユーザにフォローされる人たちとして取得
+followers = User.all[3..40] # user.allの4番目～41番目を、最初のユーザをフォローする人たちとして取得
+following.each { |followed| User.first.follow(followed) } # 最初のユーザがfollowingの人たちをフォローする
+followers.each { |follower| follower.follow(User.first) } # followersの人たちが最初のユーザをフォローする
 following.each { |followed| user_kido.follow(followed) }
+
+# 画像テスト用
 picture = Rack::Test::UploadedFile.new(Rails.root.join('spec/factories/images/rails.png'))
 Micropost.create!(content:"test",picture: picture, user: user_kido, created_at: Time.now)
+

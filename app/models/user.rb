@@ -80,7 +80,8 @@ class User < ApplicationRecord
   has_many :user_rooms,                 dependent: :delete_all
   has_many :rooms, through: :user_rooms
 
-  has_one  :user_follower_notification, dependent: :destroy
+  has_one  :follower_notification, dependent: :destroy
+  accepts_nested_attributes_for :follower_notification
 
   attr_accessor :remember_token, :activation_token, :reset_token
 
@@ -89,6 +90,8 @@ class User < ApplicationRecord
 
   # before_saveとの違いは、saveは作成・更新時、createは作成時のみ実行される
   before_create :create_activation_digest
+
+  after_create -> { create_follower_notification(enabled: false) }
 
   validates :name, presence: true, length: { maximum: 50 }
 

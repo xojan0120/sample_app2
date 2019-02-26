@@ -36,9 +36,9 @@ RSpec.describe Micropost, type: :model do
 
   describe "投稿の取得順序について" do
     let(:user)             { FactoryBot.create(:user) }
-    let(:today)            { Date.today.to_time       }
-    let(:yesterday)        { Date.today.days_ago(1)   }
-    let(:before_yesterday) { Date.today.days_ago(2)   }
+    let(:today)            { Time.zone.now } #{ Date.today.to_time       }
+    let(:yesterday)        { today - 1.day } #{ Date.today.days_ago(1)   }
+    let(:before_yesterday) { today - 2.day } #{ Date.today.days_ago(2)   }
     before do
       user.microposts.create(content: "first post",  created_at: before_yesterday)
       user.microposts.create(content: "second post", created_at: yesterday)
@@ -46,12 +46,12 @@ RSpec.describe Micropost, type: :model do
     end
     context "デフォルトスコープでは" do
       it "投稿は作成日時の一番新しいものから取得できること" do
-        expect(user.microposts.first.created_at).to eq today
+        expect(user.microposts.first.created_at.to_i).to eq today.to_i
       end
     end
     context "デフォルトスコープを解除した状態では" do
       it "投稿は作成日時の一番古いものから取得できること" do
-        expect(user.microposts.unscoped.first.created_at).to eq before_yesterday
+        expect(user.microposts.unscoped.first.created_at.to_i).to eq before_yesterday.to_i
       end
     end
   end

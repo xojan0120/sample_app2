@@ -1,3 +1,4 @@
+/- @user.build_follower_notification
 = form_for(@user, url: yield(:submit_url)) do |f|
 
   = render 'shared/error_messages', object: f.object
@@ -17,7 +18,8 @@
   = f.label :password_confirmation, "Confirmation"
   = f.password_field :password_confirmation, class: 'form-control'
 
-  = f.label :follower_notification, "Follower notification"
-  = f.check_box :follower_notification, class: 'form-control'
+  = f.fields_for :follower_notification do |f2|
+    = f2.check_box :enabled
+    = f2.label :enabled, "Follower notification"
 
   = f.submit yield(:button_text), class: "btn btn-primary"

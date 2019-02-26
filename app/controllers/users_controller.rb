@@ -32,6 +32,7 @@ class UsersController < ApplicationController
 
   def new
     @user = User.new
+    @user.build_follower_notification
   end
 
   def create
@@ -85,7 +86,13 @@ class UsersController < ApplicationController
 
   private
     def user_params
-      params.require(:user).permit(:name, :email, :password, :password_confirmation, :unique_name)
+      params.require(:user).permit(:name,
+                                   :email,
+                                   :password,
+                                   :password_confirmation,
+                                   :unique_name,
+                                   follower_notification_attributes: [:id, :enabled]
+                                  )
     end
 
     # beforeアクション

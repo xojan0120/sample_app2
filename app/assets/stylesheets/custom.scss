@@ -227,6 +227,11 @@ input, textarea, select, .uneditable-input {
   @include box_sizing;
 }
 
+// ラベルとチェックボックスを横並びに戻す
+input[type=checkbox] {
+  width: auto;
+}
+
 input {
   height: auto !important;
 }

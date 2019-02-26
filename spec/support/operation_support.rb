@@ -9,6 +9,16 @@ module OperationSupport
       click_link "delete", match: :first
     end
   end
+
+  def click_follow(time = 1)
+    click_button "Follow"
+    sleep time
+  end
+
+  def click_unfollow(time = 1)
+    click_button "Unfollow"
+    sleep time
+  end
 end
 
 RSpec.configure do |config|
