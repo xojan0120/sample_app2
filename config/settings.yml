@@ -2,3 +2,6 @@ unique_name:
   length:
     minimum: 5 
     maximum: 15
+
+follower_notification:
+  snooze_limit_hours: 24 
