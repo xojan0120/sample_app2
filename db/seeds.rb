@@ -43,8 +43,9 @@ user_kido = User.create!(name: "木戸涼介",
 end
 
 # フォロワー通知設定
-User.first.create_follower_notification(enabled: true)
-User.second.create_follower_notification(enabled: true)
+User.all.each do |user|
+  user.create_follower_notification(enabled: false)
+end
 
 # ユーザーテーブルから作成日時順で6人のUserオブジェクトを配列で取得する
 users = User.order(:created_at).take(6)

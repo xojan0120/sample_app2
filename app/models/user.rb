@@ -91,7 +91,9 @@ class User < ApplicationRecord
   # before_saveとの違いは、saveは作成・更新時、createは作成時のみ実行される
   before_create :create_activation_digest
 
-  after_create -> { create_follower_notification(enabled: false) }
+  # app/controllers/users_controller.rbのnewアクションでbuild_follower_notificationしているので不要。
+  # ここでafter_createも追加してしまうと、INSERT文が2回走ったあと、DELETE文で消されてしまう。(謎)
+  #after_create -> {  create_follower_notification(enabled: false) }
 
   validates :name, presence: true, length: { maximum: 50 }
 
