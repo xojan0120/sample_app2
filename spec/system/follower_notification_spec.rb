@@ -4,11 +4,11 @@ RSpec.feature "FollowerNotification", type: :system do
   #↓perform_enqueued_jobsを使うために必要
   include ActiveJob::TestHelper
 
-  let!(:user1)  { FactoryBot.create(:user, name: "ユーザ1", unique_name: "John_smith") }
-  let!(:user2)  { FactoryBot.create(:user, name: "ユーザ2", unique_name: "Jane_smith") }
-  let!(:user3)  { FactoryBot.create(:user, name: "ユーザ3", unique_name: "Agent_smith") }
+  let!(:user1)  { FactoryBot.create(:user, :with_follower_notification, name: "ユーザ1", unique_name: "John_smith",  follower_notification_enabled: false) }
+  let!(:user2)  { FactoryBot.create(:user, :with_follower_notification, name: "ユーザ2", unique_name: "Jane_smith",  follower_notification_enabled: false) }
+  let!(:user3)  { FactoryBot.create(:user, :with_follower_notification, name: "ユーザ3", unique_name: "Agent_smith", follower_notification_enabled: false) }
 
-  scenario "設定画面の通知設定欄の確認", js: true do
+  fscenario "設定画面の通知設定欄の確認", js: true do
     visit root_path
     log_in_as(user1) do
       visit_settings

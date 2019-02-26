@@ -40,8 +40,11 @@ FactoryBot.define do
 
   # フォロワー通知設定ON
   trait :with_follower_notification do
+    transient do
+      follower_notification_enabled true
+    end
     after(:create) {|user,evaluator|
-      user.create_follower_notification(enabled: true)
+      user.create_follower_notification(enabled: evaluator.follower_notification_enabled)
     }
   end
 
