@@ -12,7 +12,7 @@ class RelationshipsController < ApplicationController
     if fn&.enabled?
 			log = fn.logs.find_by(follower: current_user)
       if log.nil? || Time.zone.now >= (log.mail_sent_at + Settings.follower_notification[:snooze_limit_hours]) 
-				UserMailer.follower_notification(current_user, @user).deliver_later #now
+				UserMailer.follower_notification(current_user, @user).deliver_later
 			end
       FollowerNotificationLog.create_or_update(current_user, @user)
     end
