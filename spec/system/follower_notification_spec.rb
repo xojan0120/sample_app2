@@ -8,7 +8,7 @@ RSpec.feature "FollowerNotification", type: :system do
   let!(:user2)  { FactoryBot.create(:user, :with_follower_notification, name: "ユーザ2", unique_name: "Jane_smith",  follower_notification_enabled: false) }
   let!(:user3)  { FactoryBot.create(:user, :with_follower_notification, name: "ユーザ3", unique_name: "Agent_smith", follower_notification_enabled: false) }
 
-  fscenario "設定画面の通知設定欄の確認", js: true do
+  scenario "設定画面の通知設定欄の確認", js: true do
     visit root_path
     log_in_as(user1) do
       visit_settings

@@ -4,6 +4,9 @@ class SessionsController < ApplicationController
 
   def create
     @user = User.find_by(email: params[:session][:email].downcase)
+    # authenticateメソッドはhas_secure_passwordが提供するメソッド
+    # 引数に渡されたパスワードをハッシュ化した値と、データベース内にある
+    # password_digest絡むの値を比較する。
     if @user && @user.authenticate(params[:session][:password])
       if @user.activated?
         log_in @user
