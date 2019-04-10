@@ -4,7 +4,7 @@
 [*Ruby on Rails チュートリアル*](https://railstutorial.jp/)
 [Michael Hartl](http://www.michaelhartl.com/) 著
 
-変更テスト
+変更テスト2
 
 ## ライセンス
 
