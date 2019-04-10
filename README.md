@@ -17,6 +17,8 @@ Railsチュートリアルを2周し、機能拡張課題に挑戦していま�
 [*Ruby on Rails チュートリアル*](https://railstutorial.jp/)
 [Michael Hartl](http://www.michaelhartl.com/) 著
 
+変更テスト2
+
 ## ライセンス
 
 [Ruby on Rails チュートリアル](https://railstutorial.jp/)内にある
