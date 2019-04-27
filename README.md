@@ -1,8 +1,8 @@
-# 2019/01/27現在
+# 概要
 
-Railsチュートリアルを2周し、機能拡張課題に挑戦しています。
-課題リストは[issue](https://github.com/xojan0120/sample_app2/issues)を御覧ください。
-現在進行中のものは[Projects](https://github.com/xojan0120/sample_app2/projects)で確認できます。
+Railsチュートリアルの機能拡張版。
+拡張した機能は下記に記載。
+https://github.com/xojan0120/sample_app2/issues?q=is%3Aissue+is%3Aclosed
 各機能の設計は[Wiki](https://github.com/xojan0120/sample_app2/wiki)で確認できます。
 
 ある程度改修が進んだ時点でmasterブランチへpushしています。
